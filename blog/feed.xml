@@ -2,28 +2,28 @@
 <rss version="2.0">
     <channel>
         <title>FDC3 Blog</title>
-        <link>https://fdc3.finos.org/blog</link>
+        <link>/https://ChartIQ.github.io/FDC3/FDC3/blog</link>
         <description>The best place to stay up-to-date with the latest FDC3 news and events.</description>
         <lastBuildDate>Tue, 26 Sep 2017 06:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <image>
             <title>FDC3 Blog</title>
-            <url>https://fdc3.finos.org/img/fdc3-icon-2019.svg</url>
-            <link>https://fdc3.finos.org/blog</link>
+            <url>/https://ChartIQ.github.io/FDC3/FDC3/img/fdc3-icon-2019.svg</url>
+            <link>/https://ChartIQ.github.io/FDC3/FDC3/blog</link>
         </image>
         <copyright>Copyright © 2020 FDC3</copyright>
         <item>
             <title><![CDATA[Adding RSS Support]]></title>
-            <link>https://fdc3.finos.org/blog/2017/09/26/adding-rss.html</link>
-            <guid>https://fdc3.finos.org/blog/2017/09/26/adding-rss.html</guid>
+            <link>/https://ChartIQ.github.io/FDC3/FDC3/blog/2017/09/26/adding-rss.html</link>
+            <guid>/https://ChartIQ.github.io/FDC3/FDC3/blog/2017/09/26/adding-rss.html</guid>
             <pubDate>Tue, 26 Sep 2017 06:00:00 GMT</pubDate>
             <description><![CDATA[<p>This is a test post.</p> <p>A whole bunch of other information.</p> ]]></description>
         </item>
         <item>
             <title><![CDATA[Adding RSS Support - RSS Truncation Test]]></title>
-            <link>https://fdc3.finos.org/blog/2017/09/25/testing-rss.html</link>
-            <guid>https://fdc3.finos.org/blog/2017/09/25/testing-rss.html</guid>
+            <link>/https://ChartIQ.github.io/FDC3/FDC3/blog/2017/09/25/testing-rss.html</link>
+            <guid>/https://ChartIQ.github.io/FDC3/FDC3/blog/2017/09/25/testing-rss.html</guid>
             <pubDate>Mon, 25 Sep 2017 06:00:00 GMT</pubDate>
             <description><![CDATA[<p>1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890</p>
 <p>This should be truncated.</p>
