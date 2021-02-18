@@ -1,8 +1,9 @@
 ---
-id: spec
+id: version-next-spec
 sidebar_label: Context Data Specification
 title: Context Data Specification
 hide_title: true
+original_id: spec
 ---
 
 # Context Data Specification

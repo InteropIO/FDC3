@@ -1,8 +1,9 @@
 ---
-id: Position
+id: version-next-Position
 sidebar_label: Position
 title: Position
 hide_title: true
+original_id: Position
 ---
 # `Position`
 
