@@ -156,8 +156,8 @@ __Note:__ The below examples show how the base context data interface can be use
     ],
     "range": {
         "type": "fdc3.dateRange",
-        "start": "2020-09-01T08:00:00.000Z",
-        "end": "2020-10-31T08:00:00.000Z"
+        "starttime": "2020-09-01T08:00:00.000Z",
+        "endtime": "2020-10-31T08:00:00.000Z"
     },
     "style": "line",
     "indicators": [
@@ -308,7 +308,7 @@ __Note:__ The below examples show how the base context data interface can be use
 #### Portfolio
 ```json
 {
-    "type":"fdc3.portfolio"
+    "type":"fdc3.portfolio",
     "name":"my portfolio",
     "positions":[
         {
