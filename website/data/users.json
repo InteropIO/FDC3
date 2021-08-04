@@ -8,7 +8,14 @@
     {
         "caption": "ChartIQ",
         "image": "/img/users/ChartIQ.png",
-        "infoLink": "https://www.chartiq.com/",
+        "infoLink": "https://cosaic.io/chartiq/",
+        "pinned": true,
+        "isMember": true
+    },
+    {
+        "caption": "Citi",
+        "image": "/img/users/citi.png",
+        "infoLink": "https://www.citigroup.com/",
         "pinned": true,
         "isMember": true
     },
@@ -65,6 +72,13 @@
         "caption": "OpenFin",
         "image": "/img/users/Openfin.png",
         "infoLink": "https://openfin.co/",
+        "pinned": true,
+        "isMember": true
+    },
+    {
+        "caption": "RBC Capital Markets",
+        "image": "/img/users/RBCCMlogo.png",
+        "infoLink": "https://www.rbccm.com/",
         "pinned": true,
         "isMember": true
     },
