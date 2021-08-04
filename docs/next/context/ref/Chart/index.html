@@ -89,44 +89,44 @@
 </table>
 <h2><a class="anchor" aria-hidden="true" id="example"></a><a href="#example" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Example</h2>
 <pre><code class="hljs css language-js"><span class="hljs-keyword">const</span> chart = {
-    <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;fdc3.chart&#x27;</span>
+    <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;fdc3.chart&quot;</span>,
     <span class="hljs-attr">instruments</span>: [
-      {
-        <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;fdc3.instrument&#x27;</span>,
-        <span class="hljs-attr">id</span>: {
-          <span class="hljs-attr">ticker</span>: <span class="hljs-string">&#x27;AAPL&#x27;</span>
+        {
+            <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;fdc3.instrument&quot;</span>,
+            <span class="hljs-attr">id</span>: {
+                <span class="hljs-attr">ticker</span>: <span class="hljs-string">&quot;AAPL&quot;</span>
+            }
+        },
+        {
+            <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;fdc3.instrument&quot;</span>,
+            <span class="hljs-attr">id</span>: {
+                <span class="hljs-attr">ticker</span>: <span class="hljs-string">&quot;GOOG&quot;</span>
+            }
         }
-      },
-      {
-        <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;fdc3.instrument&#x27;</span>,
-        <span class="hljs-attr">id</span>: {
-          <span class="hljs-attr">ticker</span>: <span class="hljs-string">&#x27;GOOG&#x27;</span>
-        }
-      }
     ],
     <span class="hljs-attr">range</span>: {
-      <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;fdc3.dateRange&#x27;</span>,
-      <span class="hljs-attr">start</span>: <span class="hljs-string">&#x27;2020-09-01T08:00:00.000Z&#x27;</span>,
-      <span class="hljs-attr">end</span>: <span class="hljs-string">&#x27;2020-10-31T08:00:00.000Z&#x27;</span>
+        <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;fdc3.dateRange&quot;</span>,
+        <span class="hljs-attr">starttime</span>: <span class="hljs-string">&quot;2020-09-01T08:00:00.000Z&quot;</span>,
+        <span class="hljs-attr">endtime</span>: <span class="hljs-string">&quot;2020-10-31T08:00:00.000Z&quot;</span>
     },
-    <span class="hljs-attr">style</span>: <span class="hljs-string">&#x27;line&#x27;</span>,
+    <span class="hljs-attr">style</span>: <span class="hljs-string">&quot;line&quot;</span>,
     <span class="hljs-attr">indicators</span>: [
-      {
-        <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;fdc3.indicator&#x27;</span>,
-        <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;ma&#x27;</span>,
-        <span class="hljs-attr">parameters</span>: {
-          <span class="hljs-attr">period</span>: <span class="hljs-number">14</span>,
-          <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;ema&#x27;</span>
+        {
+            <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;fdc3.indicator&quot;</span>,
+            <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;ma&quot;</span>,
+            <span class="hljs-attr">parameters</span>: {
+                <span class="hljs-attr">period</span>: <span class="hljs-number">14</span>,
+                <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;ema&quot;</span>
+            }
+        },
+        {
+            <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;fdc3.indicator&quot;</span>,
+            <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;volume&quot;</span>
         }
-      },
-      {
-        <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;fdc3.indicator&#x27;</span>,
-        <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;volume&#x27;</span>
-      }
     ]
 }
 
-fdc3.raiseIntent(<span class="hljs-string">&#x27;ViewChart&#x27;</span>, chart)
+fdc3.raiseIntent(<span class="hljs-string">&quot;ViewChart&quot;</span>, chart)
 </code></pre>
 <h2><a class="anchor" aria-hidden="true" id="see-also"></a><a href="#see-also" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>See Also</h2>
 <p>Other Types</p>
@@ -138,9 +138,5 @@ fdc3.raiseIntent(<span class="hljs-string">&#x27;ViewChart&#x27;</span>, chart)
 <p>Intents</p>
 <ul>
 <li><a href="../../intents/ref/ViewChart">ViewChart</a></li>
-</ul>
-<p>FINOS Financial Objects</p>
-<ul>
-<li><a href="https://fo.finos.org/docs/objects/chart">Chart</a></li>
 </ul>
 </span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/FDC3/docs/next/context/ref/Context"><span class="arrow-prev">← </span><span>Context</span></a><a class="docs-next button" href="/FDC3/docs/next/context/ref/Contact"><span>Contact</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#type">Type</a></li><li><a href="#schema">Schema</a></li><li><a href="#details">Details</a></li><li><a href="#example">Example</a></li><li><a href="#see-also">See Also</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/FDC3/" class="nav-home"><img src="/FDC3/img/fdc3-icon-2019.svg" alt="FDC3"/></a><div><h5>Learn</h5><a href="/FDC3/docs/fdc3-intro">Getting Started</a><a href="/FDC3/docs/supported-platforms">Supported Platforms</a><a href="/FDC3/docs/api/ref/DesktopAgent">API Reference</a><a href="/FDC3/docs/use-cases/overview">Use Cases</a></div><div><h5>Community</h5><a href="https://www.finos.org/" target="_blank" rel="noreferrer noopener">FINOS</a><a href="https://finos-lf.slack.com/messages/fdc3/" target="_blank" rel="noreferrer noopener">Slack</a><a href="https://stackoverflow.com/questions/tagged/fdc3" target="_blank" rel="noreferrer noopener">Stack Overflow</a><a href="https://groups.google.com/a/finos.org/forum/#!forum/fdc3" target="_blank" rel="noreferrer noopener">Google Groups</a></div><div><h5>More</h5><div class="social"><a class="github-button" href="https://github.com/finos/FDC3" data-count-href="https://github.com/finos/FDC3/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">FDC3</a></div><div class="social"><a href="https://twitter.com/FDC3_" class="twitter-follow-button">@FDC3_</a></div></div></section><section class="finos finosBanner"><a href="https://www.finos.org"><img id="finosicon" src="https://fdc3.finos.org/img/finos_wordmark.svg" height="75px" alt="FINOS" title="FINOS"/><h2 id="proud">Proud member of the Fintech Open Source Foundation</h2></a></section><section class="copyright">Copyright © 2021 FDC3</section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>

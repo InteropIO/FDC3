@@ -120,7 +120,6 @@ The source application may have data required to compose a workflow with another
 <li><strong>fdc3.chart</strong>
 <ul>
 <li>A visualization of data for a financial instrument or a set of instruments.</li>
-<li><a href="https://fo.finos.org/docs/objects/chart">Financial Objects Specification</a></li>
 <li><a href="/schemas/next/chart.schema.json">schema</a></li>
 </ul></li>
 <li><strong>fdc3.contact</strong>
@@ -144,19 +143,16 @@ The source application may have data required to compose a workflow with another
 <li><strong>fdc3.currency</strong>
 <ul>
 <li>An entity that can be used when referencing currency.</li>
-<li><a href="https://fo.finos.org/docs/objects/currency">Financial Objects Specification</a></li>
 <li><a href="/schemas/next/currency.schema.json">schema</a></li>
 </ul></li>
 <li><strong>fdc3.dateRange</strong>
 <ul>
 <li>A definition of a range of time, consisting of a start and end time..</li>
-<li><a href="https://fo.finos.org/docs/objects/daterange">Financial Objects Specification</a></li>
 <li><a href="/schemas/next/dateRange.schema.json">schema</a></li>
 </ul></li>
 <li><strong>fdc3.indicator</strong>
 <ul>
-<li>A function or transformation performed on data..</li>
-<li><a href="https://fo.finos.org/docs/objects/indicator">Financial Objects Specification</a></li>
+<li>A function or transformation performed on data and used to measure current conditions as well as to forecast trends.</li>
 <li><a href="/schemas/next/indicator.schema.json">schema</a></li>
 </ul></li>
 <li><strong>fdc3.instrument</strong>
@@ -185,7 +181,7 @@ The source application may have data required to compose a workflow with another
 </ul></li>
 <li><strong>fdc3.position</strong>
 <ul>
-<li>An instrument and a holding in that instrument.</li>
+<li>An amount of a security, asset, or property that is owned (or sold short) by some individual or other entity.</li>
 <li><a href="https://fo.finos.org/docs/objects/position">Financial Objects Specification</a></li>
 <li><a href="/schemas/next/position.schema.json">schema</a></li>
 </ul></li>
@@ -198,7 +194,6 @@ The source application may have data required to compose a workflow with another
 <li><strong>fdc3.valuation</strong>
 <ul>
 <li>A valuation expresses a price and value of a holding.</li>
-<li><a href="https://fo.finos.org/docs/objects/valuation">Financial Objects Specification</a></li>
 <li><a href="/schemas/next/valuation.schema.json">schema</a></li>
 </ul></li>
 </ul>
@@ -206,40 +201,40 @@ The source application may have data required to compose a workflow with another
 <h3><a class="anchor" aria-hidden="true" id="examples"></a><a href="#examples" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Examples</h3>
 <h4><a class="anchor" aria-hidden="true" id="chart"></a><a href="#chart" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Chart</h4>
 <pre><code class="hljs css language-json">{
-    type: &#x27;fdc3.chart&#x27;
-    instruments: [
-      {
-        type: &#x27;fdc3.instrument&#x27;,
-        id: {
-          ticker: &#x27;AAPL&#x27;
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;fdc3.chart&quot;</span>,
+    <span class="hljs-attr">&quot;instruments&quot;</span>: [
+        {
+            <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;fdc3.instrument&quot;</span>,
+            <span class="hljs-attr">&quot;id&quot;</span>: {
+                <span class="hljs-attr">&quot;ticker&quot;</span>: <span class="hljs-string">&quot;AAPL&quot;</span>
+            }
+        },
+        {
+            <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;fdc3.instrument&quot;</span>,
+            <span class="hljs-attr">&quot;id&quot;</span>: {
+                <span class="hljs-attr">&quot;ticker&quot;</span>: <span class="hljs-string">&quot;GOOG&quot;</span>
+            }
         }
-      },
-      {
-        type: &#x27;fdc3.instrument&#x27;,
-        id: {
-          ticker: &#x27;GOOG&#x27;
-        }
-      }
     ],
-    range: {
-      type: &#x27;fdc3.dateRange&#x27;,
-      start: &#x27;2020-09-01T08:00:00.000Z&#x27;,
-      end: &#x27;2020-10-31T08:00:00.000Z&#x27;
+    <span class="hljs-attr">&quot;range&quot;</span>: {
+        <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;fdc3.dateRange&quot;</span>,
+        <span class="hljs-attr">&quot;start&quot;</span>: <span class="hljs-string">&quot;2020-09-01T08:00:00.000Z&quot;</span>,
+        <span class="hljs-attr">&quot;end&quot;</span>: <span class="hljs-string">&quot;2020-10-31T08:00:00.000Z&quot;</span>
     },
-    style: &#x27;line&#x27;,
-    indicators: [
-      {
-        type: &#x27;fdc3.indicator&#x27;,
-        name: &#x27;ma&#x27;,
-        parameters: {
-          period: 14,
-          type: &#x27;ema&#x27;
+    <span class="hljs-attr">&quot;style&quot;</span>: <span class="hljs-string">&quot;line&quot;</span>,
+    <span class="hljs-attr">&quot;indicators&quot;</span>: [
+        {
+            <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;fdc3.indicator&quot;</span>,
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;ma&quot;</span>,
+            <span class="hljs-attr">&quot;parameters&quot;</span>: {
+                <span class="hljs-attr">&quot;period&quot;</span>: <span class="hljs-number">14</span>,
+                <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;ema&quot;</span>
+            }
+        },
+        {
+            <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;fdc3.indicator&quot;</span>,
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;volume&quot;</span>
         }
-      },
-      {
-        type: &#x27;fdc3.indicator&#x27;,
-        name: &#x27;volume&#x27;
-      }
     ]
 }
 </code></pre>
@@ -286,25 +281,25 @@ The source application may have data required to compose a workflow with another
 </code></pre>
 <h4><a class="anchor" aria-hidden="true" id="currency"></a><a href="#currency" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Currency</h4>
 <pre><code class="hljs css language-json">{
-    type: &#x27;fdc3.currency&#x27;,
-    name: &#x27;US Dollar&#x27;,
-    code: &#x27;USD&#x27;
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;fdc3.currency&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;US Dollar&quot;</span>,
+    <span class="hljs-attr">&quot;code&quot;</span>: <span class="hljs-string">&quot;USD&quot;</span>
 }
 </code></pre>
 <h4><a class="anchor" aria-hidden="true" id="daterange"></a><a href="#daterange" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>DateRange</h4>
 <pre><code class="hljs css language-json">{
-    type: &#x27;fdc3.dateRange&#x27;
-    starttime: &#x27;2020-09-01T08:00:00.000Z&#x27;,
-    endtime: &#x27;2020-10-31T08:00:00.000Z&#x27;
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;fdc3.dateRange&quot;</span>,
+    <span class="hljs-attr">&quot;starttime&quot;</span>: <span class="hljs-string">&quot;2020-09-01T08:00:00.000Z&quot;</span>,
+    <span class="hljs-attr">&quot;endtime&quot;</span>: <span class="hljs-string">&quot;2020-10-31T08:00:00.000Z&quot;</span>
 }
 </code></pre>
 <h4><a class="anchor" aria-hidden="true" id="indicator"></a><a href="#indicator" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Indicator</h4>
 <pre><code class="hljs css language-json">{
-    type: &#x27;fdc3.indicator&#x27;
-    name: &#x27;ma&#x27;,
-    parameters: {
-      period: 14,
-      matype: &#x27;ema&#x27;
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;fdc3.indicator&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;ma&quot;</span>,
+    <span class="hljs-attr">&quot;parameters&quot;</span>: {
+        <span class="hljs-attr">&quot;period&quot;</span>: <span class="hljs-number">14</span>,
+        <span class="hljs-attr">&quot;matype&quot;</span>: <span class="hljs-string">&quot;ema&quot;</span>
     }
 }
 </code></pre>
@@ -401,37 +396,37 @@ The source application may have data required to compose a workflow with another
 </code></pre>
 <h4><a class="anchor" aria-hidden="true" id="trade"></a><a href="#trade" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Trade</h4>
 <pre><code class="hljs css language-json">{
-    type: &#x27;fdc3.trade&#x27;,
-    tradedaterange: {
-        type: &#x27;fdc3.dateRange&#x27;,
-        starttime: &#x27;2020-09-01T08:00:00.000Z&#x27;
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;fdc3.trade&quot;</span>,
+    <span class="hljs-attr">&quot;tradedaterange&quot;</span>: {
+        <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;fdc3.dateRange&quot;</span>,
+        <span class="hljs-attr">&quot;starttime&quot;</span>: <span class="hljs-string">&quot;2020-09-01T08:00:00.000Z&quot;</span>
     },
-    settledaterange: {
-        type: &#x27;fdc3.dateRange&#x27;,
-        starttime: &#x27;2020-09-02T08:00:00.000Z&#x27;
+    <span class="hljs-attr">&quot;settledaterange&quot;</span>: {
+        <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;fdc3.dateRange&quot;</span>,
+        <span class="hljs-attr">&quot;starttime&quot;</span>: <span class="hljs-string">&quot;2020-09-02T08:00:00.000Z&quot;</span>
     },
-    units: 1000000,
-    open: {
-        type: &#x27;fdc3.valuation&#x27;,
-        price: 20.00,
-        value: 20000000,
-        currency: {
-            type: &#x27;fdc3.currency&#x27;,
-            code: &#x27;USD&#x27;
+    <span class="hljs-attr">&quot;units&quot;</span>: <span class="hljs-number">1000000</span>,
+    <span class="hljs-attr">&quot;open&quot;</span>: {
+        <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;fdc3.valuation&quot;</span>,
+        <span class="hljs-attr">&quot;price&quot;</span>: <span class="hljs-number">20.00</span>,
+        <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-number">20000000</span>,
+        <span class="hljs-attr">&quot;currency&quot;</span>: {
+            <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;fdc3.currency&quot;</span>,
+            <span class="hljs-attr">&quot;code&quot;</span>: <span class="hljs-string">&quot;USD&quot;</span>
         }
     },
-    location: &#x27;XYZ&#x27;,
-    account: &#x27;cash&#x27;
+    <span class="hljs-attr">&quot;location&quot;</span>: <span class="hljs-string">&quot;XYZ&quot;</span>,
+    <span class="hljs-attr">&quot;account&quot;</span>: <span class="hljs-string">&quot;cash&quot;</span>
 }
 </code></pre>
 <h4><a class="anchor" aria-hidden="true" id="valuation"></a><a href="#valuation" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Valuation</h4>
 <pre><code class="hljs css language-json">{
-    type: &#x27;fdc3.valuation&#x27;,
-    price: 20.00,
-    value: 20000000,
-    currency: {
-        type: &#x27;fdc3.currency&#x27;,
-        code: &#x27;USD&#x27;
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;fdc3.valuation&quot;</span>,
+    <span class="hljs-attr">&quot;price&quot;</span>: <span class="hljs-number">20.00</span>,
+    <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-number">20000000</span>,
+    <span class="hljs-attr">&quot;currency&quot;</span>: {
+        <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;fdc3.currency&quot;</span>,
+        <span class="hljs-attr">&quot;code&quot;</span>: <span class="hljs-string">&quot;USD&quot;</span>
     }
 }
 </code></pre>
