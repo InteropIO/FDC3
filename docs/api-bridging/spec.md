@@ -198,11 +198,17 @@ It encodes this as a message which it sends to the websocket server(hosted by ag
     "body": {
         "channel": "myChannel",
         "context": { /*contxtObj*/ }
+    },
+    "source": {
+        "name": "",
+        "appId": "",
+        "version": "",
+        // ... other metadata fields
     }
 }
 ```
 
-which it repeats on to Agent-B with the `sourceAgent` metadata added:
+which it repeats on to Agent-B with the `source.desktopAgent` metadata added:
 ```JSON
 {
     "requestGuid": "some-guid-string-here",
@@ -212,9 +218,17 @@ which it repeats on to Agent-B with the `sourceAgent` metadata added:
         "channel": "myChannel",
         "context": { /*contxtObj*/}
     },
-    "sourceAgent": "agent-A"
+    "source": {
+        "desktopAgent": "agent-A",
+        "name": "",
+        "appId": "",
+        "version": "",
+        // ... other metadata fields
+    }
 }
 ```
+
+No message exchange, when adding context listeners or channel add context listener. Upon receving a broadcast it just forwards it to all listeners.
 
 ## Intents
 ### findIntent
@@ -238,7 +252,13 @@ It sends an outward message to the other desktop agents (sent from A -> C):
    "body": {
        "intent": "StartChat",
        "context": {/*contxtObj*/}
-   }
+   },
+   "source": {
+        "name": "",
+        "appId": "",
+        "version": "",
+        // ... other metadata fields
+    }
 }
 ```
 
@@ -252,7 +272,13 @@ which is repeated from C -> B as:
         "intent": "StartChat",
         "context": {/*contxtObj*/},
     },
-    "sourceAgent": "agent-A"
+    "source": {
+        "desktoAgent": "agent-A",
+        "name": "",
+        "appId": "",
+        "version": "",
+        // ... other metadata fields
+    }
 }
 ```
 
@@ -289,7 +315,7 @@ which is sent back over the bridge by Agent B -> C as a response to the request 
     "requestGuid": "4dd60b3b-9835-4cab-870c-6b9b099ed7ae",
     "responseGuid":  "b4cf1b91-0b64-45b6-9f55-65503d507024",
     "timestamp":  2020-03-...,
-    "type":  "findIntent",
+    "type":  "findIntentResponse",
     "body": {
         "intent":  "StartChat",
         "appIntent":  {
@@ -302,7 +328,13 @@ which is sent back over the bridge by Agent B -> C as a response to the request 
             ]
         }
     },
-    "targetAgent": "agent-A"
+    "destination": {
+        "desktopAgent": "agent-A",
+        "name": "",
+        "appId": "",
+        "version": "",
+        // ... other metadata fields
+    }
 }
 ```
 
@@ -312,21 +344,29 @@ Which gets repeated by the websocket server (agent-C) in augmented form as:
     "requestGuid": "4dd60b3b-9835-4cab-870c-6b9b099ed7ae",
     "responseGuid":  "b4cf1b91-0b64-45b6-9f55-65503d507024",
     "timestamp":  2020-03-...,
-    "type":  "findIntent",
+    "type":  "findIntentResponse",
     "body": {
         "intent":  "StartChat",
         "appIntent":  {
             "intent":  { "name": "StartChat", "displayName": "Chat" },
             "apps": [
-                { "name": "Skype", "agent": "agent-B"},
-                { "name": "Symphony", "agent": "agent-B" },
-                { "name": "Symphony", "instanceId": "93d2fe3e-a66c-41e1-b80b-246b87120859", "agent": "agent-B" },
-                { "name": "Slack", "agent": "agent-B" }
+                { "name": "Skype", "desktopAgent": "agent-B"},
+                { "name": "Symphony", "desktopAgent": "agent-B" },
+                { "name": "Symphony", "instanceId": "93d2fe3e-a66c-41e1-b80b-246b87120859", "desktopAgent": "agent-B" },
+                { "name": "Slack", "desktopAgent": "agent-B" }
             ]
         }
     },
-    "targetAgent": "agent-A",
-    "sourceAgent": "agent-B"
+    "destination": {
+        "desktopAgent": "agent-A",
+        "name": "",
+        "appId": "",
+        "version": "",
+        // ... other metadata fields
+    },
+    "source": {
+        "desktoAgent": "agent-B",
+    }
 }
 ```
 
@@ -346,18 +386,26 @@ which it encodes as a message:
     "requestGuid": "4dd60b3b-9835-4cab-870c-6b9b099ed7ae",
     "responseGuid":  "988a49c8-49c2-4fb4-aad4-be39d1471834",
     "timestamp":  2020-03-...,
-    "type":  "findIntent",
+    "type":  "findIntentResponse",
     "body": {
         "intent":  "StartChat",
         "appIntent":  {
             "intent":  { "name": "StartChat", "displayName": "Chat" },
             "apps": [
-            { "name": "WebIce", "agent": "agent-C"}
+            { "name": "WebIce", "desktopAgent": "agent-C"}
             ]
         }
     },
-    "targetAgent": "agent-A",
-    "sourceAgent": "agent-C"
+     "destination": {
+        "desktopAgent": "agent-A",
+        "name": "",
+        "appId": "",
+        "version": "",
+        // ... other metadata fields
+    },
+    "source": {
+        "desktoAgent": "agent-C",
+    }
 }
 ```
 Then on agent-A the originating app finally gets back the following response from the FDC3 desktop "agent-C":
@@ -366,11 +414,11 @@ Then on agent-A the originating app finally gets back the following response fro
     "intent":  { "name": "StartChat", "displayName": "Chat" },
     "apps": [
         { "name": "myChat" }, // local to this agent
-        { "name": "Skype", "agent": "agent-B" }, //agent-B responses
-        { "name": "Symphony", "agent": "agent-B" },
-        { "name": "Symphony", "instanceId": "93d2fe3e-a66c-41e1-b80b-246b87120859", "agent": "agent-B" },
-        { "name": "Slack", "agent": "agent-B" },
-        { "name": "WebIce", "agent": "agent-C"} //agent C response
+        { "name": "Skype", "desktopAgent": "agent-B" }, //agent-B responses
+        { "name": "Symphony", "desktopAgent": "agent-B" },
+        { "name": "Symphony", "instanceId": "93d2fe3e-a66c-41e1-b80b-246b87120859", "desktopAgent": "agent-B" },
+        { "name": "Slack", "desktopAgent": "agent-B" },
+        { "name": "WebIce", "desktopAgent": "agent-C"} //agent C response
     ]
 }
 ```
@@ -417,7 +465,8 @@ Maybe we can strongly advise that `raiseIntent` should be preceeded by `findInte
 
 No target specified
 1. DA-A (client) sends `raiseIntent` request without target to DA-C (server)
-2. DA-C MUST fire a `findIntent` to DA-A, DA-B and DA-C
+2. DA-A sends instead a `findIntent` to get a target. Will execute `findIntent` scenario.
+3. DA-C MUST fire a `findIntent` to DA-A, DA-B and DA-C
    * `findIntent` response only has one possible resolution
       *  No resolver UI is shown and a `findIntent` response is sent to DA-A which sends a `raiseIntent` with target. This should happen silently/transparently?
    * `findIntent` response has multiple resolution possibilities
@@ -436,39 +485,52 @@ Target specified
 
 It sends an outward message to the other desktop agents (sent from A -> C):
 ```JSON
-// no target
+// no target - will fire a findIntent
 {
-   "requestGuid": "62fe69bd-3f40-45a4-86fc-0150dbade8ab",
+   "requestGuid": "4dd60b3b-9835-4cab-870c-6b9b099ed7ae",
    "timestamp": "2020-03-...",
-   "type": "raiseIntent",
+   "type": "findIntent",
    "body": {
-       "intent": "ViewChart",
+       "intent": "StartChat",
        "context": {/*contxtObj*/}
-   }
+   },
+   "source": {
+        "name": "",
+        "appId": "",
+        "version": "",
+        // ... other metadata fields
+    }
 }
+continue the flow for find intent
+received options back from all agents
+show resolver
+user picks target
+raiseIntent is sent with target
+
 // with AppMetadata
 {
    "requestGuid": "c916ee2e-feb7-437e-9ab3-be52ac46a6bc",
    "timestamp": "2020-03-...",
    "type": "raiseIntent",
    "body": {
-       "intent": "ViewChart",
+       "intent": "StartChat",
        "context": {/*contxtObj*/},
        "app": {
-           "name": "AChartApp",
-           "agent": "agent-c"
+           "name": "AChatApp",
+           "desktopAgent": "agent-c"
        }
-   }
-}
-// with AppName only
-{
-   "requestGuid": "2adbd9e5-5a22-4869-9a8c-95ca7ec8b6ae",
-   "timestamp": "2020-03-...",
-   "type": "raiseIntent",
-   "body": {
-       "intent": "ViewChart",
-       "context": {/*contxtObj*/},
-       "app": "AChartApp"
+   },
+   "source": {
+        "name": "",
+        "appId": "",
+        "version": "",
+        // ... other metadata fields
+   },
+   "destination": { // duplicates the app argument
+        "app": {
+           "name": "AChatApp",
+           "desktopAgent": "agent-b"
+       }
    }
 }
 ```
@@ -484,52 +546,310 @@ Which is repeated from C -> B as:
         "intent": "ViewChart",
         "context": {/*contxtObj*/},
     },
-    "sourceAgent": "agent-A"
+    "source": {
+        "name": "someOtherApp",
+        "appId": "",
+        "version": "",
+        "desktopAgent": "agent-a"
+        // ... other metadata fields
+   },
+   "destination": { // duplicates the app argument
+        "app": {
+           "name": "AChatApp",
+           "desktopAgent": "agent-b"
+       }
+   }
 }
 ```
 Note that the sourceAgent field has been populated with the id of the agent that raised the requests, enabling the routing of responses.
 
 #### Response format
-Normal response from:agent A, where the request was raised (a websocket client)
+Normal response from:agent B, where the request was targeted to (a websocket client)
+sends this intentResolution as soon as it delivers the raiseIntent to the target app
 ```JSON
 {
-    "intent": "ViewChart",
-    "source": {
-        "name": "myChartA",
+    
+    "type": "intentResolution",
+    "payload": {
+        "intent": "ViewChart",
+        "source": {
+            "name": "AChatApp",
+            "appId": "",
+            "version": "",
+            // ... other metadata fields
+        },
+        "version": "...",
     },
-    "resolution": {
-        // with a context
-        "context": {/*contxtObj*/}
-    }
-}
-```
-or
-```JSON
-{
-    "intent": "ViewChart",
+    "error?:": "ResolveError Enum",
     "source": {
-        "name": "myChartA",
+        "name": "AChatApp",
+        "appId": "",
+        "version": "",
+        // ... other metadata fields
     },
-    "resolution": {
-        // with a channel
-        "id": "channel 1",
-        "type": "system"
-    }
+    "destination": { // duplicates the app argument
+        "app": {
+           "name": "someOtherApp",
+           "appId": "",
+            "version": "",
+            "desktopAgent": "agent-a"
+            // ... other metadata fields
+       }
+   }
 }
 ```
 
-Desktop agent B (a websocket client) woud produce response:
+server will fill in the `source.DesktopAgent` and relay on to desktopAgent A.
 ```JSON
 {
-    "intent": "ViewChart",
-    "source": {
-        "name": "myChartB",
+    
+    "type": "intentResolution",
+    "body": {
+        "intent": "ViewChart",
+        "source": {
+            "name": "AChatApp",
+            "appId": "",
+            "version": "",
+            "desktopAgent": "agent-b" // filled by server
+            // ... other metadata fields
+        },
+        "version": "...",
     },
-    "resolution": {
-       "context": {/*contxtObj*/}
-    }
+    "source": {
+        "name": "AChatApp",
+        "appId": "",
+        "version": "",
+        "desktopAgent": "agent-b" // filled by server
+        // ... other metadata fields
+    },
+    "destination": { // duplicates the app argument
+        "app": {
+           "name": "someOtherApp",
+           "appId": "",
+            "version": "",
+            "desktopAgent": "agent-a"
+            // ... other metadata fields
+       }
+   }
 }
 ```
+
+When aChatApp produces a response or the intent handler finishes running, it should send a further message to send that response onto the intent raiser (or throw an error if one occurred)
+
+```JSON
+{
+    
+    "type": "intentResult",
+    "payload?:": {
+        "channel": {
+            "id": "channel 1",
+            "type": "system"
+        },
+        "context": {/*contextObj*/} // in alternative to channel
+    },
+    "error?:": "ResultError Enum",
+    "source": {
+        "name": "AChatApp",
+        "appId": "",
+        "version": "",
+        "desktopAgent": "agent-b" // filled by server
+        // ... other metadata fields
+    },
+    "destination": { // duplicates the app argument
+        "app": {
+           "name": "someOtherApp",
+           "appId": "",
+            "version": "",
+            "desktopAgent": "agent-a"
+            // ... other metadata fields
+       }
+   }
+}
+```
+If intent result is private channel:
+```JSON
+{
+    
+    "type": "intentResult",
+    "payload?:": {
+        "channel": {
+            "id": "channel a",
+            "type": "private"
+        },
+        "context": {/*contextObj*/} // in alternative to channel
+    },
+    "error?:": "ResultError Enum",
+    "source": {
+        "name": "AChatApp",
+        "appId": "",
+        "version": "",
+        "desktopAgent": "agent-b" // filled by server
+        // ... other metadata fields
+    },
+    "destination": { // duplicates the app argument
+        "app": {
+           "name": "someOtherApp",
+           "appId": "",
+            "version": "",
+            "desktopAgent": "agent-a"
+            // ... other metadata fields
+       }
+   }
+}
+```
+onSubscribing to the private channel send to server (agent-c):
+
+```JSON
+{
+    "type": "privateChannelSubscribe",
+    "payload": {},
+    "source": {
+        "name": "AChatApp",
+        "appId": "",
+        "version": "",
+        // ... other metadata fields
+    },
+    "destination": { // duplicates the app argument
+        "app": {
+           "name": "someOtherApp",
+           "appId": "",
+            "version": "",
+            "desktopAgent": "agent-b"
+            // ... other metadata fields
+       }
+   }
+}
+```
+server (agent-c) will add in the source agent (agent-a)
+```JSON
+{
+    "type": "privateChannelSubscribe",
+    "payload": {},
+    "source": {
+        "name": "AChatApp",
+        "appId": "",
+        "version": "",
+        "desktopAgent": "agent-a"
+        // ... other metadata fields
+    },
+    "destination": { // duplicates the app argument
+        "app": {
+           "name": "someOtherApp",
+           "appId": "",
+            "version": "",
+            "desktopAgent": "agent-b"
+            // ... other metadata fields
+       }
+   }
+}
+```
+
+onUnsubscribe a -> c
+```JSON
+{
+    "type": "privateChannelUnsubscribe",
+    "payload": {},
+    "source": {
+        "name": "AChatApp",
+        "appId": "",
+        "version": "",
+        // ... other metadata fields
+    },
+    "destination": { // duplicates the app argument
+        "app": {
+           "name": "someOtherApp",
+           "appId": "",
+            "version": "",
+            "desktopAgent": "agent-b"
+            // ... other metadata fields
+       }
+   }
+}
+```
+
+c -> b
+```JSON
+{
+    "type": "privateChannelUnsubscribe",
+    "payload": {},
+    "source": {
+        "name": "AChatApp",
+        "appId": "",
+        "version": "",
+        "desktopAgent": "agent-a",
+        // ... other metadata fields
+    },
+    "destination": { // duplicates the app argument
+        "app": {
+           "name": "someOtherApp",
+           "appId": "",
+            "version": "",
+            "desktopAgent": "agent-b"
+            // ... other metadata fields
+       }
+   }
+}
+```
+
+a -> c
+
+```JSON
+{
+    "type": "privateChannelDisconnect",
+    "payload": {},
+    "source": {
+        "name": "AChatApp",
+        "appId": "",
+        "version": "",
+        // ... other metadata fields
+    },
+    "destination": { // duplicates the app argument
+        "app": {
+           "name": "someOtherApp",
+           "appId": "",
+            "version": "",
+            "desktopAgent": "agent-b"
+            // ... other metadata fields
+       }
+   }
+}
+```
+
+c -> b
+```JSON
+{
+    "type": "privateChannelDisconnect",
+    "payload": {},
+    "source": {
+        "name": "AChatApp",
+        "appId": "",
+        "version": "",
+        "desktopAgent": "agent-a"
+        // ... other metadata fields
+    },
+    "destination": { // duplicates the app argument
+        "app": {
+           "name": "someOtherApp",
+           "appId": "",
+            "version": "",
+            "desktopAgent": "agent-b"
+            // ... other metadata fields
+       }
+   }
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 which is sent back over the bridge by Agent B -> C as a response to the request message as:
 ```JSON
@@ -643,15 +963,15 @@ Then agent C (ie. the server) should augment the responses so that a unequivocal
     "sources": [
         "source": { // agent-A intent resolver UI response
             "name": "myChartA",
-            "agent": "agent-A"
+            "desktopAgent": "agent-A"
         },
         "source": { // agent-B intent resolver UI response
             "name": "myChartB",
-            "agent": "agent-B"
+            "desktopAgent": "agent-B"
         },
         "source": { // agent-C intent resolver UI response
             "name": "myChartC",
-            "agent": "agent-C"
+            "desktopAgent": "agent-C"
         },
     ],
 }
