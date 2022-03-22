@@ -1,48 +1,77 @@
-# Notes
-Need to product some description of a protocol, to be used over a websocket, for exchanging messages about FDC3 calls between Desktop Agents.
-## Overall protocol details
+# Desktop Agent Bridging
+
+In order to implement Desktop Agent Bridging some means for Desktop Agents to communicate with each other is needed. One obvious solution is to support the use a websocket to communicate. However, to do so some idea of the protocol for that communication is needed. 
+
+## Websocket protocol proposal 
+In a typical bridging scenario, one of more Desktop Agents will need to provide a websocket server for other agents to connect to - in the rest of this proposal the agent providing the websocket server will be referred to as 'the server' or 'a server', while Desktop Agents connecting to it are referred to as 'the client' or 'a client'.
+
+If a Desktop Agent acts as a server, this should not preclude it also being a client of another server (allowing for a variety of bridging topologies). However, there should exist only one connection between any two desktop agents.
+
+### Identifying Desktop Agents and Message Sources
+In order to target intents and perform other actions that require specific routing between Desktop Agents, Desktop Agents need to have an identity. Identities should be assigned to clients when they connect to a server, although they might request a particular identity. This allows for multiple copies of the same underlying desktop agent implementation to be bridged and ensures that id clashes can be avoided.
+
+To prevent spoofing and to simplify the implementation of clients, sender identities for birdging messages should be added, by the server to top level messages AND to AppMetadata objects embedded in them.
+
 * Sender details to be added by websocket server to top level messages AND any embedded AppMetadata objects.
-    * AppMetadata needs a new `agent `field
+    * AppMetadata needs a new `desktopAgent `field
     * When a client connects to a server it should be assigned an identity of some sort, which can be used to augment messages with details of the agent
         * The server should do the assignments and could generate ids or accept them via config.
         * Clients don't need to know their own ids or even the ids of others, they just need to be able to pass around AppMetadata objects that contain them.
-* Preserve message path as it passes through different servers?
+
+### Identifying Individual Messages
+There are a variety of message types we'll need to send between bridged Desktop Agents, several of which will need to be replied to specifically (e.g. a `fdc3.raiseIntent` call should receive and `IntentResponse` when an app has been chosen and the intent and context delivered to it). Hence, messages also need a unique identity.
+
 * GUIDs required to uniquely identify messages
     * To be referenced in replies
-* Desktop agents that are bridged will need to wait for responses from other desktop agents before responding to API calls…
-    * for resilience, this may mean defining timeouts
-    * Desktop Agents may need GUIDs and / OR metadata - names?
+
+### Handling FDC3 calls When Bridged
+* Desktop agents that are bridged will need to wait for responses from other desktop agents before responding to API calls.
+    * for resilience, this may mean defining timeouts...
+
+### Forwarding of Messages from Other Agents
+To enable support for a vairety of topologies, it is necessary for a Desktop Agent to be able to forward messages received from one Desktop Agent on to others. There are a few simple rules which determine whether a message needs to be forwarded:
+- the message does not have a target Desktop Agent (e.g. findIntent)
+  - If you are a client of a server, send it on to the server
+  - If you are a server, send it on to your clients (except the source of the message)
+  - If you are both do both
+- If the message has a target Destkop Agent (e.g. response to findIntent)
+  - If you are a server and the target is one of your clients forward the message to it.
+  - If you are a client (and teh target isn't you) forward the message to your server.
 
 
-## Generic request and response formats
+### Open Questions
+* Is it necessary to preserve message path as it passes through different servers?
 
-### Request:
+
+### Generic request and response formats
+
+#### Request:
 ```typescript
 {
-   /** Unique guid for this request */
-   requestGuid: string,
-   /** Timestamp at which request was generated */
-   timestamp:  date,
-   /** FDC3 function name message relates to, e.g. "findIntent" */
-   type:  string,
-   /** Request body, containing the arguments to the function called.*/
-   payload: {
-       //example fields for specific messages... wouldn't be specified in base type
-       channel?: string,
-       intent?: string,
-       context?: Context,
-       //fields for other possible arguments
-   },
-   /** AppMetadata source request received from */
-   source?: {
-       AppMetadata & {
-           desktopAgent?: string // filled in by server on receipt of message
-       }
-   }
+    /** Unique guid for this request */
+    requestGuid: string,
+    /** Timestamp at which request was generated */
+    timestamp:  date,
+    /** FDC3 function name message relates to, e.g. "findIntent" */
+    type:  string,
+    /** Request body, containing the arguments to the function called.*/
+    payload: {
+        //example fields for specific messages... wouldn't be specified in base type
+        channel?: string,
+        intent?: string,
+        context?: Context,
+        //fields for other possible arguments
+    },
+    /** AppMetadata source request received from */
+    source?: {
+            AppMetadata & {
+            desktopAgent?: string // filled in by server on receipt of message
+            }
+    }
 }
 ```
 
-### Response:
+#### Response:
 Responses will be differentiated by the presence of a `responseGuid` field.
 ```typescript
 {
@@ -78,115 +107,12 @@ Responses will be differentiated by the presence of a `responseGuid` field.
 Clients should send these messages on to the 'server', which will add the `source.desktopAgent` metadata. Further, when processing responses, the agent acting as the 'server' should augment any `AppMetadata` objects in responses with the the same id applied to `source.desktopAgent`.
 
 
-## Individual message exchanges
-The sections below cover all scenerios for each of the Desktop Agent methods.
+### Individual message exchanges
+The sections below cover most scenerios for each of the Desktop Agent methods in order to explore how this protocol might work.
+
 Each section assumes that we have 3 agents connected by bridge: agent-A, agent-B and agent-C. Agent-C provides a websocket server that agent-A and agent-B have connected to.
 
-## Apps
-### Open
-```typescript
-  open(app: TargetApp, context?: Context): Promise<AppMetadata>;
-```
-#### Request format:
-A findIntent call is made on agent-A.
-```javascript
-// Open an app without context, using the app name
-let instanceMetadata = await fdc3.open('myApp');
 
-// Open an app without context, using an AppMetadata object to specify the target
-let appMetadata = {name: 'myApp', appId: 'myApp-v1.0.1', version: '1.0.1'};
-let instanceMetadata = await fdc3.open(appMetadata);
-
-// Open an app without context, using an AppMetadata object to specify the target and Desktop Agent
-let appMetadata = {name: 'myApp', appId: 'myApp-v1.0.1', version: '1.0.1', desktopAgents:["DesktopAgentB"]};
-let instanceMetadata = await fdc3.open(appMetadata);
-
-```
-There are three scenerios where Desktop Agent A sends an Open command
-1) The app is opened on all Desktop Agents instances
-2) The app is not found on any Desktop Agent
-3) The Desktop Agent(s) that the app should open on is specified by the end user ahead of time
-```mermaid
-sequenceDiagram
-    participant DA as Desktop Agent A
-    participant DB as Desktop Agent B
-    participant DC as Desktop Agent C
-    DA ->>+ DB: Open Chart
-    DB ->>+ DC: Open Chart
-    DB ->> DB: App Found
-    DB ->> DB: Open App
-    DB -->>- DA: Return App Data
-    DC ->> DC: App Found
-    DC ->> DC: Open App
-    DC -->>- DB: Return App Data
-```
-**When the desktop agent is in a list**
-```mermaid
-sequenceDiagram
-    participant DA as Desktop Agent A
-    participant DB as Desktop Agent B
-    participant DC as Desktop Agent C
-    DA ->>+ DB: Open App
-    DB --x DB: Is not in the desktopAgents list
-    DB ->>+ DC: Open App
-    DC ->> DC: Desktop agent in list and App Found
-    DC ->> DC: Open App
-    DC -->>- DB: Return App Data
-    DB -->>- DA:Return App Data
-```
-
-It sends an outward message to the other desktop agents (sent from A -> C):
-```JSON
-{
-   "requestGuid": "4dd60b3b-9835-4cab-870c-6b9b099ed7ae",
-   "timestamp": "2020-03-...",
-   "type": "open",
-   "payload": {
-       "appMetaData": {
-           "name": "myApp",
-           "appId": "myApp-v1.0.1",
-           "version": "1.0.1",
-           "desktopAgent":"DesktopAgentB"
-           },
-       "context": {/*contxtObj*/}
-   }
-}
-```
-
-which is repeated from C -> B as:
-```JSON
-{
-    "requestGuid": "4dd60b3b-9835-4cab-870c-6b9b099ed7ae",
-    "timestamp": 2020-03-...,
-    "type": "open",
-    "payload": {
-       "appMetaData": {
-           "name": "myApp",
-           "appId": "myApp-v1.0.1",
-           "version": "1.0.1",
-           "desktopAgent":"DesktopAgentB"
-           },
-       "context": {/*contxtObj*/}
-    },
-    "sourceAgent": "agent-A"
-}
-```
-
-### findInstances
-```typescript
-  findInstances(app: TargetApp): Promise<Array<AppMetadata>>;
-```
-
-```mermaid
-sequenceDiagram
-    participant DA as Desktop Agent A
-    participant DB as Desktop Agent B
-    participant DC as Desktop Agent C
-    DA ->>+ DB: Find Instances of App
-    DB ->>+ DC: Find Instances of App
-    DC -->>- DB: Return App Data
-    DB -->>- DA:Return App Data
-```
 
 ## Context
 ### For broadcasts on channels
@@ -214,9 +140,9 @@ Message flow: agent-A -> agent-C
         "context": { /*contxtObj*/ }
     },
     "source": {
-        "name": "",
-        "appId": "",
-        "version": "",
+        "name": "...",
+        "appId": "...",
+        "version": "...",
         // ... other metadata fields
     }
 }
@@ -237,15 +163,15 @@ Message flow: agent-C -> agent-B
     },
     "source": {
         "desktopAgent": "agent-A",
-        "name": "",
-        "appId": "",
-        "version": "",
+        "name": "...",
+        "appId": "...",
+        "version": "...",
         // ... other metadata fields
     }
 }
 ```
 
-No message exchange, when adding context listeners or channel add context listener. Upon receving a broadcast it just forwards it to all listeners.
+When adding context listeners (either for User channels or specific App Channels) no messages need to be exchanged. Instead, upon receving a broadcast message the Desktop Agent just needs  to pass it on to all listeners on that named channel.
 
 ## Intents
 ### findIntent
@@ -866,5 +792,139 @@ Server (agent-C) will add in the source agent (agent-A) and forward the message 
 ```
 ---
 
-## Channels
+### `fdc3.open`
+```typescript
+  open(app: TargetApp, context?: Context): Promise<AppMetadata>;
+```
+#### Request format:
+A `fdc3.open`` call is made on agent-A.
 
+```javascript
+// Open an app without context, using the app name
+let instanceMetadata = await fdc3.open('myApp');
+
+// Open an app without context, using an AppMetadata object to specify the target
+let appMetadata = {name: 'myApp', appId: 'myApp-v1.0.1', version: '1.0.1'};
+let instanceMetadata = await fdc3.open(appMetadata);
+
+// Open an app without context, using an AppMetadata object to specify the target and Desktop Agent
+let appMetadata = {name: 'myApp', appId: 'myApp-v1.0.1', version: '1.0.1', desktopAgent:"DesktopAgentB"};
+let instanceMetadata = await fdc3.open(appMetadata);
+```
+
+
+The `fdc3.open` command should result in a single copy of the specified app being opened and its instance data returned, or an error if it could not be opened. There are two possible scenarios:
+
+1) The Desktop Agent that the app should open on is specified 
+2) The Desktop Agent that the app should open on is NOT specified app
+
+The first case (target Desktop Agent is specified) is simple: 
+- If the local Desktop Agent is the target, handle the call normally
+- If you are a server
+  - check if any of your clients is the target and transmit the call to them and await a response
+  - If you are also a client of another server follow the client steps
+  - otherwise return `OpenError.AppNotFound`
+- If you are a client
+  - transmit the call to the server and await a response
+
+The second case is a little trickier as we don't know which agent may have the app available:
+- If the local Desktop Agent has the app, open it and exit.
+- If you are a server
+  - call each client one at a time and await a response
+    - If the response is `OpenError.AppNotFound` move to the next client
+    - If the response is AppMetadata then return it and exit
+  - If you are also a client of another server follow the client steps
+  - otherwise return `OpenError.AppNotFound`
+- If you are a client
+  - transmit the call to the server and await a response
+
+
+<!-- TODO correct mermaid diagrams -->
+```mermaid
+sequenceDiagram
+    participant DA as Desktop Agent A
+    participant DB as Desktop Agent B
+    participant DC as Desktop Agent C
+    DA ->>+ DB: Open Chart
+    DB ->>+ DC: Open Chart
+    DB ->> DB: App Found
+    DB ->> DB: Open App
+    DB -->>- DA: Return App Data
+    DC ->> DC: App Found
+    DC ->> DC: Open App
+    DC -->>- DB: Return App Data
+```
+
+**When the target Desktop Agent is set**
+```mermaid
+sequenceDiagram
+    participant DA as Desktop Agent A
+    participant DB as Desktop Agent B
+    participant DC as Desktop Agent C
+    DA ->>+ DB: Open App
+    DB --x DB: Is not in the desktopAgents list
+    DB ->>+ DC: Open App
+    DC ->> DC: Desktop agent in list and App Found
+    DC ->> DC: Open App
+    DC -->>- DB: Return App Data
+    DB -->>- DA:Return App Data
+```
+
+It sends an outward message to the other desktop agents (sent from A -> C):
+```JSON
+{
+   "requestGuid": "4dd60b3b-9835-4cab-870c-6b9b099ed7ae",
+   "timestamp": "2020-03-...",
+   "type": "open",
+   "payload": {
+       "appMetaData": {
+           "name": "myApp",
+           "appId": "myApp-v1.0.1",
+           "version": "1.0.1",
+           "desktopAgent":"agent-B"
+           },
+       "context": {/*contxtObj*/}
+   }
+}
+```
+
+which is repeated from C -> B as:
+```JSON
+{
+    "requestGuid": "4dd60b3b-9835-4cab-870c-6b9b099ed7ae",
+    "timestamp": 2020-03-...,
+    "type": "open",
+    "payload": {
+       "appMetaData": {
+           "name": "myApp",
+           "appId": "myApp-v1.0.1",
+           "version": "1.0.1",
+           "desktopAgent":"DesktopAgentB"
+           },
+       "context": {/*contxtObj*/}
+    },
+    "sourceAgent": "agent-A"
+}
+```
+
+### `fdc3.findInstances`
+```typescript
+  findInstances(app: TargetApp): Promise<Array<AppMetadata>>;
+```
+
+<!-- TODO: write this one up -->
+```mermaid
+sequenceDiagram
+    participant DA as Desktop Agent A
+    participant DB as Desktop Agent B
+    participant DC as Desktop Agent C
+    DA ->>+ DB: Find Instances of App
+    DB ->>+ DC: Find Instances of App
+    DC -->>- DB: Return App Data
+    DB -->>- DA: Return App Data
+```
+
+## Channels
+App Channels don't need specific messages sending for `fdc3.getOrCreateChannel` as other agents will be come aware of it when messages are broadcast. However, `PrivateChannel` instances do require additional handling due to the listeners for subscription and disconnect.
+
+<!-- TODO: write up message exchanges for PrivateChannel listeners -->
