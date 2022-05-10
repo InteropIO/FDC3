@@ -1,0 +1,1049 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>api-bridging/spec · FDC3</title><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="generator" content="Docusaurus"/><meta name="description" content="# Desktop Agent Bridging"/><meta name="docsearch:version" content="next"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="api-bridging/spec · FDC3"/><meta property="og:type" content="website"/><meta property="og:url" content="/https://ChartIQ.github.io/FDC3/FDC3/"/><meta property="og:description" content="# Desktop Agent Bridging"/><meta property="og:image" content="/https://ChartIQ.github.io/FDC3/FDC3/assets/fdc3-logo.png"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="/https://ChartIQ.github.io/FDC3/FDC3/assets/fdc3-logo.png"/><link rel="shortcut icon" href="/FDC3/img/favicon/favicon.ico"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-89349362-8', 'auto');
+              ga('send', 'pageview');
+            </script><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/FDC3/js/scrollSpy.js"></script><link rel="stylesheet" href="/FDC3/css/main.css"/><script src="/FDC3/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/FDC3/"><img class="logo" src="/FDC3/img/fdc3-icon-2019.svg" alt="FDC3"/><h2 class="headerTitleWithLogo">FDC3</h2></a><a href="/FDC3/versions"><h3>next</h3></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class=""><a href="/FDC3/docs/next/fdc3-intro" target="_self">Docs</a></li><li class=""><a href="/FDC3/docs/next/use-cases/overview" target="_self">Use Cases</a></li><li class=""><a href="/FDC3/get-involved" target="_self">Get Involved</a></li><li class=""><a href="https://www.edx.org/course/fdc3-interoperability-for-the-financial-desktop" target="_blank">Training</a></li><li class=""><a href="/FDC3/docs/next/why-fdc3" target="_self">Why FDC3</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="container mainContainer docsContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 id="__docusaurus" class="postHeaderTitle">api-bridging/spec</h1></header><article><div><span><h1><a class="anchor" aria-hidden="true" id="desktop-agent-bridging"></a><a href="#desktop-agent-bridging" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Desktop Agent Bridging</h1>
+<p>The FDC3 Desktop Agent API addresses interoperability between apps running within the context of a single Desktop Agent, facilitating cross-application workflows. Desktop Agent Bridging addresses the interconnection of desktop agents such that apps running under different desktop agents can also interoperate, allowing workflows to span multiple desktop agents.</p>
+<p>In any desktop agent bridging scenario, it is expected that each Desktop Agent is being operated by the same user (as the scope of FDC3 contemplates cross-application workflows for a single user, rather than cross-user workflows), although Desktop Agents may be run on different machines operated by the same user.</p>
+<h2><a class="anchor" aria-hidden="true" id="open-questions--todo-list"></a><a href="#open-questions--todo-list" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Open questions / TODO list</h2>
+<ul>
+<li>Add topology diagram</li>
+<li>Define handshake, authentication and naming protocol</li>
+<li>Do we need to make mandatory that a <code>fdc3.joinChannel</code> was invoked before you can return the current state of the channel?</li>
+<li>Bridging startup - Consider an app that joins a channel whose last context was sent before the bridge was created, then DA couldn’t send the correct initial context when the channel joined
+<ul>
+<li>Current context is ignored</li>
+<li>Add an init flow where DAs share info about channels they have with context on them already - (this type of discovery of channels does not happen in FDC3 at the moment, therefore it would add significant complexity to the spec).</li>
+</ul></li>
+<li>How to handle slow responding DAs?</li>
+</ul>
+<h2><a class="anchor" aria-hidden="true" id="connection-overview"></a><a href="#connection-overview" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Connection Overview</h2>
+<h3><a class="anchor" aria-hidden="true" id="topology"></a><a href="#topology" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Topology</h3>
+<p>In order to implement Desktop Agent Bridging some means for desktop agents to connect to and communicate with each other is needed. This Standard assumes that Desktop Agent Bridging is implemented via a standalone 'bridge' which each agent connects to and will use to route messages to or from other agents. This topology is similar to a star topology in networking, where the Desktop Agent Bridge (a 'bridge') will be the central node acting as a router.</p>
+<p>Other possible topologies include peer-to-peer or client/server networks, however, these introduce significant additional complexity into multiple aspects of the bridging protocol that must be implemented by desktop agents, (including discovery, authentication and message routing), where a star topology/standalone bridge enables a relatively simple set of protocols, with the most difficult parts being implemented in the bridge itself.</p>
+<p>Whilst the standalone bridge represents a single point of failure for the interconnection of desktop agents, it will also be significantly simpler than a full desktop agent implementation. Further, failures may be mitigated by setting the bridge up as a system service, such that it is started when the user's computer is started and may be restarted automatically if it fails. In the event of a bridge failure or manual shutdown, then desktop agents will no longer be bridged and should act as single agents.</p>
+<p>Where multi-machine use cases must be supported, cross-machine routing is an internal concern of the Desktop Agent Bridge, with each desktop agent simply communicating with a bridge instance located on the same machine (or nominated IP address, where supported). Bridges running on different machines may then exchange messages between each other. The connection protocol between bridges themselves is implementation specific and beyond the scope of this standard. Further, as FDC3 only contemplates interoperability between apps for a single user, it is expected that in multi-machine use cases each machine is being operated by the same user.</p>
+<h3><a class="anchor" aria-hidden="true" id="technology--service-discovery"></a><a href="#technology--service-discovery" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Technology &amp; Service Discovery</h3>
+<p>Connections between desktop agents and the Desktop Agent Bridge will be made via websocket connections, with the bridge acting as the websocket server and each connected desktop agent as a client.</p>
+<p>The bridge MUST run on the same machine as the desktop agents, and the websocket MUST be bound to the loopback adapter IP address (127.0.0.1), ensuring that the websocket is not exposed to wider networks.</p>
+<p>Bridge implementations SHOULD default to binding the recommended websocket server to port XXXX, enabling simple discovery of a running bridge via attempting a socket connection to that port and handshake (as defined later in this proposal). However, bridge implementations and desktop agents SHOULD support configuration of a alternative port range which can be scanned for connection.</p>
+<p>Both DAs and the bridge MUST support configuration of the bridging port and/or port range.</p>
+<p>As part of the Desktop Agent Bridging protocol, a bridge will implement &quot;server&quot; behavior by:</p>
+<ul>
+<li>Receiving requests from client desktop agents.</li>
+<li>Routing requests to client desktop agents.</li>
+<li>Receiving responses from client desktop agents.</li>
+<li>Routing responses to client desktop agents.</li>
+</ul>
+<p>A desktop agent will implement &quot;client&quot; behavior by:</p>
+<ul>
+<li>Forwarding requests to the bridge.</li>
+<li>Awaiting response(s) from the bridge.</li>
+<li>Receiving requests from the bridge.</li>
+<li>Forwarding response to the bridge.</li>
+</ul>
+<p>Hence, message paths and propagation are simple. All messages to other desktop agents are passed to the bridge for routing and all messages (both requests and responses) are received back from it, i.e. the bridge is responsible for all message routing.</p>
+<h3><a class="anchor" aria-hidden="true" id="handshake-authentication--name-assignment"></a><a href="#handshake-authentication--name-assignment" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Handshake, Authentication &amp; Name Assignment</h3>
+<p>On connection to the bridge, a handshake and authentication step must be completed. This allows:</p>
+<ul>
+<li>The desktop agent to confirm that it is connecting to an FDC3 Desktop Agent Bridge, rather than another service exposed via a websocket.</li>
+<li>The bridge to require that the desktop agent authenticate itself, allowing it to control access to the network of bridged desktop agents</li>
+<li>The desktop agent to request a particular name by which it will be addressed by other agents and for the bridge to assign the requested name, after confirming that no other agent is connected with that name, or a derivative of that name if it is already in use.</li>
+</ul>
+<p>The bridge is ultimately responsible for assigning each desktop agent a name and for routing messages using those names.</p>
+<h3><a class="anchor" aria-hidden="true" id="channels"></a><a href="#channels" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Channels</h3>
+<p>It is assumed that Desktop Agents SHOULD adopt the recommended 8 channel set (and the respective display metadata). Desktop Agents MAY support channel customization through configuration.
+The Desktop Agent Bridge MAY support channel mapping ability to deal with channel differences that can arise.</p>
+<h2><a class="anchor" aria-hidden="true" id="interactions-between-desktop-agents"></a><a href="#interactions-between-desktop-agents" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Interactions between Desktop Agents</h2>
+<p>The use of Desktop Agent Bridging affects how a desktop agent must handle FDC3 API calls. Details on how this affects the FD3 API and how a desktop agent should interact with other agents over the bridge are provided below in this section.</p>
+<h3><a class="anchor" aria-hidden="true" id="handling-fdc3-calls-when-bridged"></a><a href="#handling-fdc3-calls-when-bridged" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Handling FDC3 calls When Bridged</h3>
+<h4><a class="anchor" aria-hidden="true" id="wip"></a><a href="#wip" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>WIP</h4>
+<p>Desktop Agents that are bridged will need to wait for responses from other DAs before responding to API calls.</p>
+<ul>
+<li>for resilience, this may mean defining timeouts...</li>
+</ul>
+<h3><a class="anchor" aria-hidden="true" id="identifying-desktop-agents-identity-and-message-sources"></a><a href="#identifying-desktop-agents-identity-and-message-sources" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Identifying Desktop Agents Identity and Message Sources</h3>
+<p>In order to target intents and perform other actions that require specific routing between DAs, DAs need to have an identity. Identities should be assigned to clients when they connect to the bridge, although they might request a particular identity. This allows for multiple copies of the same underlying desktop agent implementation to be bridged and ensures that id clashes can be avoided.</p>
+<p>To prevent spoofing and to simplify the implementation of clients, sender identities for bridging messages should be added, by the bridge to <code>AppMetadata</code> objects embedded in them.</p>
+<ul>
+<li>Sender details to be added by the DAB to the embedded <code>AppMetadata</code> objects.
+<ul>
+<li><code>AppMetadata</code> needs a new <code>desktopAgent</code> field</li>
+<li>When a client connects to a DAB it should be assigned an identity of some sort, which can be used to augment messages with details of the agent
+<ul>
+<li>The DAB should do the assignments and could generate ids or accept them via config.</li>
+<li>DAs don't need to know their own ids or even the ids of others, they just need to be able to pass around <code>AppMetadata</code> objects that contain them.</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3><a class="anchor" aria-hidden="true" id="identifying-individual-messages"></a><a href="#identifying-individual-messages" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Identifying Individual Messages</h3>
+<p>There are a variety of message types we'll need to send between bridged DAs, several of which will need to be replied to specifically (e.g. a <code>fdc3.raiseIntent</code> call should receive and <code>IntentResponse</code> when an app has been chosen and the intent and context delivered to it). Hence, messages also need a unique identity.</p>
+<ul>
+<li>GUIDs required to uniquely identify messages
+<ul>
+<li>To be referenced in replies</li>
+</ul></li>
+</ul>
+<p>This means that each request that gets generated, should contain a request GUID, and every response to a request should contain a response GUID AND reference the request GUID. A response the does not reference a request GUID should be considered invalid.</p>
+<h3><a class="anchor" aria-hidden="true" id="forwarding-of-messages-from-other-agents"></a><a href="#forwarding-of-messages-from-other-agents" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Forwarding of Messages from Other Agents</h3>
+<p>The DAB MUST be able to forward messages received from one DA on to others (excluding obviously the Desktop Agent where the request was originated). There are a few simple rules which determine whether a message needs to be forwarded:</p>
+<ul>
+<li><p>the message does not have a target Desktop Agent (e.g. findIntent)</p>
+<ul>
+<li>If you are a DA, send it on to the bridge</li>
+<li>The bridge will send it on to other known DAs (except the source of the message)</li>
+</ul></li>
+<li><p>If the message has a target Desktop Agent (e.g. response to findIntent)</p>
+<ul>
+<li>The bridge will forward the message to it.</li>
+</ul></li>
+</ul>
+<h2><a class="anchor" aria-hidden="true" id="appmetadata"></a><a href="#appmetadata" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>AppMetadata</h2>
+<p><code>AppMetadata</code> needs to be expanded to contain a <code>desktopAgent</code> field.</p>
+<pre><code class="hljs css language-typescript"><span class="hljs-keyword">interface</span> AppMetadata {
+  <span class="hljs-comment">/** The unique app name that can be used with the open and raiseIntent calls. */</span>
+  <span class="hljs-keyword">readonly</span> name: <span class="hljs-built_in">string</span>;
+
+  <span class="hljs-comment">/** The unique application identifier located within a specific application directory instance. An example of an appId might be &#x27;app<span class="hljs-doctag">@sub</span>.root&#x27; */</span>
+  <span class="hljs-keyword">readonly</span> appId?: <span class="hljs-built_in">string</span>;
+
+  <span class="hljs-comment">/** The Version of the application. */</span>
+  <span class="hljs-keyword">readonly</span> version?: <span class="hljs-built_in">string</span>;
+
+  <span class="hljs-comment">/** An optional instance identifier, indicating that this object represents a specific instance of the application described.*/</span>
+  <span class="hljs-keyword">readonly</span> instanceId?: <span class="hljs-built_in">string</span>;
+
+  <span class="hljs-comment">/** An optional set of, implementation specific, metadata fields that can be used to disambiguate instances, such as a window title or screen position. Must only be set if `instanceId` is set. */</span>
+  <span class="hljs-keyword">readonly</span> instanceMetadata?: Record&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">any</span>&gt;;
+
+  <span class="hljs-comment">/** A more user-friendly application title that can be used to render UI elements  */</span>
+  <span class="hljs-keyword">readonly</span> title?: <span class="hljs-built_in">string</span>;
+
+  <span class="hljs-comment">/**  A tooltip for the application that can be used to render UI elements */</span>
+  <span class="hljs-keyword">readonly</span> tooltip?: <span class="hljs-built_in">string</span>;
+
+  <span class="hljs-comment">/** A longer, multi-paragraph description for the application that could include mark-up */</span>
+  <span class="hljs-keyword">readonly</span> description?: <span class="hljs-built_in">string</span>;
+
+  <span class="hljs-comment">/** A list of icon URLs for the application that can be used to render UI elements */</span>
+  <span class="hljs-keyword">readonly</span> icons?: <span class="hljs-built_in">Array</span>&lt;Icon&gt;;
+
+  <span class="hljs-comment">/** A list of image URLs for the application that can be used to render UI elements */</span>
+  <span class="hljs-keyword">readonly</span> images?: <span class="hljs-built_in">Array</span>&lt;<span class="hljs-built_in">string</span>&gt;;
+  
+  <span class="hljs-comment">/** The type of result returned for any intent specified during resolution. 
+   * May express a particular context type (e.g. &quot;fdc3.instrument&quot;), channel 
+   * (e.g. &quot;channel&quot;) or a channel that will receive a specified type 
+   * (e.g. &quot;channel&lt;fdc3.instrument&gt;&quot;). */</span>
+  <span class="hljs-keyword">readonly</span> resultType?: <span class="hljs-built_in">string</span> | <span class="hljs-literal">null</span>;
+
+  <span class="hljs-comment">/** A string filled in by server on receipt of message, that represents 
+   * the Desktop Agent that the app is available on. */</span>
+  <span class="hljs-keyword">readonly</span> desktopAgent?: <span class="hljs-built_in">string</span>;
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="generic-request-and-response-formats"></a><a href="#generic-request-and-response-formats" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Generic request and response formats</h2>
+<p>For simplicity, in this spec the request and response GUID will be just <code>requestGUID</code> and <code>responseGUID</code>. A GUID/UUID 128-bit integer number used to uniquely identify resources should be used.</p>
+<h3><a class="anchor" aria-hidden="true" id="request"></a><a href="#request" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Request</h3>
+<pre><code class="hljs css language-typescript">{
+    <span class="hljs-comment">/** FDC3 function name message relates to, e.g. &quot;findIntent&quot; */</span>
+    <span class="hljs-attr">type</span>:  <span class="hljs-built_in">string</span>,
+    <span class="hljs-comment">/** Request body, containing the arguments to the function called.*/</span>
+    <span class="hljs-attr">payload</span>: {
+        <span class="hljs-comment">//example fields for specific messages... wouldn&#x27;t be specified in base type</span>
+        channel?: <span class="hljs-built_in">string</span>,
+        intent?: <span class="hljs-built_in">string</span>,
+        context?: Context,
+        <span class="hljs-comment">//fields for other possible arguments</span>
+    },
+    <span class="hljs-attr">meta</span>: {
+        <span class="hljs-comment">/** Unique guid for this request */</span>
+        <span class="hljs-attr">requestGuid</span>: <span class="hljs-built_in">string</span>,
+        <span class="hljs-comment">/** Timestamp at which request was generated */</span>
+        <span class="hljs-attr">timestamp</span>:  date,
+         <span class="hljs-comment">/** AppMetadata source request received from */</span>
+        source?: AppMetadata
+    }
+}
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="response"></a><a href="#response" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Response</h3>
+<p>Responses will be differentiated by the presence of a <code>responseGuid</code> field and MUST reference the <code>requestGuid</code> that they are responding to.</p>
+<pre><code class="hljs css language-typescript">{
+    <span class="hljs-comment">/** FDC3 function name the original request related to, e.g. &quot;findIntent&quot; */</span>
+    <span class="hljs-attr">type</span>:  <span class="hljs-built_in">string</span>,
+    <span class="hljs-comment">/** Response body */</span>
+    <span class="hljs-attr">payload</span>: {
+        <span class="hljs-comment">//example fields for specific messages... wouldn&#x27;t be specified in base type</span>
+        intent?:  <span class="hljs-built_in">string</span>,
+        appIntent?:  AppIntent,
+        <span class="hljs-comment">//fields for other possible response values</span>
+    },
+    <span class="hljs-attr">meta</span>: {
+        <span class="hljs-comment">/** Value from request*/</span>
+        <span class="hljs-attr">requestGuid</span>: <span class="hljs-built_in">string</span>,
+        <span class="hljs-comment">/** Unique guid for this response */</span>
+        <span class="hljs-attr">responseGuid</span>:  <span class="hljs-built_in">string</span>,
+        <span class="hljs-comment">/** Timestamp at which request was generated */</span>
+        <span class="hljs-attr">timestamp</span>:  <span class="hljs-built_in">Date</span>,
+        <span class="hljs-comment">/** AppMetadata source request received from */</span>
+        source?: AppMetadata,
+        <span class="hljs-comment">/** AppMetadata destination response sent from */</span>
+        destination?: AppMetadata
+    }
+}
+</code></pre>
+<p>DAs should send these messages on to the bridge, which will add the <code>source.desktopAgent</code> metadata. Further, when processing responses, the bridge should also augment any <code>AppMetadata</code> objects in responses with the the same id applied to <code>source.desktopAgent</code>.</p>
+<h2><a class="anchor" aria-hidden="true" id="individual-message-exchanges"></a><a href="#individual-message-exchanges" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Individual message exchanges</h2>
+<p>The sections below cover most scenarios for each of the Desktop Agent methods in order to explore how this protocol might work.</p>
+<p>Each section assumes that we have 3 agents connected by a bridge:</p>
+<ul>
+<li>agent-A</li>
+<li>agent-B</li>
+<li>agent-C</li>
+<li>DAB</li>
+</ul>
+<h2><a class="anchor" aria-hidden="true" id="context"></a><a href="#context" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Context</h2>
+<h3><a class="anchor" aria-hidden="true" id="broadcast-on-channels"></a><a href="#broadcast-on-channels" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>broadcast (on channels)</h3>
+<p>Only needs a single message (no response).</p>
+<p>An app on agent-A does:</p>
+<pre><code class="hljs css language-javascript">fdc3.broadcast(contextObj);
+</code></pre>
+<p>or</p>
+<pre><code class="hljs css language-javascript">(<span class="hljs-keyword">await</span> fdc3.getOrCreateChannel(<span class="hljs-string">&quot;myChannel&quot;</span>)).broadcast(contextObj)
+</code></pre>
+<pre><code class="hljs css language-mermaid">sequenceDiagram
+    participant DA <span class="hljs-keyword">as</span> Desktop Agent A
+    participant DAB <span class="hljs-keyword">as</span> Desktop Agent Bridge
+    participant DB <span class="hljs-keyword">as</span> Desktop Agent B
+    participant DC <span class="hljs-keyword">as</span> Desktop Agent C
+    DA -&gt;&gt;+ DAB: Broadcast
+    DAB -&gt;&gt;+ DB: Broadcast
+    DAB -&gt;&gt;+ DC: Broadcast
+</code></pre>
+<p>It encodes this as a message which it sends to the DAB</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// agent-A -&gt; DAB</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;broadcast&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {
+        <span class="hljs-attr">&quot;channel&quot;</span>: <span class="hljs-string">&quot;myChannel&quot;</span>,
+        <span class="hljs-attr">&quot;context&quot;</span>: { <span class="hljs-comment">/*contextObj*/</span> }
+    },
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;...&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;...&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;...&quot;</span>,
+            <span class="hljs-comment">// ... other metadata fields</span>
+        }
+    }
+}
+</code></pre>
+<p>which it repeats on to agent-B AND agent-C with the <code>source.desktopAgent</code> metadata added.</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// DAB -&gt; agent-B</span>
+<span class="hljs-comment">// DAB -&gt; agent-C</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;broadcast&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {
+        <span class="hljs-attr">&quot;channel&quot;</span>: <span class="hljs-string">&quot;myChannel&quot;</span>,
+        <span class="hljs-attr">&quot;context&quot;</span>: { <span class="hljs-comment">/*contextObj*/</span>}
+    },
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-A&quot;</span>,
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;...&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;...&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;...&quot;</span>,
+            <span class="hljs-comment">// ... other metadata fields</span>
+        },
+    }
+}
+</code></pre>
+<p>When adding context listeners (either for User Channels or specific App Channels) no messages need to be exchanged. Instead, upon receiving a broadcast message the Desktop Agent just needs to pass it on to all listeners on that named channel.</p>
+<h2><a class="anchor" aria-hidden="true" id="intents"></a><a href="#intents" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Intents</h2>
+<h3><a class="anchor" aria-hidden="true" id="findintent"></a><a href="#findintent" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>findIntent</h3>
+<pre><code class="hljs css language-typescript">findIntent(intent: <span class="hljs-built_in">string</span>, context?: Context): <span class="hljs-built_in">Promise</span>&lt;AppIntent&gt;;
+</code></pre>
+<pre><code class="hljs css language-mermaid">sequenceDiagram
+    participant DA <span class="hljs-keyword">as</span> Desktop Agent A
+    participant DAB <span class="hljs-keyword">as</span> Desktop Agent Bridge
+    participant DB <span class="hljs-keyword">as</span> Desktop Agent B
+    participant DC <span class="hljs-keyword">as</span> Desktop Agent C
+    DA -&gt;&gt;+ DAB: findIntent
+    DAB -&gt;&gt;+ DB: findIntent
+    DB --&gt;&gt;- DAB: findIntentResponse (B)
+    DAB -&gt;&gt;+ DC: findIntent
+    DC --&gt;&gt;- DAB: findIntentResponse (C)
+    DAB --&gt;&gt;- DA: findIntentResponse (B + C)
+</code></pre>
+<h4><a class="anchor" aria-hidden="true" id="request-format"></a><a href="#request-format" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Request format</h4>
+<p>A findIntent call is made on agent-A.</p>
+<pre><code class="hljs css language-javascript"><span class="hljs-keyword">let</span> appIntent = <span class="hljs-keyword">await</span> fdc3.findIntent();
+</code></pre>
+<p>Sends an outward message to the DAB.</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// agent-A -&gt; DAB</span>
+{
+   <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;findIntent&quot;</span>,
+   <span class="hljs-attr">&quot;payload&quot;</span>: {
+        <span class="hljs-attr">&quot;intent&quot;</span>: <span class="hljs-string">&quot;StartChat&quot;</span>,
+        <span class="hljs-attr">&quot;context&quot;</span>: {<span class="hljs-comment">/*contextObj*/</span>}
+   },
+   <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-comment">// ... other metadata fields</span>
+        }
+   }
+}
+</code></pre>
+<p>The DAB fills in the <code>source.desktopAgent</code> field and forwards the request to the other desktop agents (agent-B AND agent-C).</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// DAB -&gt; agent-B</span>
+<span class="hljs-comment">// DAB -&gt; agent-C</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;findIntent&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {
+        <span class="hljs-attr">&quot;intent&quot;</span>: <span class="hljs-string">&quot;StartChat&quot;</span>,
+        <span class="hljs-attr">&quot;context&quot;</span>: {<span class="hljs-comment">/*contextObj*/</span>},
+    },
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-A&quot;</span>, <span class="hljs-comment">// filled by DAB</span>
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-comment">// ... other metadata fields</span>
+        }
+    }
+}
+</code></pre>
+<p>Note that the <code>source.desktopAgent</code> field has been populated with the id of the agent that raised the requests, enabling the routing of responses.</p>
+<h4><a class="anchor" aria-hidden="true" id="response-format"></a><a href="#response-format" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Response format</h4>
+<p>Normal response from agent-A, where the request was raised.</p>
+<pre><code class="hljs css language-JSON">{
+    <span class="hljs-attr">&quot;intent&quot;</span>: { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;StartChat&quot;</span>, <span class="hljs-attr">&quot;displayName&quot;</span>: <span class="hljs-string">&quot;Chat&quot;</span> },
+    <span class="hljs-attr">&quot;apps&quot;</span>: [
+        { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;myChat&quot;</span> }
+    ]
+}
+</code></pre>
+<p>DA agent-B would produce response:</p>
+<pre><code class="hljs css language-JSON">{
+    <span class="hljs-attr">&quot;intent&quot;</span>: { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;StartChat&quot;</span>, <span class="hljs-attr">&quot;displayName&quot;</span>: <span class="hljs-string">&quot;Chat&quot;</span> },
+    <span class="hljs-attr">&quot;apps&quot;</span>: [
+        { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Skype&quot;</span> },
+        { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Symphony&quot;</span> },
+        { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Symphony&quot;</span>, <span class="hljs-attr">&quot;instanceId&quot;</span>: <span class="hljs-string">&quot;93d2fe3e-a66c-41e1-b80b-246b87120859&quot;</span> },
+        { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Slack&quot;</span> }
+    ]
+}
+</code></pre>
+<p>which is sent back over the bridge as a response to the request message as:</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// agent-B -&gt; DAB</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>:  <span class="hljs-string">&quot;findIntentResponse&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {
+        <span class="hljs-attr">&quot;intent&quot;</span>:  <span class="hljs-string">&quot;StartChat&quot;</span>,
+        <span class="hljs-attr">&quot;appIntent&quot;</span>:  {
+            <span class="hljs-attr">&quot;intent&quot;</span>:  { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;StartChat&quot;</span>, <span class="hljs-attr">&quot;displayName&quot;</span>: <span class="hljs-string">&quot;Chat&quot;</span> },
+            <span class="hljs-attr">&quot;apps&quot;</span>: [
+                { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Skype&quot;</span>},
+                { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Symphony&quot;</span> },
+                { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Symphony&quot;</span>, <span class="hljs-attr">&quot;instanceId&quot;</span>: <span class="hljs-string">&quot;93d2fe3e-a66c-41e1-b80b-246b87120859&quot;</span> },
+                { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Slack&quot;</span> }
+            ]
+        }
+    },
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;responseGuid&quot;</span>:  <span class="hljs-string">&quot;responseGuidAgentB&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>:  <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;destination&quot;</span>: {
+            <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-A&quot;</span>,
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-comment">// ... other metadata fields</span>
+        }
+    }
+}
+</code></pre>
+<p>Note the response guid generated by the agent-B and the reference to the request guid produced by agent-A where the request was originated.</p>
+<p>This response gets repeated by the bridge in augmented form as:</p>
+<pre><code class="hljs css language-JSON">{
+    <span class="hljs-attr">&quot;type&quot;</span>:  <span class="hljs-string">&quot;findIntentResponse&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {
+        <span class="hljs-attr">&quot;intent&quot;</span>:  <span class="hljs-string">&quot;StartChat&quot;</span>,
+        <span class="hljs-attr">&quot;appIntent&quot;</span>:  {
+            <span class="hljs-attr">&quot;intent&quot;</span>:  { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;StartChat&quot;</span>, <span class="hljs-attr">&quot;displayName&quot;</span>: <span class="hljs-string">&quot;Chat&quot;</span> },
+            <span class="hljs-attr">&quot;apps&quot;</span>: [
+                { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Skype&quot;</span>, <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span>},
+                { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Symphony&quot;</span>, <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span> },
+                { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Symphony&quot;</span>, <span class="hljs-attr">&quot;instanceId&quot;</span>: <span class="hljs-string">&quot;93d2fe3e-a66c-41e1-b80b-246b87120859&quot;</span>, <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span> },
+                { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Slack&quot;</span>, <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span> }
+            ]
+        }
+    },
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;responseGuid&quot;</span>:  <span class="hljs-string">&quot;responseGuidAgentB&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>:  <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;destination&quot;</span>: {
+            <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-A&quot;</span>,
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-comment">// ... other metadata fields</span>
+        },
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span>,
+        }
+    }
+}
+</code></pre>
+<p>DA agent-C would produce response:</p>
+<pre><code class="hljs css language-JSON">{
+    <span class="hljs-attr">&quot;intent&quot;</span>:  { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;StartChat&quot;</span>, <span class="hljs-attr">&quot;displayName&quot;</span>: <span class="hljs-string">&quot;Chat&quot;</span> },
+    <span class="hljs-attr">&quot;apps&quot;</span>: [
+       { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;WebIce&quot;</span>}
+    ]
+}
+</code></pre>
+<p>which is sent back over the bridge as a response to the request message as:</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// agent-C -&gt; DAB</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>:  <span class="hljs-string">&quot;findIntentResponse&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {
+        <span class="hljs-attr">&quot;intent&quot;</span>:  <span class="hljs-string">&quot;StartChat&quot;</span>,
+        <span class="hljs-attr">&quot;appIntent&quot;</span>:  {
+            <span class="hljs-attr">&quot;intent&quot;</span>:  { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;StartChat&quot;</span>, <span class="hljs-attr">&quot;displayName&quot;</span>: <span class="hljs-string">&quot;Chat&quot;</span> },
+            <span class="hljs-attr">&quot;apps&quot;</span>: [
+                { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;WebIce&quot;</span>, <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-C&quot;</span>}
+            ]
+        }
+    },
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;responseGuid&quot;</span>:  <span class="hljs-string">&quot;responseGuidAgentC&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>:  <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;destination&quot;</span>: {
+           <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-A&quot;</span>,
+           <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+           <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+           <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+           <span class="hljs-comment">// ... other metadata fields</span>
+       }
+    }
+}
+</code></pre>
+<p>This response gets repeated by the bridge in augmented form as:</p>
+<pre><code class="hljs css language-JSON">{
+    <span class="hljs-attr">&quot;type&quot;</span>:  <span class="hljs-string">&quot;findIntentResponse&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {
+        <span class="hljs-attr">&quot;intent&quot;</span>:  <span class="hljs-string">&quot;StartChat&quot;</span>,
+        <span class="hljs-attr">&quot;appIntent&quot;</span>:  {
+            <span class="hljs-attr">&quot;intent&quot;</span>:  { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;StartChat&quot;</span>, <span class="hljs-attr">&quot;displayName&quot;</span>: <span class="hljs-string">&quot;Chat&quot;</span> },
+            <span class="hljs-attr">&quot;apps&quot;</span>: [
+                { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;WebIce&quot;</span>, <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-C&quot;</span>}
+            ]
+        }
+    },
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;responseGuid&quot;</span>:  <span class="hljs-string">&quot;responseGuidAgentC&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>:  <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;destination&quot;</span>: {
+           <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-A&quot;</span>,
+           <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+           <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+           <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+           <span class="hljs-comment">// ... other metadata fields</span>
+       },
+       <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-C&quot;</span>,
+        }
+    }
+}
+</code></pre>
+<p>Then on agent-A the originating app finally gets back the following response from the bridge:</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// DAB -&gt; agent-A</span>
+{
+    <span class="hljs-attr">&quot;intent&quot;</span>:  { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;StartChat&quot;</span>, <span class="hljs-attr">&quot;displayName&quot;</span>: <span class="hljs-string">&quot;Chat&quot;</span> },
+    <span class="hljs-attr">&quot;apps&quot;</span>: [
+        { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;myChat&quot;</span> }, <span class="hljs-comment">// local to this agent</span>
+        { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Skype&quot;</span>, <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span> }, <span class="hljs-comment">//agent-B responses</span>
+        { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Symphony&quot;</span>, <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span> },
+        { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Symphony&quot;</span>, <span class="hljs-attr">&quot;instanceId&quot;</span>: <span class="hljs-string">&quot;93d2fe3e-a66c-41e1-b80b-246b87120859&quot;</span>, <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span> },
+        { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Slack&quot;</span>, <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span> },
+        { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;WebIce&quot;</span>, <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-C&quot;</span>} <span class="hljs-comment">//agent C response</span>
+    ]
+}
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="raiseintent"></a><a href="#raiseintent" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>raiseIntent</h3>
+<pre><code class="hljs css language-typescript">raiseIntent(intent: <span class="hljs-built_in">string</span>, <span class="hljs-attr">context</span>: Context, app?: TargetApp): <span class="hljs-built_in">Promise</span>&lt;IntentResolution&gt;;
+</code></pre>
+<p>For Desktop Agent bridging, a <code>raiseIntent</code> call MUST always pass a <code>app:TargetApp</code> argument. If one is not passed a <code>findIntent</code> will be sent instead to collect options to display in a local resolver UI, allowing for a targeted intent to be raised afterwards. See details below.</p>
+<p>When receiving a response from invoking <code>raiseIntent</code> the new app instances MUST be fully initialized ie. the responding Desktop Agent will need to return an <code>AppMetadata</code> with an <code>instanceId</code>.</p>
+<p>Note that the below diagram assumes a <code>raiseIntent</code> WITH a <code>app:TargetApp</code> was specified and therefore agent-C is not involved.</p>
+<pre><code class="hljs css language-mermaid">sequenceDiagram
+    participant DA <span class="hljs-keyword">as</span> Desktop Agent A
+    participant DAB <span class="hljs-keyword">as</span> Desktop Agent Bridge
+    participant DB <span class="hljs-keyword">as</span> Desktop Agent B
+    participant DC <span class="hljs-keyword">as</span> Desktop Agent C
+    DA -&gt;&gt;+ DAB: raiseIntent
+    DAB -&gt;&gt;+ DB: raiseIntent
+    DB --&gt;&gt;- DAB: intentResolution
+    DAB --&gt;&gt;- DA: intentResolution
+    DB -&gt;&gt;+ DAB: intentResult
+    DAB -&gt;&gt;+ DA: intentResult
+</code></pre>
+<h4><a class="anchor" aria-hidden="true" id="request-format-1"></a><a href="#request-format-1" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Request format</h4>
+<p>A raiseIntent call, <strong>without</strong> <code>app:TargetApp</code> argument is made on agent-A.</p>
+<pre><code class="hljs css language-typescript">raiseIntent(intent: <span class="hljs-built_in">string</span>, <span class="hljs-attr">context</span>: Context): <span class="hljs-built_in">Promise</span>&lt;IntentResolution&gt;;
+</code></pre>
+<p>agent-A sends an outward <code>findIntent</code> message to the DAB:</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// agent-A -&gt; DAB</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;findIntent&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {
+        <span class="hljs-attr">&quot;intent&quot;</span>: <span class="hljs-string">&quot;StartChat&quot;</span>,
+        <span class="hljs-attr">&quot;context&quot;</span>: {<span class="hljs-comment">/*contextObj*/</span>}
+    },
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;someOtherApp&quot;</span>, <span class="hljs-comment">//should this be the desktop agent or the app?</span>
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;...&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;...&quot;</span>,
+            <span class="hljs-comment">// ... other metadata fields</span>
+        }
+    }
+}
+</code></pre>
+<p>This will trigger the same flow as <code>findIntent</code>. Upon receiving a <code>findIntentResponse</code>, the resolver is shown.</p>
+<p>User selects an option which will trigger a <code>raiseIntent</code> call with a <code>app:TargetApp</code> argument.</p>
+<hr>
+<p>A <code>raiseIntent</code> call is made on agent-A which targets an <code>AChatApp</code> in agent-B.</p>
+<pre><code class="hljs css language-typescript">raiseIntent(intent: <span class="hljs-built_in">string</span>, <span class="hljs-attr">context</span>: Context, <span class="hljs-attr">app</span>: TargetApp): <span class="hljs-built_in">Promise</span>&lt;IntentResolution&gt;;
+</code></pre>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// agent-A -&gt; DAB</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;raiseIntent&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {
+        <span class="hljs-attr">&quot;intent&quot;</span>: <span class="hljs-string">&quot;StartChat&quot;</span>,
+        <span class="hljs-attr">&quot;context&quot;</span>: {<span class="hljs-comment">/*contextObj*/</span>},
+        <span class="hljs-attr">&quot;app&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;AChatApp&quot;</span>,
+            <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span>
+        }
+    },
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+                <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;someOtherApp&quot;</span>,
+                <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;...&quot;</span>,
+                <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;...&quot;</span>,
+                <span class="hljs-comment">// ... other metadata fields</span>
+        },
+        <span class="hljs-attr">&quot;destination&quot;</span>: { <span class="hljs-comment">// duplicates the app argument so that the message is routed like any other</span>
+                <span class="hljs-attr">&quot;app&quot;</span>: {
+                <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;AChatApp&quot;</span>,
+                <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span>
+            }
+        }
+    }
+}
+</code></pre>
+<p>The bridge fills in the <code>source.desktopAgent</code> field and forwards the request to the target desktop agent</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// DAB -&gt; agent-B</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;raiseIntent&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {
+        <span class="hljs-attr">&quot;intent&quot;</span>: <span class="hljs-string">&quot;StartChat&quot;</span>,
+        <span class="hljs-attr">&quot;context&quot;</span>: {<span class="hljs-comment">/*contextObj*/</span>},
+    },
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;someOtherApp&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;...&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;...&quot;</span>,
+            <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-A&quot;</span> <span class="hljs-comment">// &lt;---- filled by DAB</span>
+            <span class="hljs-comment">// ... other metadata fields</span>
+        },
+        <span class="hljs-attr">&quot;destination&quot;</span>: {
+            <span class="hljs-attr">&quot;app&quot;</span>: {
+                <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;AChatApp&quot;</span>,
+                <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span>
+            }
+        },
+    }
+}
+</code></pre>
+<h4><a class="anchor" aria-hidden="true" id="response-format-1"></a><a href="#response-format-1" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Response format</h4>
+<p>Normal response from agent-B, where the request was targeted to by agent-A. It sends this <code>intentResolution</code> as soon as it delivers the <code>raiseIntent</code> to the target app</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// agent-B -&gt; DAB</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;intentResolution&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {
+        <span class="hljs-attr">&quot;intent&quot;</span>: <span class="hljs-string">&quot;StartChat&quot;</span>,
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;AChatApp&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-comment">// ... other metadata fields</span>
+        },
+        <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;...&quot;</span>,
+    },
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;responseGuid&quot;</span>: <span class="hljs-string">&quot;intentResolutionResponseGuid&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;error?:&quot;</span>: <span class="hljs-string">&quot;ResolveError Enum&quot;</span>,
+        <span class="hljs-attr">&quot;source&quot;</span>: { <span class="hljs-comment">//Note this was the destination of the raised intent</span>
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;AChatApp&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-comment">// ... other metadata fields</span>
+        },
+        <span class="hljs-attr">&quot;destination&quot;</span>: { 
+            <span class="hljs-attr">&quot;app&quot;</span>: { <span class="hljs-comment">//note this was the source of the raised intent</span>
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;someOtherApp&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-A&quot;</span>
+                <span class="hljs-comment">// ... other metadata fields</span>
+            }
+        }
+    }
+}
+</code></pre>
+<p>The bridge will fill in the <code>source.DesktopAgent</code> and relay the message on to agent-A</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// DAB -&gt; agent-A</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;intentResolution&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {
+        <span class="hljs-attr">&quot;intent&quot;</span>: <span class="hljs-string">&quot;StartChat&quot;</span>,
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;AChatApp&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span> <span class="hljs-comment">// filled by DAB</span>
+            <span class="hljs-comment">// ... other metadata fields</span>
+        },
+        <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;...&quot;</span>,
+    },
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;responseGuid&quot;</span>: <span class="hljs-string">&quot;intentResolutionResponseGuid&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;AChatApp&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span> <span class="hljs-comment">// filled by DAB</span>
+            <span class="hljs-comment">// ... other metadata fields</span>
+        },
+        <span class="hljs-attr">&quot;destination&quot;</span>: { <span class="hljs-comment">// duplicates the app argument</span>
+            <span class="hljs-attr">&quot;app&quot;</span>: {
+               <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;someOtherApp&quot;</span>,
+               <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-A&quot;</span>
+                <span class="hljs-comment">// ... other metadata fields</span>
+           }
+       }
+    }
+}
+</code></pre>
+<p>When <code>AChatApp</code> produces a response, or the intent handler finishes running, it should send a further <code>intentResult</code> message to send that response onto the intent raiser (or throw an error if one occurred)</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// agent-B -&gt; DAB -&gt; agent-A</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;intentResult&quot;</span>,
+    <span class="hljs-attr">&quot;payload?:&quot;</span>: {
+        <span class="hljs-attr">&quot;channel&quot;</span>: {
+            <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;channel 1&quot;</span>,
+            <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;system&quot;</span>
+        },
+        <span class="hljs-attr">&quot;context&quot;</span>: {<span class="hljs-comment">/*contextObj*/</span>} <span class="hljs-comment">// in alternative to channel</span>
+    },
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;responseGuid&quot;</span>: <span class="hljs-string">&quot;intentResultResponseGuid&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;error?:&quot;</span>: <span class="hljs-string">&quot;ResultError Enum&quot;</span>,
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;AChatApp&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span> <span class="hljs-comment">// filled by DAB</span>
+            <span class="hljs-comment">// ... other metadata fields</span>
+        },
+        <span class="hljs-attr">&quot;destination&quot;</span>: { <span class="hljs-comment">// duplicates the app argument</span>
+            <span class="hljs-attr">&quot;app&quot;</span>: {
+               <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;someOtherApp&quot;</span>,
+               <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-A&quot;</span>
+                <span class="hljs-comment">// ... other metadata fields</span>
+           }
+       }
+    }
+}
+</code></pre>
+<p>If intent result is private channel:</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// agent-B -&gt; DAB -&gt; agent-A</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;intentResult&quot;</span>,
+    <span class="hljs-attr">&quot;payload?:&quot;</span>: {
+        <span class="hljs-attr">&quot;channel&quot;</span>: {
+            <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;channel a&quot;</span>,
+            <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;private&quot;</span>
+        },
+        <span class="hljs-attr">&quot;context&quot;</span>: {<span class="hljs-comment">/*contextObj*/</span>} <span class="hljs-comment">// in alternative to channel</span>
+    },
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;responseGuid&quot;</span>: <span class="hljs-string">&quot;intentResultResponseGuid&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;error?:&quot;</span>: <span class="hljs-string">&quot;ResultError Enum&quot;</span>,
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;AChatApp&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span> <span class="hljs-comment">// filled by DAB</span>
+            <span class="hljs-comment">// ... other metadata fields</span>
+        },
+        <span class="hljs-attr">&quot;destination&quot;</span>: { <span class="hljs-comment">// duplicates the app argument</span>
+            <span class="hljs-attr">&quot;app&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;someOtherApp&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-A&quot;</span>
+                <span class="hljs-comment">// ... other metadata fields</span>
+            }
+        }
+    }
+}
+</code></pre>
+<hr>
+<p><code>onSubscribe</code> to the private channel sent to server:</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// agent-A -&gt; DAB</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;privateChannelSubscribe&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {},
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;AChatApp&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-comment">// ... other metadata fields</span>
+        },
+        <span class="hljs-attr">&quot;destination&quot;</span>: { <span class="hljs-comment">// duplicates the app argument</span>
+            <span class="hljs-attr">&quot;app&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;someOtherApp&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span>
+                <span class="hljs-comment">// ... other metadata fields</span>
+            }
+        }
+    }
+}
+</code></pre>
+<p>The bridge will add in the source agent (agent-A) and forward the message to destination (agent-B)</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// DAB -&gt; agent-B</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;privateChannelSubscribe&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {},
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;AChatApp&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-A&quot;</span>
+            <span class="hljs-comment">// ... other metadata fields</span>
+        },
+            <span class="hljs-attr">&quot;destination&quot;</span>: { <span class="hljs-comment">// duplicates the app argument</span>
+                <span class="hljs-attr">&quot;app&quot;</span>: {
+                <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;someOtherApp&quot;</span>,
+                <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                    <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                    <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span>
+                    <span class="hljs-comment">// ... other metadata fields</span>
+            }
+        }
+    }
+}
+</code></pre>
+<hr>
+<p><code>onUnsubscribe</code> to the private channel sent to the bridge</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// agent-A -&gt; DAB</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;privateChannelUnsubscribe&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {},
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;AChatApp&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-comment">// ... other metadata fields</span>
+        },
+        <span class="hljs-attr">&quot;destination&quot;</span>: { <span class="hljs-comment">// duplicates the app argument</span>
+            <span class="hljs-attr">&quot;app&quot;</span>: {
+               <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;someOtherApp&quot;</span>,
+               <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span>
+                <span class="hljs-comment">// ... other metadata fields</span>
+           }
+       }
+    }
+}
+</code></pre>
+<p>The bridge will add in the source agent (agent-A) and forward the message to destination (agent-B)</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// DAB -&gt; agent-B</span>
+{
+    <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+    <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;privateChannelUnsubscribe&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {},
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;AChatApp&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-A&quot;</span>,
+            <span class="hljs-comment">// ... other metadata fields</span>
+        },
+        <span class="hljs-attr">&quot;destination&quot;</span>: { <span class="hljs-comment">// duplicates the app argument</span>
+            <span class="hljs-attr">&quot;app&quot;</span>: {
+               <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;someOtherApp&quot;</span>,
+               <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span>
+                <span class="hljs-comment">// ... other metadata fields</span>
+           }
+       }
+    }
+}
+</code></pre>
+<hr>
+<p><code>onDisconnect</code> to the private channel sent to the bridge</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// agent-A -&gt; DAB</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;privateChannelDisconnect&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {},
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;AChatApp&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-comment">// ... other metadata fields</span>
+        },
+        <span class="hljs-attr">&quot;destination&quot;</span>: { <span class="hljs-comment">// duplicates the app argument</span>
+            <span class="hljs-attr">&quot;app&quot;</span>: {
+               <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;someOtherApp&quot;</span>,
+               <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span>
+                <span class="hljs-comment">// ... other metadata fields</span>
+           }
+       }
+    }
+}
+</code></pre>
+<p>The bridge will add in the source agent (agent-A) and forward the message to destination (agent-B)</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// DAB -&gt; agent-B</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;privateChannelDisconnect&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {},
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;AChatApp&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-A&quot;</span>
+            <span class="hljs-comment">// ... other metadata fields</span>
+        },
+        <span class="hljs-attr">&quot;destination&quot;</span>: { <span class="hljs-comment">// duplicates the app argument</span>
+            <span class="hljs-attr">&quot;app&quot;</span>: {
+               <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;someOtherApp&quot;</span>,
+               <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-B&quot;</span>
+                <span class="hljs-comment">// ... other metadata fields</span>
+           }
+       }
+    }
+}
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="open"></a><a href="#open" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>open</h3>
+<pre><code class="hljs css language-typescript">open(app: TargetApp, context?: Context): <span class="hljs-built_in">Promise</span>&lt;AppMetadata&gt;;
+</code></pre>
+<p>When receiving a response from invoking <code>fdc3.open</code> the new app instances MUST be fully initialized ie. the responding Desktop Agent will need to return an <code>AppMetadata</code> with an <code>instanceId</code>.</p>
+<h4><a class="anchor" aria-hidden="true" id="request-format-2"></a><a href="#request-format-2" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Request format</h4>
+<p>A <code>fdc3.open</code> call is made on agent-A.</p>
+<pre><code class="hljs css language-javascript"><span class="hljs-comment">// Open an app without context, using the app name</span>
+<span class="hljs-keyword">let</span> instanceMetadata = <span class="hljs-keyword">await</span> fdc3.open(<span class="hljs-string">&#x27;myApp&#x27;</span>);
+
+<span class="hljs-comment">// Open an app without context, using an AppMetadata object to specify the target</span>
+<span class="hljs-keyword">let</span> appMetadata = {<span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;myApp&#x27;</span>, <span class="hljs-attr">appId</span>: <span class="hljs-string">&#x27;myApp-v1.0.1&#x27;</span>, <span class="hljs-attr">version</span>: <span class="hljs-string">&#x27;1.0.1&#x27;</span>};
+<span class="hljs-keyword">let</span> instanceMetadata = <span class="hljs-keyword">await</span> fdc3.open(appMetadata);
+
+<span class="hljs-comment">// Open an app without context, using an AppMetadata object to specify the target and Desktop Agent</span>
+<span class="hljs-keyword">let</span> appMetadata = {<span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;myApp&#x27;</span>, <span class="hljs-attr">appId</span>: <span class="hljs-string">&#x27;myApp-v1.0.1&#x27;</span>, <span class="hljs-attr">version</span>: <span class="hljs-string">&#x27;1.0.1&#x27;</span>, <span class="hljs-attr">desktopAgent</span>:<span class="hljs-string">&quot;DesktopAgentB&quot;</span>};
+<span class="hljs-keyword">let</span> instanceMetadata = <span class="hljs-keyword">await</span> fdc3.open(appMetadata);
+</code></pre>
+<p>The <code>fdc3.open</code> command should result in a single copy of the specified app being opened and its instance data returned, or an error if it could not be opened. There are two possible scenarios:</p>
+<ol>
+<li>The Desktop Agent that the app should open on is specified</li>
+<li>The Desktop Agent that the app should open on is NOT specified app</li>
+</ol>
+<p>The first case (target Desktop Agent is specified) is simple:</p>
+<ul>
+<li>If the local Desktop Agent is the target, handle the call normally</li>
+<li>If you are a server
+<ul>
+<li>check if any of your clients is the target and transmit the call to them and await a response</li>
+<li>If you are also a client of another server follow the client steps</li>
+<li>otherwise return <code>OpenError.AppNotFound</code></li>
+</ul></li>
+<li>If you are a client
+<ul>
+<li>transmit the call to the server and await a response</li>
+</ul></li>
+</ul>
+<p>The second case is a little trickier as we don't know which agent may have the app available:</p>
+<ul>
+<li>If the local Desktop Agent has the app, open it and exit.</li>
+<li>If you are a server
+<ul>
+<li>call each client one at a time and await a response
+<ul>
+<li>If the response is <code>OpenError.AppNotFound</code> move to the next client</li>
+<li>If the response is <code>AppMetadata</code> then return it and exit</li>
+</ul></li>
+<li>If you are also a client of another server follow the client steps</li>
+<li>otherwise return <code>OpenError.AppNotFound</code></li>
+</ul></li>
+<li>If you are a client
+<ul>
+<li>transmit the call to the server and await a response</li>
+</ul></li>
+</ul>
+<pre><code class="hljs css language-mermaid">sequenceDiagram
+    participant DA <span class="hljs-keyword">as</span> Desktop Agent A
+    participant DAB <span class="hljs-keyword">as</span> Desktop Agent Bridge
+    participant <span class="hljs-keyword">DB</span> <span class="hljs-keyword">as</span> Desktop Agent B
+    participant DC <span class="hljs-keyword">as</span> Desktop Agent C
+    DA -&gt;&gt;+ DAB: <span class="hljs-keyword">Open</span> Chart
+    DAB -&gt;&gt;+ <span class="hljs-keyword">DB</span>: <span class="hljs-keyword">Open</span> Chart
+    DAB -&gt;&gt;+ DC: <span class="hljs-keyword">Open</span> Chart
+    <span class="hljs-keyword">DB</span> -&gt;&gt; <span class="hljs-keyword">DB</span>: <span class="hljs-keyword">App</span> Found
+    <span class="hljs-keyword">DB</span> -&gt;&gt; <span class="hljs-keyword">DB</span>: <span class="hljs-keyword">Open</span> <span class="hljs-keyword">App</span>
+    <span class="hljs-keyword">DB</span> --&gt;&gt;- DAB: <span class="hljs-keyword">Return</span> <span class="hljs-keyword">App</span> Data
+    DC -&gt;&gt; DC: <span class="hljs-keyword">App</span> Found
+    DC -&gt;&gt; DC: <span class="hljs-keyword">Open</span> <span class="hljs-keyword">App</span>
+    DC --&gt;&gt;- DAB: <span class="hljs-keyword">Return</span> <span class="hljs-keyword">App</span> Data
+    DAB --&gt;&gt;- DA: Augmented <span class="hljs-keyword">App</span> Data
+</code></pre>
+<p><strong>When the target Desktop Agent is set</strong></p>
+<pre><code class="hljs css language-mermaid">sequenceDiagram
+    participant DA <span class="hljs-keyword">as</span> Desktop Agent A
+    participant DAB <span class="hljs-keyword">as</span> Desktop Agent Bridge
+    participant <span class="hljs-keyword">DB</span> <span class="hljs-keyword">as</span> Desktop Agent B
+    participant DC <span class="hljs-keyword">as</span> Desktop Agent C
+    DA -&gt;&gt;+ DAB: <span class="hljs-keyword">Open</span> <span class="hljs-keyword">App</span>
+    DAB -&gt;&gt;+ DC: <span class="hljs-keyword">Open</span> <span class="hljs-keyword">App</span>
+    DC -&gt;&gt; DC: Desktop agent <span class="hljs-keyword">in</span> <span class="hljs-keyword">list</span> and <span class="hljs-keyword">App</span> Found
+    DC -&gt;&gt;x DC: <span class="hljs-keyword">Open</span> <span class="hljs-keyword">App</span>
+    DC --&gt;&gt;- DAB: <span class="hljs-keyword">Return</span> <span class="hljs-keyword">App</span> Data
+    DAB --&gt;&gt;- DA: <span class="hljs-keyword">Return</span> <span class="hljs-keyword">App</span> Data
+</code></pre>
+<p>It sends an outward message to the bridge:</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// agent-A -&gt; DAB</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;open&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {
+        <span class="hljs-attr">&quot;appMetaData&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;myApp&quot;</span>,
+            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;myApp-v1.0.1&quot;</span>,
+            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;1.0.1&quot;</span>,
+            <span class="hljs-attr">&quot;desktopAgent&quot;</span>:<span class="hljs-string">&quot;agent-B&quot;</span>
+            },
+        <span class="hljs-attr">&quot;context&quot;</span>: {<span class="hljs-comment">/*contextObj*/</span>}
+    },
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-string">&quot;2020-03-...&quot;</span>,
+    }
+}
+</code></pre>
+<p>which is repeated as:</p>
+<pre><code class="hljs css language-JSON"><span class="hljs-comment">// DAB -&gt; agent-B</span>
+{
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;open&quot;</span>,
+    <span class="hljs-attr">&quot;payload&quot;</span>: {
+        <span class="hljs-attr">&quot;appMetaData&quot;</span>: {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;myApp&quot;</span>,
+           <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;myApp-v1.0.1&quot;</span>,
+           <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;1.0.1&quot;</span>,
+           <span class="hljs-attr">&quot;desktopAgent&quot;</span>:<span class="hljs-string">&quot;DesktopAgentB&quot;</span>
+           },
+       <span class="hljs-attr">&quot;context&quot;</span>: {<span class="hljs-comment">/*contextObj*/</span>}
+    },
+    <span class="hljs-attr">&quot;meta&quot;</span>: {
+        <span class="hljs-attr">&quot;requestGuid&quot;</span>: <span class="hljs-string">&quot;requestGuid&quot;</span>,
+        <span class="hljs-attr">&quot;timestamp&quot;</span>: <span class="hljs-number">2020</span><span class="hljs-number">-03</span>-...,
+        <span class="hljs-attr">&quot;source&quot;</span>: {
+            <span class="hljs-attr">&quot;desktopAgent&quot;</span>: <span class="hljs-string">&quot;agent-A&quot;</span>, <span class="hljs-comment">// filled by DAB</span>
+            <span class="hljs-comment">// ... other metadata fields</span>
+        }
+    }
+}
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="findinstances"></a><a href="#findinstances" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>findInstances</h3>
+<pre><code class="hljs css language-typescript">findInstances(app: TargetApp): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">Array</span>&lt;AppMetadata&gt;&gt;;
+</code></pre>
+<pre><code class="hljs css language-mermaid">sequenceDiagram
+    participant DA <span class="hljs-keyword">as</span> Desktop Agent A
+    participant DAB <span class="hljs-keyword">as</span> Desktop Agent Bridge
+    participant <span class="hljs-keyword">DB</span> <span class="hljs-keyword">as</span> Desktop Agent B
+    participant DC <span class="hljs-keyword">as</span> Desktop Agent C
+    DA -&gt;&gt;+ DAB: Find Instances of <span class="hljs-keyword">App</span>.
+    DAB -&gt;&gt;+ <span class="hljs-keyword">DB</span>: Find Instances of <span class="hljs-keyword">App</span>
+    DAB -&gt;&gt;+ DC: Find Instances of <span class="hljs-keyword">App</span>
+    DC --x DC: <span class="hljs-keyword">No</span> Instance found
+    <span class="hljs-keyword">DB</span> -&gt;&gt; <span class="hljs-keyword">DB</span>: <span class="hljs-keyword">App</span> Instance found
+    <span class="hljs-keyword">DB</span> --&gt;&gt;- DA: <span class="hljs-keyword">Return</span> <span class="hljs-keyword">App</span> Data
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="channels-1"></a><a href="#channels-1" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Channels</h2>
+<p>App Channels don't need specific messages sending for <code>fdc3.getOrCreateChannel</code> as other agents will be come aware of it when messages are broadcast.</p>
+<p>However, <code>PrivateChannel</code> instances do require additional handling due to the listeners for subscription and disconnect. Please see the raiseIntent section for the messages sent in support of this functionality.</p>
+</span></div></article></div><div class="docs-prevnext"></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#open-questions--todo-list">Open questions / TODO list</a></li><li><a href="#connection-overview">Connection Overview</a><ul class="toc-headings"><li><a href="#topology">Topology</a></li><li><a href="#technology--service-discovery">Technology &amp; Service Discovery</a></li><li><a href="#handshake-authentication--name-assignment">Handshake, Authentication &amp; Name Assignment</a></li><li><a href="#channels">Channels</a></li></ul></li><li><a href="#interactions-between-desktop-agents">Interactions between Desktop Agents</a><ul class="toc-headings"><li><a href="#handling-fdc3-calls-when-bridged">Handling FDC3 calls When Bridged</a></li><li><a href="#identifying-desktop-agents-identity-and-message-sources">Identifying Desktop Agents Identity and Message Sources</a></li><li><a href="#identifying-individual-messages">Identifying Individual Messages</a></li><li><a href="#forwarding-of-messages-from-other-agents">Forwarding of Messages from Other Agents</a></li></ul></li><li><a href="#appmetadata">AppMetadata</a></li><li><a href="#generic-request-and-response-formats">Generic request and response formats</a><ul class="toc-headings"><li><a href="#request">Request</a></li><li><a href="#response">Response</a></li></ul></li><li><a href="#individual-message-exchanges">Individual message exchanges</a></li><li><a href="#context">Context</a><ul class="toc-headings"><li><a href="#broadcast-on-channels">broadcast (on channels)</a></li></ul></li><li><a href="#intents">Intents</a><ul class="toc-headings"><li><a href="#findintent">findIntent</a></li><li><a href="#raiseintent">raiseIntent</a></li><li><a href="#open">open</a></li><li><a href="#findinstances">findInstances</a></li></ul></li><li><a href="#channels-1">Channels</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/FDC3/" class="nav-home"><img src="/FDC3/img/fdc3-icon-2019.svg" alt="FDC3"/></a><div><h5>Learn</h5><a href="/FDC3/docs/fdc3-intro">Getting Started</a><a href="/FDC3/docs/supported-platforms">Supported Platforms</a><a href="/FDC3/docs/api/ref/DesktopAgent">API Reference</a><a href="/FDC3/docs/use-cases/overview">Use Cases</a><a href="https://www.edx.org/course/fdc3-interoperability-for-the-financial-desktop" target="_blank">Training</a></div><div><h5>Community</h5><a href="https://www.finos.org/" target="_blank" rel="noreferrer noopener">FINOS</a><a href="https://finos-lf.slack.com/messages/fdc3/" target="_blank" rel="noreferrer noopener">Slack</a><a href="https://stackoverflow.com/questions/tagged/fdc3" target="_blank" rel="noreferrer noopener">Stack Overflow</a><a href="https://groups.google.com/a/finos.org/forum/#!forum/fdc3" target="_blank" rel="noreferrer noopener">Google Groups</a><a href="/docs/next/trademarks">Trademarks</a></div><div><h5>More</h5><div class="social"><a class="github-button" href="https://github.com/finos/FDC3" data-count-href="https://github.com/finos/FDC3/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">FDC3</a></div><div class="social"><a href="https://twitter.com/FDC3_" class="twitter-follow-button">@FDC3_</a></div></div></section><section class="finos finosBanner"><a href="https://www.finos.org"><img id="finosicon" src="https://fdc3.finos.org/img/finos_wordmark.svg" height="75px" alt="FINOS" title="FINOS"/><h2 id="proud">Proud member of the Fintech Open Source Foundation</h2></a></section><section class="copyright">Copyright © 2022 FDC3</section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>
