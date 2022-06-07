@@ -11,19 +11,75 @@
 <p>In any desktop agent bridging scenario, it is expected that each DA is being operated by the same user (as the scope of FDC3 contemplates cross-application workflows for a single user, rather than cross-user workflows), although DAs may be run on different machines operated by the same user.</p>
 <h2><a class="anchor" aria-hidden="true" id="open-questions--todo-list"></a><a href="#open-questions--todo-list" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Open questions / TODO list</h2>
 <ul>
-<li>Add topology diagram</li>
-<li>Define handshake, authentication and naming protocol</li>
-<li>Do we need to make mandatory that a <code>fdc3.joinChannel</code> was invoked before you can return the current state of the channel?</li>
-<li>Bridging startup - Consider an app that joins a channel whose last context was sent before the bridge was created, then DA couldn’t send the correct initial context when the channel joined
+<li><p>Define handshake, authentication and naming protocol</p>
 <ul>
-<li>Current context is ignored</li>
-<li>Add an init flow where DAs share info about channels they have with context on them already - (this type of discovery of channels does not happen in FDC3 at the moment, therefore it would add significant complexity to the spec).</li>
+<li>Should auth be optional? E.g. triggered by a challenge?</li>
 </ul></li>
-<li>How to handle slow responding DAs?</li>
+<li><p>How do we resolve differing state on channels (app/user/private) when a new DA joins the bridge?</p>
+<ul>
+<li>Problems
+<ul>
+<li>DA joins the bridge on startup with no context on its channels, another DA already joined to the bridge has a different context on several channels</li>
+<li>DA joins the bridge after it has context on a channel, another DA already joined to the bridge has a different context on the same named channel
+<ul>
+<li>N.B. current context is not just most recent context, but most recent of each type.</li>
+</ul></li>
+<li>App channels are not normally discoverable in the FDC3 API, what about under bridging? When should context on an app channel be shared with other agents?</li>
+<li>How do Private channels differ (as they are 'owned' by an app on a particular DA)?</li>
+</ul></li>
+<li>Solutions
+<ul>
+<li>Assume bridge is up on start-up (system service) and that all DAs will connect to it as the first thing they do.
+<ul>
+<li>❌ Some DAs may retain state between sessions</li>
+</ul></li>
+<li>Ignore current context entirely, it will synchronize after one or messages have been sent.
+<ul>
+<li>⚠ ignores the problem, but it very simple to implement</li>
+</ul></li>
+<li>Get current context from other DAs when an app adds a context listener or calls <code>channel.getCurrentContext()</code> or <code>fdc3.joinChannel()</code>
+<ul>
+<li>❌ Which DA's state takes priority? No obvious answer</li>
+<li>Spreads out complexity throughout use, rather than getting it over with</li>
+</ul></li>
+<li>Add an init flow where DAs share info about channels they have with context on them already
+<ul>
+<li>✔️ Does actually solve the problem</li>
+<li>⚠ Requires sharing of known channels and current state (this type of discovery of channels does not happen in the regular FDC3 API).</li>
+<li>⚠ Requires state in the bridge.</li>
+<li>⚠ Which DA's state takes priority?
+<ul>
+<li>First to join bridge? Last to join bridge? use timestamps?</li>
+<li>Most recently sent context might be from the last to join...</li>
+</ul></li>
+<li>⚠ Need to ensure agents join bridge serially so first/state of the first is known</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>Who collates responses to queries (e.g. findIntent, raiseIntent, findInstances etc.)? Bridge or requesting DA?</p>
+<ul>
+<li>How to handle slow responding DAs? Should there be a recommended timeout?</li>
+<li>Should an agent that is repeatedly timing out be disconnected?
+<ul>
+<li>Should other agents report to users on connect/disconnect events?</li>
+</ul></li>
+</ul></li>
+<li><p>Select recommended port range for bridge</p></li>
 </ul>
 <h2><a class="anchor" aria-hidden="true" id="connection-overview"></a><a href="#connection-overview" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Connection Overview</h2>
 <h3><a class="anchor" aria-hidden="true" id="topology"></a><a href="#topology" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Topology</h3>
 <p>In order to implement Desktop Agent Bridging some means for desktop agents to connect to and communicate with each other is needed. This Standard assumes that Desktop Agent Bridging is implemented via a standalone 'bridge' which each agent connects to and will use to route messages to or from other agents. This topology is similar to a star topology in networking, where the Desktop Agent Bridge (a 'bridge') will be the central node acting as a router.</p>
+<pre><code class="hljs css language-mermaid"><span class="hljs-variable">flowchart</span> <span class="hljs-variable">TD</span><span class="hljs-operator">;</span>
+    <span class="hljs-variable">A</span><span class="hljs-punctuation">[</span><span class="hljs-variable">DA</span> <span class="hljs-variable">A</span><span class="hljs-punctuation">]</span>
+    <span class="hljs-variable">B</span><span class="hljs-punctuation">[</span><span class="hljs-variable">DA</span> <span class="hljs-variable">B</span><span class="hljs-punctuation">]</span>
+    <span class="hljs-built_in">C</span><span class="hljs-punctuation">[</span><span class="hljs-variable">DA</span> <span class="hljs-built_in">C</span><span class="hljs-punctuation">]</span>
+    <span class="hljs-built_in">D</span><span class="hljs-punctuation">[</span><span class="hljs-variable">DA</span> <span class="hljs-built_in">D</span><span class="hljs-punctuation">]</span>
+    <span class="hljs-built_in">E</span><span class="hljs-punctuation">{</span><span class="hljs-variable">Bridge</span><span class="hljs-punctuation">}</span> 
+    <span class="hljs-variable">A</span> <span class="hljs-operator">&lt;--&gt;</span> <span class="hljs-built_in">E</span>
+    <span class="hljs-built_in">E</span> <span class="hljs-operator">&lt;--&gt;</span> <span class="hljs-variable">B</span>
+    <span class="hljs-built_in">E</span> <span class="hljs-operator">&lt;--&gt;</span> <span class="hljs-built_in">C</span>
+    <span class="hljs-built_in">D</span> <span class="hljs-operator">&lt;--&gt;</span> <span class="hljs-built_in">E</span>
+</code></pre>
 <p>Other possible topologies include peer-to-peer or client/server networks, however, these introduce significant additional complexity into multiple aspects of the bridging protocol that must be implemented by desktop agents, (including discovery, authentication and message routing), where a star topology/standalone bridge enables a relatively simple set of protocols, with the most difficult parts being implemented in the bridge itself.</p>
 <p>Whilst the standalone bridge represents a single point of failure for the interconnection of desktop agents, it will also be significantly simpler than a full desktop agent implementation. Further, failures may be mitigated by setting the bridge up as a system service, such that it is started when the user's computer is started and may be restarted automatically if it fails. In the event of a bridge failure or manual shutdown, then desktop agents will no longer be bridged and should act as single agents.</p>
 <p>In Financial services it is not unusual for a single user to be working with applications on more than one desktop. As desktop agents do not span desktops bridging desktop agents across multiple machines is an additional use case for desktop agent bridging. However, as FDC3 only contemplates interoperability between apps for a single user, it is expected that in multi-machine use cases each machine is being operated by the same user.</p>
@@ -34,19 +90,23 @@
 <p>Both DAs and bridge implementations MUST support at least connection to the recommended port range and MAY also support configuration for connection to an alternative bridging port range.</p>
 <p>As part of the Desktop Agent Bridging protocol, a bridge will implement &quot;server&quot; behavior by:</p>
 <ul>
+<li>Accepting connections from client desktop agents, receiving and authenticating credentials and assigning a name (for routing purposes)</li>
 <li>Receiving requests from client desktop agents.</li>
 <li>Routing requests to client desktop agents.</li>
-<li>Receiving responses from client desktop agents.</li>
+<li>Receiving responses (and collating?) from client desktop agents.</li>
 <li>Routing responses to client desktop agents.</li>
 </ul>
 <p>A desktop agent will implement &quot;client&quot; behavior by:</p>
 <ul>
+<li>Connecting to the bridge, providing authentication credentials and receiving an assigned named (for purposes)</li>
 <li>Forwarding requests to the bridge.</li>
-<li>Awaiting response(s) from the bridge.</li>
+<li>Awaiting response(s) (and collating them?) from the bridge.</li>
 <li>Receiving requests from the bridge.</li>
-<li>Forwarding response to the bridge.</li>
+<li>Sending responses to the bridge.</li>
 </ul>
 <p>Hence, message paths and propagation are simple. All messages to other desktop agents are passed to the bridge for routing and all messages (both requests and responses) are received back from it, i.e. the bridge is responsible for all message routing.</p>
+<h4><a class="anchor" aria-hidden="true" id="collating-responses"></a><a href="#collating-responses" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Collating responses</h4>
+<p>TBD</p>
 <h4><a class="anchor" aria-hidden="true" id="bridging-desktop-agent-on-multiple-machines"></a><a href="#bridging-desktop-agent-on-multiple-machines" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Bridging Desktop Agent on Multiple Machines</h4>
 <p>As the bridge binds its websocket on the loopback address (127.0.0.1) it cannot be connected to from another device. Hence, an instance of the standalone bridge may be run on each device and those instances exchange messages in order to implement the bridge cross-device.</p>
 <p>However, cross-machine routing is an internal concern of the Desktop Agent Bridge, with each desktop agent simply communicating with a bridge instance located on the same machine. The connection protocol between bridges themselves is implementation specific and beyond the scope of this standard. Further, as FDC3 only contemplates interoperability between apps for a single user, it is expected that in multi-machine use cases each machine is being operated by the same user. However, methods of verifying the identity of user are currently beyond the scope of this Standard.</p>
@@ -54,29 +114,89 @@
 <p>On connection to the bridge handshake, authentication and name assignment steps must be completed. These allow:</p>
 <ul>
 <li>The desktop agent to confirm that it is connecting to an FDC3 Desktop Agent Bridge, rather than another service exposed via a websocket.</li>
-<li>The bridge to require that the desktop agent authenticate itself, allowing it to control access to the network of bridged desktop agents</li>
-<li>The desktop agent to request a particular name by which it will be addressed by other agents and for the bridge to assign the requested name, after confirming that no other agent is connected with that name, or a derivative of that name if it is already in use.</li>
+<li>The bridge to require that the desktop agent authenticate itself, allowing it to control access to the network of bridged desktop agents.</li>
+<li>The desktop agent to request a particular name by which it will be addressed by other agents and for the bridge to assign the requested name, after confirming that no other agent is connected with that name, or a derivative of that name if it is already in use.
+<ul>
+<li>The bridge is ultimately responsible for assigning each desktop agent a name and for routing messages using those names. Desktop agents MUST accept the name they are assigned by the bridge.</li>
+</ul></li>
 </ul>
-<p>The bridge is ultimately responsible for assigning each desktop agent a name and for routing messages using those names.</p>
 <h4><a class="anchor" aria-hidden="true" id="step-1-handshake"></a><a href="#step-1-handshake" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step 1. Handshake</h4>
-<p>TBC
-Standard hello message that identifies that this is bridge, perhaps with implementation details for logging</p>
-<h4><a class="anchor" aria-hidden="true" id="step-2-authentication"></a><a href="#step-2-authentication" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step 2. Authentication</h4>
-<p>Send in authentication details + a proposal for a specific name
-TBC
-Needs research</p>
-<h4><a class="anchor" aria-hidden="true" id="step-3-auth-confirmation-and--name-assignment"></a><a href="#step-3-auth-confirmation-and--name-assignment" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step 3. Auth Confirmation and  Name Assignment</h4>
-<p>TBC
-Receive back auth confirmation and assigned name
-Name to appear in ImplementationMetadata
-Note: own name is rarely used by the desktop agent, but useful to log for debugging purposes</p>
-<h4><a class="anchor" aria-hidden="true" id="step-4-connected-agents-update"></a><a href="#step-4-connected-agents-update" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step 4. Connected agents update</h4>
-<p>Message sent with names of other desktop agents connected to bridge
-Message reissued whenever an agent connects or disconnects
-Enables logging of connected agents and (optional) targeted API calls (e.g. <code>raiseIntent</code> to a specific agent)</p>
-<h3><a class="anchor" aria-hidden="true" id="channels"></a><a href="#channels" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Channels</h3>
+<p>Exchange standardized hello messages that identify:</p>
+<ul>
+<li>That the server is a bridge, including:
+<ul>
+<li>implementation details for logging by DA.</li>
+<li>supported FDC3 version(s).</li>
+</ul></li>
+<li>That the client is an FDC3 DA, including:
+<ul>
+<li>implementation details (ImplementationMeta returned by fdc3.getInfo() call) for logging by DA and sharing with other DAs.
+<ul>
+<li>already includes supported FDC3 version.</li>
+</ul></li>
+<li>request for a specific agent name.</li>
+</ul></li>
+</ul>
+<h4><a class="anchor" aria-hidden="true" id="step-2-authentication-optional"></a><a href="#step-2-authentication-optional" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step 2. Authentication (optional?)</h4>
+<p>If auth is enabled:</p>
+<ul>
+<li>Bridge sends auth challenge</li>
+<li>DA must reply with credentials</li>
+</ul>
+<p>TBD:</p>
+<ul>
+<li>What is the auth scheme?
+<ul>
+<li>JWT token? or similar (return signature for some challenge data using private key)
+<ul>
+<li>Bridge will need to be configured with credentials (public keys) for each agent that should be able to connect.</li>
+<li>Agents will need to be configured with credentials (private key).</li>
+</ul></li>
+<li>Preshared access token
+<ul>
+<li>Simpler to configure, less secure</li>
+</ul></li>
+<li>Some form of SSO, e.g. OAuth
+<ul>
+<li>Most complex to integrate</li>
+<li>Can confirm same user on each agent</li>
+</ul></li>
+<li>Integrated Windows auth?
+<ul>
+<li>Platform specific, but could confirm same user on each agent</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>If auth fails, server disconnects socket.
+If auth succeeds move to next step.</p>
+<h4><a class="anchor" aria-hidden="true" id="step-3-auth-confirmation-and-name-assignment"></a><a href="#step-3-auth-confirmation-and-name-assignment" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step 3. Auth Confirmation and Name Assignment</h4>
+<p>TBD:</p>
+<ul>
+<li>Receive back auth confirmation and assigned name
+<ul>
+<li>Name to appear in ImplementationMetadata when retrieved locally through <code>fdc3.getInfo()</code>
+<ul>
+<li>Note: own name is rarely used by the desktop agent, but useful to log for debugging purposes</li>
+</ul></li>
+</ul></li>
+</ul>
+<h4><a class="anchor" aria-hidden="true" id="step-4-synchronize-channel-state"></a><a href="#step-4-synchronize-channel-state" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step 4. Synchronize channel state</h4>
+<p>TBD:</p>
+<ul>
+<li>Details of the current state of channels (of DAs already connected to the bridge) may need to shared so that the incoming agent can have its state synchronized with the bridged group of agents.</li>
+</ul>
+<h5><a class="anchor" aria-hidden="true" id="channels"></a><a href="#channels" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Channels</h5>
 <p>It is assumed that Desktop Agents SHOULD adopt the recommended 8 channel set (and the respective display metadata). Desktop Agents MAY support channel customization through configuration.
 The Desktop Agent Bridge MAY support channel mapping ability to deal with channel differences that can arise.</p>
+<h4><a class="anchor" aria-hidden="true" id="step-5-connected-agents-update"></a><a href="#step-5-connected-agents-update" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step 5. Connected agents update</h4>
+<p>To enable logging of connected agents and (optional) targeted API calls (e.g. <code>raiseIntent</code> to a specific agent), the details of all agents connected to the bridge is shared with all other agents connected to the bridge.</p>
+<p>TBD:</p>
+<ul>
+<li>Message sent with names of <em>all</em> desktop agents connected to bridge to <em>all</em> connected agents
+<ul>
+<li>Message reissued whenever an agent connects or disconnects</li>
+</ul></li>
+</ul>
 <h2><a class="anchor" aria-hidden="true" id="interactions-between-desktop-agents"></a><a href="#interactions-between-desktop-agents" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Interactions between Desktop Agents</h2>
 <p>The use of Desktop Agent Bridging affects how a desktop agent must handle FDC3 API calls. Details on how this affects the FD3 API and how a desktop agent should interact with other agents over the bridge are provided below in this section.</p>
 <h3><a class="anchor" aria-hidden="true" id="handling-fdc3-calls-when-bridged"></a><a href="#handling-fdc3-calls-when-bridged" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Handling FDC3 calls When Bridged</h3>
@@ -93,34 +213,24 @@ The Desktop Agent Bridge MAY support channel mapping ability to deal with channe
 </ul>
 <h3><a class="anchor" aria-hidden="true" id="identifying-desktop-agents-identity-and-message-sources"></a><a href="#identifying-desktop-agents-identity-and-message-sources" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Identifying Desktop Agents Identity and Message Sources</h3>
 <p>In order to target intents and perform other actions that require specific routing between DAs, DAs need to have an identity. Identities should be assigned to clients when they connect to the bridge, although they might request a particular identity. This allows for multiple copies of the same underlying desktop agent implementation to be bridged and ensures that id clashes can be avoided.</p>
-<p>To prevent spoofing and to simplify the implementation of clients, sender identities for bridging messages should be added, by the bridge to <code>AppMetadata</code> objects embedded in them.</p>
+<p>To prevent spoofing and to simplify the implementation of clients, sender identities for bridging messages should be added, by the bridge to <code>AppIdentifier</code> objects embedded in them.</p>
 <ul>
-<li>Sender details to be added by the DAB to the embedded <code>AppMetadata</code> objects.
+<li>Sender details to be added by the DAB to the embedded <code>AppIdentifier</code> objects.
 <ul>
-<li><code>AppMetadata</code> needs a new <code>desktopAgent</code> field</li>
+<li><code>AppIdentifier</code> needs a new <code>desktopAgent</code> field</li>
 <li>When a client connects to a DAB it should be assigned an identity of some sort, which can be used to augment messages with details of the agent
 <ul>
 <li>The DAB should do the assignments and could generate ids or accept them via config.</li>
-<li>DAs don't need to know their own ids or even the ids of others, they just need to be able to pass around <code>AppMetadata</code> objects that contain them.</li>
+<li>DAs don't need to know their own ids or even the ids of others, they just need to be able to pass around <code>AppIdentifier</code> objects that contain them.</li>
 </ul></li>
 </ul></li>
 </ul>
-<h4><a class="anchor" aria-hidden="true" id="appmetadata"></a><a href="#appmetadata" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>AppMetadata</h4>
-<p><code>AppMetadata</code> needs to be expanded to contain a <code>desktopAgent</code> field.</p>
-<pre><code class="hljs css language-typescript"><span class="hljs-keyword">interface</span> AppMetadata {
-  <span class="hljs-keyword">readonly</span> name: <span class="hljs-built_in">string</span>;
-  <span class="hljs-keyword">readonly</span> appId?: <span class="hljs-built_in">string</span>;
-  <span class="hljs-keyword">readonly</span> version?: <span class="hljs-built_in">string</span>;
+<h4><a class="anchor" aria-hidden="true" id="appidentifier"></a><a href="#appidentifier" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>AppIdentifier</h4>
+<p><code>AppIdentifier</code> needs to be expanded to contain a <code>desktopAgent</code> field.</p>
+<pre><code class="hljs css language-typescript"><span class="hljs-keyword">interface</span> AppIdentifier {
+  <span class="hljs-keyword">readonly</span> appId: <span class="hljs-built_in">string</span>;
   <span class="hljs-keyword">readonly</span> instanceId?: <span class="hljs-built_in">string</span>;
-  <span class="hljs-keyword">readonly</span> instanceMetadata?: Record&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">any</span>&gt;;
-  <span class="hljs-keyword">readonly</span> title?: <span class="hljs-built_in">string</span>;
-  <span class="hljs-keyword">readonly</span> tooltip?: <span class="hljs-built_in">string</span>;
-  <span class="hljs-keyword">readonly</span> description?: <span class="hljs-built_in">string</span>;
-  <span class="hljs-keyword">readonly</span> icons?: <span class="hljs-built_in">Array</span>&lt;Icon&gt;;
-  <span class="hljs-keyword">readonly</span> images?: <span class="hljs-built_in">Array</span>&lt;<span class="hljs-built_in">string</span>&gt;;
-  <span class="hljs-keyword">readonly</span> resultType?: <span class="hljs-built_in">string</span> | <span class="hljs-literal">null</span>;
-
-  <span class="hljs-comment">/** A string filled in by the DAB on receipt of a message, that represents 
+  <span class="hljs-comment">/** A string filled in by the bridge on receipt of a message, that represents 
    * the Desktop Agent that the app is available on. 
    **/</span>
   <span class="hljs-keyword">readonly</span> desktopAgent?: <span class="hljs-built_in">string</span>;
@@ -170,8 +280,8 @@ The Desktop Agent Bridge MAY support channel mapping ability to deal with channe
         <span class="hljs-attr">requestGuid</span>: <span class="hljs-built_in">string</span>,
         <span class="hljs-comment">/** Timestamp at which request was generated */</span>
         <span class="hljs-attr">timestamp</span>:  date,
-         <span class="hljs-comment">/** AppMetadata source request received from */</span>
-        source?: AppMetadata
+         <span class="hljs-comment">/** AppIdentifier source request received from */</span>
+        source?: AppIdentifier
     }
 }
 </code></pre>
@@ -194,14 +304,14 @@ The Desktop Agent Bridge MAY support channel mapping ability to deal with channe
         <span class="hljs-attr">responseGuid</span>:  <span class="hljs-built_in">string</span>,
         <span class="hljs-comment">/** Timestamp at which request was generated */</span>
         <span class="hljs-attr">timestamp</span>:  <span class="hljs-built_in">Date</span>,
-        <span class="hljs-comment">/** AppMetadata source request received from */</span>
-        source?: AppMetadata,
-        <span class="hljs-comment">/** AppMetadata destination response sent from */</span>
-        destination?: AppMetadata
+        <span class="hljs-comment">/** AppIdentifier source request received from */</span>
+        source?: AppIdentifier,
+        <span class="hljs-comment">/** AppIdentifier destination response sent from */</span>
+        destination?: AppIdentifier
     }
 }
 </code></pre>
-<p>DAs should send these messages on to the bridge, which will add the <code>source.desktopAgent</code> metadata. Further, when processing responses, the bridge should also augment any <code>AppMetadata</code> objects in responses with the the same id applied to <code>source.desktopAgent</code>.</p>
+<p>DAs should send these messages on to the bridge, which will add the <code>source.desktopAgent</code> metadata. Further, when processing responses, the bridge should also augment any <code>AppIdentifier</code> objects in responses with the the same id applied to <code>source.desktopAgent</code>.</p>
 <h2><a class="anchor" aria-hidden="true" id="individual-message-exchanges"></a><a href="#individual-message-exchanges" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Individual message exchanges</h2>
 <p>The sections below cover most scenarios for each of the Desktop Agent methods in order to explore how this protocol might work.</p>
 <p>Each section assumes that we have 3 agents connected by a bridge:</p>
@@ -500,7 +610,7 @@ The Desktop Agent Bridge MAY support channel mapping ability to deal with channe
 <pre><code class="hljs css language-typescript">raiseIntent(intent: <span class="hljs-built_in">string</span>, <span class="hljs-attr">context</span>: Context, app?: TargetApp): <span class="hljs-built_in">Promise</span>&lt;IntentResolution&gt;;
 </code></pre>
 <p>For Desktop Agent bridging, a <code>raiseIntent</code> call MUST always pass a <code>app:TargetApp</code> argument. If one is not passed a <code>findIntent</code> will be sent instead to collect options to display in a local resolver UI, allowing for a targeted intent to be raised afterwards. See details below.</p>
-<p>When receiving a response from invoking <code>raiseIntent</code> the new app instances MUST be fully initialized ie. the responding Desktop Agent will need to return an <code>AppMetadata</code> with an <code>instanceId</code>.</p>
+<p>When receiving a response from invoking <code>raiseIntent</code> the new app instances MUST be fully initialized ie. the responding Desktop Agent will need to return an <code>AppIdentifier</code> with an <code>instanceId</code>.</p>
 <p>Note that the below diagram assumes a <code>raiseIntent</code> WITH a <code>app:TargetApp</code> was specified and therefore agent-C is not involved.</p>
 <pre><code class="hljs css language-mermaid">sequenceDiagram
     participant DA <span class="hljs-keyword">as</span> Desktop Agent A
@@ -909,21 +1019,21 @@ The Desktop Agent Bridge MAY support channel mapping ability to deal with channe
 }
 </code></pre>
 <h3><a class="anchor" aria-hidden="true" id="open"></a><a href="#open" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>open</h3>
-<pre><code class="hljs css language-typescript">open(app: TargetApp, context?: Context): <span class="hljs-built_in">Promise</span>&lt;AppMetadata&gt;;
+<pre><code class="hljs css language-typescript">open(app: TargetApp, context?: Context): <span class="hljs-built_in">Promise</span>&lt;AppIdentifier&gt;;
 </code></pre>
-<p>When receiving a response from invoking <code>fdc3.open</code> the new app instances MUST be fully initialized ie. the responding Desktop Agent will need to return an <code>AppMetadata</code> with an <code>instanceId</code>.</p>
+<p>When receiving a response from invoking <code>fdc3.open</code> the new app instances MUST be fully initialized ie. the responding Desktop Agent will need to return an <code>AppIdentifier</code> with an <code>instanceId</code>.</p>
 <h4><a class="anchor" aria-hidden="true" id="request-format-2"></a><a href="#request-format-2" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Request format</h4>
 <p>A <code>fdc3.open</code> call is made on agent-A.</p>
 <pre><code class="hljs css language-javascript"><span class="hljs-comment">// Open an app without context, using the app name</span>
 <span class="hljs-keyword">let</span> instanceMetadata = <span class="hljs-keyword">await</span> fdc3.open(<span class="hljs-string">&#x27;myApp&#x27;</span>);
 
-<span class="hljs-comment">// Open an app without context, using an AppMetadata object to specify the target</span>
-<span class="hljs-keyword">let</span> appMetadata = {<span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;myApp&#x27;</span>, <span class="hljs-attr">appId</span>: <span class="hljs-string">&#x27;myApp-v1.0.1&#x27;</span>, <span class="hljs-attr">version</span>: <span class="hljs-string">&#x27;1.0.1&#x27;</span>};
-<span class="hljs-keyword">let</span> instanceMetadata = <span class="hljs-keyword">await</span> fdc3.open(appMetadata);
+<span class="hljs-comment">// Open an app without context, using an AppIdentifier object to specify the target</span>
+<span class="hljs-keyword">let</span> AppIdentifier = {<span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;myApp&#x27;</span>, <span class="hljs-attr">appId</span>: <span class="hljs-string">&#x27;myApp-v1.0.1&#x27;</span>, <span class="hljs-attr">version</span>: <span class="hljs-string">&#x27;1.0.1&#x27;</span>};
+<span class="hljs-keyword">let</span> instanceMetadata = <span class="hljs-keyword">await</span> fdc3.open(AppIdentifier);
 
-<span class="hljs-comment">// Open an app without context, using an AppMetadata object to specify the target and Desktop Agent</span>
-<span class="hljs-keyword">let</span> appMetadata = {<span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;myApp&#x27;</span>, <span class="hljs-attr">appId</span>: <span class="hljs-string">&#x27;myApp-v1.0.1&#x27;</span>, <span class="hljs-attr">version</span>: <span class="hljs-string">&#x27;1.0.1&#x27;</span>, <span class="hljs-attr">desktopAgent</span>:<span class="hljs-string">&quot;DesktopAgentB&quot;</span>};
-<span class="hljs-keyword">let</span> instanceMetadata = <span class="hljs-keyword">await</span> fdc3.open(appMetadata);
+<span class="hljs-comment">// Open an app without context, using an AppIdentifier object to specify the target and Desktop Agent</span>
+<span class="hljs-keyword">let</span> AppIdentifier = {<span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;myApp&#x27;</span>, <span class="hljs-attr">appId</span>: <span class="hljs-string">&#x27;myApp-v1.0.1&#x27;</span>, <span class="hljs-attr">version</span>: <span class="hljs-string">&#x27;1.0.1&#x27;</span>, <span class="hljs-attr">desktopAgent</span>:<span class="hljs-string">&quot;DesktopAgentB&quot;</span>};
+<span class="hljs-keyword">let</span> instanceMetadata = <span class="hljs-keyword">await</span> fdc3.open(AppIdentifier);
 </code></pre>
 <p>The <code>fdc3.open</code> command should result in a single copy of the specified app being opened and its instance data returned, or an error if it could not be opened. There are two possible scenarios:</p>
 <ol>
@@ -948,7 +1058,7 @@ The Desktop Agent Bridge MAY support channel mapping ability to deal with channe
 <li>Request is sent to the bridge</li>
 <li>Bridge will query each connected DA asynchronously and await a response
 <ul>
-<li>If the response is <code>AppMetadata</code> then return it and exit (ignore every subsequent response)</li>
+<li>If the response is <code>AppIdentifier</code> then return it and exit (ignore every subsequent response)</li>
 <li>If the response is <code>OpenError.AppNotFound</code> and there are pending responses, wait for the next response</li>
 <li>If the response is <code>OpenError.AppNotFound</code> and there are NO pending responses, return <code>OpenError.AppNotFound</code></li>
 </ul></li>
@@ -987,7 +1097,7 @@ The Desktop Agent Bridge MAY support channel mapping ability to deal with channe
 {
     <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;open&quot;</span>,
     <span class="hljs-attr">&quot;payload&quot;</span>: {
-        <span class="hljs-attr">&quot;appMetaData&quot;</span>: {
+        <span class="hljs-attr">&quot;AppIdentifier&quot;</span>: {
             <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;myApp&quot;</span>,
             <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;myApp-v1.0.1&quot;</span>,
             <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;1.0.1&quot;</span>,
@@ -1006,7 +1116,7 @@ The Desktop Agent Bridge MAY support channel mapping ability to deal with channe
 {
     <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;open&quot;</span>,
     <span class="hljs-attr">&quot;payload&quot;</span>: {
-        <span class="hljs-attr">&quot;appMetaData&quot;</span>: {
+        <span class="hljs-attr">&quot;AppIdentifier&quot;</span>: {
             <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;myApp&quot;</span>,
            <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;myApp-v1.0.1&quot;</span>,
            <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;1.0.1&quot;</span>,
@@ -1025,7 +1135,7 @@ The Desktop Agent Bridge MAY support channel mapping ability to deal with channe
 }
 </code></pre>
 <h3><a class="anchor" aria-hidden="true" id="findinstances"></a><a href="#findinstances" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>findInstances</h3>
-<pre><code class="hljs css language-typescript">findInstances(app: TargetApp): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">Array</span>&lt;AppMetadata&gt;&gt;;
+<pre><code class="hljs css language-typescript">findInstances(app: TargetApp): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">Array</span>&lt;AppIdentifier&gt;&gt;;
 </code></pre>
 <pre><code class="hljs css language-mermaid">sequenceDiagram
     participant DA <span class="hljs-keyword">as</span> Desktop Agent A
@@ -1042,4 +1152,4 @@ The Desktop Agent Bridge MAY support channel mapping ability to deal with channe
 <h2><a class="anchor" aria-hidden="true" id="channels-1"></a><a href="#channels-1" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Channels</h2>
 <p>App Channels don't need specific messages sending for <code>fdc3.getOrCreateChannel</code> as other agents will be come aware of it when messages are broadcast.</p>
 <p>However, <code>PrivateChannel</code> instances do require additional handling due to the listeners for subscription and disconnect. Please see the raiseIntent section for the messages sent in support of this functionality.</p>
-</span></div></article></div><div class="docs-prevnext"></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#open-questions--todo-list">Open questions / TODO list</a></li><li><a href="#connection-overview">Connection Overview</a><ul class="toc-headings"><li><a href="#topology">Topology</a></li><li><a href="#technology--service-discovery">Technology &amp; Service Discovery</a></li><li><a href="#connection-protocol">Connection Protocol</a></li><li><a href="#channels">Channels</a></li></ul></li><li><a href="#interactions-between-desktop-agents">Interactions between Desktop Agents</a><ul class="toc-headings"><li><a href="#handling-fdc3-calls-when-bridged">Handling FDC3 calls When Bridged</a></li><li><a href="#identifying-desktop-agents-identity-and-message-sources">Identifying Desktop Agents Identity and Message Sources</a></li><li><a href="#identifying-individual-messages">Identifying Individual Messages</a></li><li><a href="#forwarding-of-messages-to-other-agents">Forwarding of Messages to Other Agents</a></li></ul></li><li><a href="#generic-request-and-response-formats">Generic request and response formats</a><ul class="toc-headings"><li><a href="#request">Request</a></li><li><a href="#response">Response</a></li></ul></li><li><a href="#individual-message-exchanges">Individual message exchanges</a></li><li><a href="#context">Context</a><ul class="toc-headings"><li><a href="#broadcast-on-channels">broadcast (on channels)</a></li></ul></li><li><a href="#intents">Intents</a><ul class="toc-headings"><li><a href="#findintent">findIntent</a></li><li><a href="#raiseintent">raiseIntent</a></li><li><a href="#open">open</a></li><li><a href="#findinstances">findInstances</a></li></ul></li><li><a href="#channels-1">Channels</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/FDC3/" class="nav-home"><img src="/FDC3/img/fdc3-icon-2019.svg" alt="FDC3"/></a><div><h5>Learn</h5><a href="/FDC3/docs/fdc3-intro">Getting Started</a><a href="/FDC3/docs/supported-platforms">Supported Platforms</a><a href="/FDC3/docs/api/ref/DesktopAgent">API Reference</a><a href="/FDC3/docs/use-cases/overview">Use Cases</a><a href="https://www.edx.org/course/fdc3-interoperability-for-the-financial-desktop" target="_blank">Training</a></div><div><h5>Community</h5><a href="https://www.finos.org/" target="_blank" rel="noreferrer noopener">FINOS</a><a href="https://finos-lf.slack.com/messages/fdc3/" target="_blank" rel="noreferrer noopener">Slack</a><a href="https://stackoverflow.com/questions/tagged/fdc3" target="_blank" rel="noreferrer noopener">Stack Overflow</a><a href="https://groups.google.com/a/finos.org/forum/#!forum/fdc3" target="_blank" rel="noreferrer noopener">Google Groups</a><a href="/docs/next/trademarks">Trademarks</a></div><div><h5>More</h5><div class="social"><a class="github-button" href="https://github.com/finos/FDC3" data-count-href="https://github.com/finos/FDC3/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">FDC3</a></div><div class="social"><a href="https://twitter.com/FDC3_" class="twitter-follow-button">@FDC3_</a></div></div></section><section class="finos finosBanner"><a href="https://www.finos.org"><img id="finosicon" src="https://fdc3.finos.org/img/finos_wordmark.svg" height="75px" alt="FINOS" title="FINOS"/><h2 id="proud">Proud member of the Fintech Open Source Foundation</h2></a></section><section class="copyright">Copyright © 2022 FDC3</section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>
+</span></div></article></div><div class="docs-prevnext"></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#open-questions--todo-list">Open questions / TODO list</a></li><li><a href="#connection-overview">Connection Overview</a><ul class="toc-headings"><li><a href="#topology">Topology</a></li><li><a href="#technology--service-discovery">Technology &amp; Service Discovery</a></li><li><a href="#connection-protocol">Connection Protocol</a></li></ul></li><li><a href="#interactions-between-desktop-agents">Interactions between Desktop Agents</a><ul class="toc-headings"><li><a href="#handling-fdc3-calls-when-bridged">Handling FDC3 calls When Bridged</a></li><li><a href="#identifying-desktop-agents-identity-and-message-sources">Identifying Desktop Agents Identity and Message Sources</a></li><li><a href="#identifying-individual-messages">Identifying Individual Messages</a></li><li><a href="#forwarding-of-messages-to-other-agents">Forwarding of Messages to Other Agents</a></li></ul></li><li><a href="#generic-request-and-response-formats">Generic request and response formats</a><ul class="toc-headings"><li><a href="#request">Request</a></li><li><a href="#response">Response</a></li></ul></li><li><a href="#individual-message-exchanges">Individual message exchanges</a></li><li><a href="#context">Context</a><ul class="toc-headings"><li><a href="#broadcast-on-channels">broadcast (on channels)</a></li></ul></li><li><a href="#intents">Intents</a><ul class="toc-headings"><li><a href="#findintent">findIntent</a></li><li><a href="#raiseintent">raiseIntent</a></li><li><a href="#open">open</a></li><li><a href="#findinstances">findInstances</a></li></ul></li><li><a href="#channels-1">Channels</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/FDC3/" class="nav-home"><img src="/FDC3/img/fdc3-icon-2019.svg" alt="FDC3"/></a><div><h5>Learn</h5><a href="/FDC3/docs/fdc3-intro">Getting Started</a><a href="/FDC3/docs/supported-platforms">Supported Platforms</a><a href="/FDC3/docs/api/ref/DesktopAgent">API Reference</a><a href="/FDC3/docs/use-cases/overview">Use Cases</a><a href="https://www.edx.org/course/fdc3-interoperability-for-the-financial-desktop" target="_blank">Training</a></div><div><h5>Community</h5><a href="https://www.finos.org/" target="_blank" rel="noreferrer noopener">FINOS</a><a href="https://finos-lf.slack.com/messages/fdc3/" target="_blank" rel="noreferrer noopener">Slack</a><a href="https://stackoverflow.com/questions/tagged/fdc3" target="_blank" rel="noreferrer noopener">Stack Overflow</a><a href="https://groups.google.com/a/finos.org/forum/#!forum/fdc3" target="_blank" rel="noreferrer noopener">Google Groups</a><a href="/docs/next/trademarks">Trademarks</a></div><div><h5>More</h5><div class="social"><a class="github-button" href="https://github.com/finos/FDC3" data-count-href="https://github.com/finos/FDC3/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">FDC3</a></div><div class="social"><a href="https://twitter.com/FDC3_" class="twitter-follow-button">@FDC3_</a></div></div></section><section class="finos finosBanner"><a href="https://www.finos.org"><img id="finosicon" src="https://fdc3.finos.org/img/finos_wordmark.svg" height="75px" alt="FINOS" title="FINOS"/><h2 id="proud">Proud member of the Fintech Open Source Foundation</h2></a></section><section class="copyright">Copyright © 2022 FDC3</section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>
