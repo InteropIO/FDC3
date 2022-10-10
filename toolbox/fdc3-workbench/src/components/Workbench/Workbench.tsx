@@ -3,7 +3,6 @@ import { observer } from "mobx-react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { Typography, Tabs, Tab, Box } from "@material-ui/core";
 import { TabPanel } from "../common/TabPanel";
-import { CurrentContext } from "./CurrentContext";
 import { ContextListeners } from "./ContextListeners";
 import { IntentListeners } from "./IntentListeners";
 import { SystemLog } from "./SystemLog";
@@ -67,12 +66,11 @@ export const Workbench = observer(() => {
 				}}
 				className={classes.tabs}
 			>
-				<Tab label="Current State" {...a11yProps(0)} />
+				<Tab label="Listeners" {...a11yProps(0)} />
 				<Tab label="System Log" {...a11yProps(1)} />
 			</Tabs>
 
 			<TabPanel value={tabValue} index={0}>
-				<CurrentContext />
 				<ContextListeners />
 				<IntentListeners />
 			</TabPanel>
