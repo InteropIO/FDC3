@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import { Typography, Tabs, Tab, Box } from "@material-ui/core";
+import { Tabs, Tab } from "@material-ui/core";
 import { TabPanel } from "../common/TabPanel";
 import { ContextListeners } from "./ContextListeners";
 import { IntentListeners } from "./IntentListeners";
@@ -52,9 +52,6 @@ export const Workbench = observer(() => {
 
 	return (
 		<div>
-			<Box textAlign="center">
-				<Typography variant="h4">{`{toolbox}`}</Typography>
-			</Box>
 			<Tabs
 				value={tabValue}
 				onChange={handleTabChange}
