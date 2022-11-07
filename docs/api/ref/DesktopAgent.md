@@ -591,7 +591,7 @@ redChannel.addContextListener(null, channelListener);
 open(app: AppIdentifier, context?: Context): Promise<AppIdentifier>;
 ```
 
-Launches an app, specified via an [`AppIdentifier`](Metadata#appidentifier) object.
+Launches an app, specified via an [`AppIdentifier`](Types#appidentifier) object.
 
 The `open` method differs in use from [`raiseIntent`](#raiseintent).  Generally, it should be used when the target application is known but there is no specific intent.  For example, if an application is querying an App Directory, `open` would be used to open an app returned in the search results.
 
@@ -677,7 +677,7 @@ try {
 
 * [Raising Intents](../spec#raising-intents)
 * [`Context`](Types#context)
-* [`AppIdentifier`](Metadata#AppIdentifier)
+* [`AppIdentifier`](Types#AppIdentifier)
 * [`IntentResult`](Types#intentresult)
 * [`IntentResolution`](Metadata#intentresolution)
 * [`ResolveError`](Errors#resolveerror)
