@@ -19,15 +19,6 @@
         "SEDOL": { "type": "string" },
         "ticker": { "type": "string" }
       }
-    },
-    "market": {
-      "type": "object",
-      "properties": {
-        "MIC": { "type": "string" },
-        "name": { "type": "string" },
-        "COUNTRY_ISOALPHA2": { "type": "string" },
-        "BBG": { "type": "string" }
-      }
     }
   },
   "required": ["id"]
