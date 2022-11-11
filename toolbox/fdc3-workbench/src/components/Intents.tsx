@@ -352,7 +352,7 @@ export const Intents = observer(({handleTabChange}: {handleTabChange:any}) => {
 										{intentTargets?.length &&
 											intentTargets.map((target) => (
 												<MenuItem key={target.name} value={target.name}>
-													{target.title}
+													{target.name}
 												</MenuItem>
 											))}
 									</Select>
