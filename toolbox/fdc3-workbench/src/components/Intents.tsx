@@ -249,7 +249,7 @@ export const Intents = observer(({handleTabChange}: {handleTabChange:any}) => {
 
 	useEffect(() => {
 		if(intentObjects){
-			let targets = intentObjects.find((obj) => {
+			const targets = intentObjects.find((obj) => {
 				let objectIntent = obj.intent.name.includes('fdc3') ? obj.intent.name.split('.')[1] : obj.intent.name
 				return objectIntent === intentValue?.value
 			});
