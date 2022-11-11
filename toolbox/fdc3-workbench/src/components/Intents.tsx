@@ -243,7 +243,10 @@ export const Intents = observer(({handleTabChange}: {handleTabChange:any}) => {
 
 	useEffect(() => {
 		if(intentObjects){
-			let targets = intentObjects.find((obj) => obj.intent.displayName === intentValue?.value);
+			let targets = intentObjects.find((obj) => {
+				let objectIntent = obj.intent.name.includes('fdc3') ? obj.intent.name.split('.')[1] : obj.intent.name
+				return objectIntent === intentValue?.value
+			});
 			if(targets?.apps){
 				setIntentTargets(targets.apps);
 			}
@@ -341,9 +344,9 @@ export const Intents = observer(({handleTabChange}: {handleTabChange:any}) => {
 									{intentTargets?.length &&
 										intentTargets.map((target) => (
 											<MenuItem key={target.name} value={target.name}>
-												{target.title}
+												{target.name}
 											</MenuItem>
-										))}
+									))}
 								</Select>
 							</FormControl>
 						</Grid>
