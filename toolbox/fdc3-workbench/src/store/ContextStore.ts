@@ -46,22 +46,35 @@ class ContextStore {
 			addContextListener: action,
 			removeContextListener: action,
 		});
-		const localStorageContextList = localStorage.getItem("contextList")
-		if(localStorageContextList) this.contextsList = JSON.parse(localStorageContextList)
-		else this.updateLocalStorage(JSON.stringify(this.contextsList))
+		const localStorageContextList = localStorage.getItem("contextList");
+		let usingDefaultContexts = true;
+		try {
+			if(localStorageContextList)
+			{
+				const parsedListFromStorage = JSON.parse(localStorageContextList);
+				if (Array.isArray(parsedListFromStorage)){
+					this.contextsList = parsedListFromStorage;
+					usingDefaultContexts = false;
+				}
+			}
+		} catch (err){
+			console.log("Failed to parse context list from localstorage");
+		}
+		if (usingDefaultContexts) {
+			this.updateLocalStorage(JSON.stringify(contexts));
+		}
 	}
 
 	addContextItem(contextItem: ContextItem) {
 		this.contextsList.push(contextItem);
-		this.contextsList.sort((a, b) => (a.id > b.id ? 1 : -1));
+		this.contextsList.sort((a, b) => a.id.localeCompare(b.id));
 		this.updateLocalStorage(this.contextsList);
 	}
 
-	saveContextItem(contextItem: ContextItem) {
-		const context = this.contextsList.find(({ id }) => id === contextItem.id);
-
+	saveContextItem(contextItem: ContextItem, selectedId?: string) {
+		const context = this.contextsList.find(({ id }) => id === selectedId || id ===contextItem.id);
 		if (context) {
-			context.template = contextItem.template;
+			Object.keys(contextItem).forEach((key:any) => (context[key as keyof ContextItem] as any) = contextItem[key as keyof ContextItem]);
 		}
 		this.updateLocalStorage(this.contextsList);
 	}
@@ -123,12 +136,13 @@ class ContextStore {
 		}
 	}
 
-	addContextListener(contextType: string) {
+	addContextListener(contextType: string | undefined) {
 		try {
+			if( typeof contextType === "string") {
 			const listenerId = nanoid();
 
 			// TODO: remove window after fixing https://github.com/finos/FDC3/issues/435
-			const contactListener = window.fdc3.addContextListener(contextType === "all" ? null : contextType, (context) => {
+			const contactListener = window.fdc3.addContextListener(contextType.toLowerCase() === "all" ? null : contextType, (context) => {
 				const currentListener = this.contextListeners.find(({ id }) => id === listenerId);
 
 				runInAction(() => {
@@ -155,6 +169,16 @@ class ContextStore {
 				});
 				this.contextListeners.push({ id: listenerId, type: contextType, listener: contactListener });
 			});
+		}else {
+			runInAction(() => {
+				systemLogStore.addLog({
+					name: "addContextListener",
+					type: "error",
+					value: contextType,
+					variant: "code",
+				});
+			});
+		}
 		} catch (e) {
 			systemLogStore.addLog({
 				name: "addContextListener",
@@ -194,7 +218,7 @@ class ContextStore {
 		}
 	}
 
-	isContextListenerExists(type: string) {
+	isContextListenerExists(type: string | undefined) {
 		return !!this.contextListeners.find((listener) => listener.type === type);
 	}
 }

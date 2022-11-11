@@ -15,6 +15,7 @@ import { Channels } from "./components/Channels";
 import { Workbench } from "./components/Workbench/Workbench";
 import { ContextCreate } from "./components/ContextCreate";
 import { Intents } from "./components/Intents";
+import { AppChannels } from "./components/AppChannels";
 import snackbarStore from "./store/SnackbarStore";
 import "./App.css";
 import { fdc3Ready } from "@finos/fdc3";
@@ -132,6 +133,11 @@ const useStyles = makeStyles((theme: Theme) =>
 		code: {
 			fontFamily: "courier, courier new, serif",
 		},
+		workbench: {
+			[theme.breakpoints.down('sm')]: {
+				marginTop: '30px'
+			}
+		}
 	})
 );
 
@@ -197,7 +203,7 @@ export const App = observer(() => {
 				</Grid>
 				{fdc3Available ? (
 					<Grid className={classes.body} container spacing={2} item xs={12} style={{ marginLeft: "0px" }}>
-						<Grid item xs={8} style={{ flex: 1 }}>
+						<Grid item xs={12} md={8} style={{ flex: 1 }}>
 							<Paper className={classes.paper}>
 								<Tabs
 									value={tabIndex}
@@ -225,10 +231,13 @@ export const App = observer(() => {
 								<TabPanel value={tabIndex} index={2}>
 									<Channels handleTabChange={handleTabChange}/>
 								</TabPanel>
+								<TabPanel value={tabIndex} index={3}>
+									<AppChannels handleTabChange={handleTabChange}/>
+								</TabPanel>
 							</Paper>
 						</Grid>
 
-						<Grid item xs={4}>
+						<Grid item xs={12} md={4} className={classes.workbench}>
 							<Paper className={classes.paper}>
 								<Workbench />
 							</Paper>

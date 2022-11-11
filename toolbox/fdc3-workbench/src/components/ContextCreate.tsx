@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { Button, Grid, Typography, Tooltip, IconButton, Table, TableBody, TableRow, TableCell, TableContainer } from "@material-ui/core";
@@ -93,7 +93,7 @@ const useStyles: any = makeStyles((theme: Theme) =>
 	})
 );
 
-let emptyJson: ContextType = {
+const emptyJson: ContextType = {
 	type: "",
 	id: {}
 };
@@ -103,6 +103,7 @@ export const ContextCreate = observer(({contextName}: {contextName:string}) => {
 	const [templateName, setTemplateName] = useState<OptionType | null>({
 		title: contextName,
 		value: contextName});
+	const [duplicateName, setDuplicateName] = useState(false);
 	const [contextValue, setContextValue] = useState<ContextType | null>(emptyJson);
 	const [context, setContext] = useState<ContextItem | null>({
 		id: contextName || "empty",
@@ -110,9 +111,10 @@ export const ContextCreate = observer(({contextName}: {contextName:string}) => {
 		schemaUrl: new URL("https://fdc3.finos.org/schemas/1.2/context.schema.json"),
 	});
 	const [contextError, setContextError] = useState<string | false>(false);
-	const [open, setOpen] = React.useState(false);
+	const [open, setOpen] = useState(false);
 	const [deleteContext, setDeleteContext] = useState<object | null>(null);
 	const [disabled, setDisabled] = useState(true);
+	const gridRef = useRef<any>(null);
 	
 	const handleClickOpen = (id: string, name: any) => {
 		setOpen(true);
@@ -129,6 +131,7 @@ export const ContextCreate = observer(({contextName}: {contextName:string}) => {
 
 	const handleChangeTemplate = (newValue: any) => {
 		setTemplateName(newValue);
+
 		if (newValue?.value) {
 			const selectedContext = contextStore.contextsList.find(({ id }) => id === newValue?.value);
 			if (selectedContext) {
@@ -151,23 +154,14 @@ export const ContextCreate = observer(({contextName}: {contextName:string}) => {
 		setDisabled(false);
 		setContextError(false)
 		setTemplateName(newValue);
-		if(context && !found(newValue.value)){
-			const selectedContext = contextStore.contextsList.find(({ id }) => id === context.id);
-			if(selectedContext) {
-				selectedContext.id = newValue.value
-				setContext(selectedContext)
-			}
-		}
-		else if(found(newValue.value) >= 1) {
-			setDisabled(true);
-			setContextError("Template name already exists");
-		}
+
+		if(context && !found(newValue.value)) setDuplicateName(false);
+		else if(found(newValue.value) >= 1) setDuplicateName(true);
 	}
 
 	const handleContextChange = (json: ContextType) => {
 		setContextValue(json);
 		setContextError(false);
-		setDisabled(false);
 	};
 
 	const validate = () => {
@@ -195,16 +189,9 @@ export const ContextCreate = observer(({contextName}: {contextName:string}) => {
 	};
 
 	const handleCreateTemplate = () => {
-		if (context) {
-			setTemplateName(null)
-			const newContext: ContextItem = {
-				id: "empty",
-				template: emptyJson,
-				schemaUrl: new URL("https://fdc3.finos.org/schemas/1.2/context.schema.json"),
-			};
-			setContext(newContext);
-			setContextValue(emptyJson);
-		}
+		setTemplateName(null)
+		setContext(null);
+		setContextValue(null);
 		setDisabled(true);
 	};
 
@@ -212,18 +199,23 @@ export const ContextCreate = observer(({contextName}: {contextName:string}) => {
 		const isValid: boolean = validate();
 
 		if (isValid && context && templateName) {
-			const selectedContext = contextStore.contextsList.find(({ id }) => id === templateName.value);
-			if(!selectedContext) contextStore.addContextItem(context);
-			contextStore.saveContextItem({
-				id: context.id,
+			
+			const selectedContext = contextStore.contextsList.find(({ id }) => id === context.id);
+			const currContext = {
+				id: templateName.value,
 				schemaUrl: context.schemaUrl,
 				template: contextValue,
-			});
-			handleChangeTemplate({title: context.id, value: context.id})
+			}
+
+			if(!selectedContext) contextStore.addContextItem(currContext);
+
+			contextStore.saveContextItem(currContext, context.id);
+			handleChangeTemplate({title: currContext.id, value: currContext.id});
+
 			systemLogStore.addLog({
 				name: "saveTemplate",
 				type: "success",
-				value: context?.id,
+				value: currContext?.id,
 				variant: "text",
 			});
 		} else {
@@ -244,13 +236,16 @@ export const ContextCreate = observer(({contextName}: {contextName:string}) => {
 			const selectedContext = contextStore.contextsList.find(({ id }) => id === newValue.value);
 
 			if (selectedContext) {
+
 				const newContext: ContextItem = {
 					id: copyName,
 					template: selectedContext.template,
 					schemaUrl: selectedContext.schemaUrl,
 				};
+
 				contextStore.addContextItem(newContext);
 				contextStore.saveContextItem(newContext);
+
 				setContextValue(selectedContext.template);
 				setContext(newContext);
 				
@@ -293,6 +288,27 @@ export const ContextCreate = observer(({contextName}: {contextName:string}) => {
 		}
 	};
 
+	useEffect(() => {
+	  if(duplicateName) {
+		setDisabled(true);
+		setContextError("Template name already exists");
+	  }
+	  else setDisabled(false);
+	}, [duplicateName, contextValue])
+	
+	useEffect(() => {
+		if(gridRef && gridRef.current) gridRef.current.scrollIntoView({behavior: 'auto', block: 'nearest'});
+		if(context == null) {
+			const newContext: ContextItem = {
+				id: "empty",
+				template: emptyJson,
+				schemaUrl: new URL("https://fdc3.finos.org/schemas/1.2/context.schema.json"),
+			};
+			setContext(newContext);
+			setContextValue(emptyJson);
+		}
+	}, [context])
+
 	return (
 		<div className={classes.root}>
 			<DialogModal open={open} onClose={handleClose} onAgree={handleDeleteTemplate} selectedValue={deleteContext} />
@@ -304,16 +320,16 @@ export const ContextCreate = observer(({contextName}: {contextName:string}) => {
 					<Table>
 						<TableBody>
 							{contextStore.contextsList.map(({ id, template }, index) => (
-								<TableRow hover role="checkbox" tabIndex={-1} key={`row-${index}`} selected={id === templateName?.value}>
-									<TableCell key={`column-${index}`} align="left" onClick={() => handleChangeTemplate({title: id, value: id})}>
+								<TableRow hover role="checkbox" tabIndex={-1} key={`row-${index}`} selected={id === templateName?.value} ref={id === templateName?.value ? gridRef : null}>
+									<TableCell key={`row-${index}-column-0`} align="left" onClick={() => handleChangeTemplate({title: id, value: id})}>
 										<Typography variant="subtitle1" >
 											{id}
 										</Typography>
 									</TableCell>
-									<TableCell key={`column-${index}`} align="left" onClick={() => handleChangeTemplate({title: id, value: id})}>
+									<TableCell key={`row-${index}-column-1`} align="left" onClick={() => handleChangeTemplate({title: id, value: id})}>
 										<Typography variant="caption" >{template?.type}</Typography>
 									</TableCell>
-									<TableCell key={`column-${index}`} align="right">
+									<TableCell key={`row-${index}-column-2`} align="right">
 										<Tooltip title="Duplicate Template" aria-label="Copy code">
 											<IconButton
 												size="small"
@@ -324,7 +340,7 @@ export const ContextCreate = observer(({contextName}: {contextName:string}) => {
 											</IconButton>
 										</Tooltip>
 									</TableCell>
-									<TableCell key={`column-${index}`} align="right">
+									<TableCell key={`row-${index}-column-3`} align="right">
 										<Tooltip title="Delete template" aria-label="Delete template">
 											<IconButton
 												size="small"
@@ -369,7 +385,7 @@ export const ContextCreate = observer(({contextName}: {contextName:string}) => {
 								variant="outlined"
 								className={classes.textField}
 								placeholder="Choose Context Template"
-								value={templateName?.value || ' '}
+								value={templateName?.value || ''}
 								onChange={(e) => handleChangeTemplateName({title: e.target.value, value: e.target.value})}
 							/>
 						</Grid>

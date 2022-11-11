@@ -146,7 +146,7 @@ export const Channels = observer(({handleTabChange} : {handleTabChange:any}) => 
 
 			<form className={classes.form} noValidate autoComplete="off">
 				<Grid container spacing={1}>
-					<Grid item xs={12} sm={8}>
+					<Grid item xs={12} sm={9}>
 						<FormControl variant="outlined" className={classes.channelsSelect} size="small" error={isError}>
 							<InputLabel id="channel">Channel</InputLabel>
 							<Select
@@ -183,7 +183,7 @@ export const Channels = observer(({handleTabChange} : {handleTabChange:any}) => 
 							{isError && <FormHelperText>Select channel from list</FormHelperText>}
 						</FormControl>
 					</Grid>
-					<Grid item xs={12} sm={4} className={classes.centerChildren}>
+					<Grid item xs={12} sm={3} className={classes.centerChildren}>
 						<Grid container direction="row" justifyContent="flex-end" spacing={1}>
 							<Grid item className={classes.controls}>
 								<Button variant="contained" color="primary" onClick={handleJoinChannel}>
@@ -214,31 +214,35 @@ export const Channels = observer(({handleTabChange} : {handleTabChange:any}) => 
 			</Grid>
 
 			<Grid container direction="row" spacing={1}>
-					<Grid item sm={7}>
+					<Grid item sm={9}>
 						<ContextTemplates handleTabChange={handleTabChange} contextStateSetter={setBroadcastContext} />
 					</Grid>
-					<Grid item container className={classes.controls} sm={5} justifyContent="flex-end">
-						<Button
-							disabled={!broadcastContext}
-							variant="contained"
-							color="primary"
-							onClick={handleBroadcast}
-						>
-							Broadcast Context
-						</Button>
-
-						<Tooltip title="Copy code example" aria-label="Copy code example">
-							<IconButton
-								size="small"
-								aria-label="Copy code example"
-								color="primary"
-								onClick={copyToClipboard(codeExamples.broadcast, "broadcast")}
-							>
-								<FileCopyIcon />
-							</IconButton>
-						</Tooltip>
-					</Grid>
-
+					<Grid item sm={3} className={classes.centerChildren}>
+						<Grid container direction="row" justifyContent="flex-end" spacing={1}>
+							<Grid item className={classes.controls} >
+								<Button
+									disabled={!broadcastContext}
+									variant="contained"
+									color="primary"
+									onClick={handleBroadcast}
+								>
+									Broadcast Context
+								</Button>
+							</Grid>
+							<Grid item className={classes.controls} >
+								<Tooltip title="Copy code example" aria-label="Copy code example">
+									<IconButton
+										size="small"
+										aria-label="Copy code example"
+										color="primary"
+										onClick={copyToClipboard(codeExamples.broadcast, "broadcast")}
+									>
+										<FileCopyIcon />
+									</IconButton>
+								</Tooltip>
+							</Grid>
+						</Grid>
+					</Grid>				
 					<div className={classes.border}></div>
 
 					<ContextLinking />
