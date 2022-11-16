@@ -143,14 +143,13 @@ export const ContextCreate = observer(({contextName}: {contextName:string}) => {
 		setContextError(false);
 	};
 
-	const found = (tempName: string, ignoreUuid?: string) => {
-		return contextStore.contextsList.reduce((count, {id, uuid}) => {
+	const found = (tempName: string, ignoreUuid?: string) => 
+		contextStore.contextsList.reduce((count, {id, uuid}) => {
 			if(id === tempName && (!ignoreUuid || ignoreUuid !== uuid)) {
 				count = count + 1;
 			}
 			return count;
 		}, 0);
-	};
 
 	const handleChangeTemplateName = (newValue: any) => {
 		setDisabled(false);
