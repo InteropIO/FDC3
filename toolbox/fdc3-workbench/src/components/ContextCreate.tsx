@@ -143,19 +143,21 @@ export const ContextCreate = observer(({contextName}: {contextName:string}) => {
 		setContextError(false);
 	};
 
-	const found = (tempName: string) => (contextStore.contextsList.reduce((count, {id}) => {
-			if(id === tempName) {
+	const found = (tempName: string, ignoreUuid?: string) => {
+		return contextStore.contextsList.reduce((count, {id, uuid}) => {
+			if(id === tempName && (!ignoreUuid || ignoreUuid !== uuid)) {
 				count = count + 1;
 			}
 			return count;
-		}, 0));
+		}, 0);
+	};
 
 	const handleChangeTemplateName = (newValue: any) => {
 		setDisabled(false);
 		setContextError(false)
 		setTemplateName(newValue);
 
-		if(context && !found(newValue.value)) setDuplicateName(false);
+		if(context && !found(newValue.value, context.uuid)) setDuplicateName(false);
 		else if(found(newValue.value) >= 1) setDuplicateName(true);
 	}
 
