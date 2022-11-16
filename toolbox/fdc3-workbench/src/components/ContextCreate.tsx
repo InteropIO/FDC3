@@ -199,37 +199,39 @@ export const ContextCreate = observer(({contextName}: {contextName:string}) => {
 
 	const handleSaveTemplate = (e: FormEvent | null = null) => {
 		e?.preventDefault();
-		const isValid: boolean = validate();
+		if(!disabled) {
+			const isValid: boolean = validate();
 
-		if (isValid && context && templateName) {
-			
-			const selectedContext = contextStore.contextsList.find(({ id }) => id === context.id);
-			const currContext = {
-				id: templateName.value,
-				schemaUrl: context.schemaUrl,
-				template: contextValue,
+			if (isValid && context && templateName) {
+				
+				const selectedContext = contextStore.contextsList.find(({ id }) => id === context.id);
+				const currContext = {
+					id: templateName.value,
+					schemaUrl: context.schemaUrl,
+					template: contextValue,
+				}
+
+				if(!selectedContext) contextStore.addContextItem(currContext);
+
+				contextStore.saveContextItem(currContext, context.id);
+				handleChangeTemplate({title: currContext.id, value: currContext.id});
+
+				systemLogStore.addLog({
+					name: "saveTemplate",
+					type: "success",
+					value: currContext?.id,
+					variant: "text",
+				});
+			} else {
+				systemLogStore.addLog({
+					name: "saveTemplate",
+					type: "error",
+					value: undefined,
+					variant: "text",
+				});
 			}
-
-			if(!selectedContext) contextStore.addContextItem(currContext);
-
-			contextStore.saveContextItem(currContext, context.id);
-			handleChangeTemplate({title: currContext.id, value: currContext.id});
-
-			systemLogStore.addLog({
-				name: "saveTemplate",
-				type: "success",
-				value: currContext?.id,
-				variant: "text",
-			});
-		} else {
-			systemLogStore.addLog({
-				name: "saveTemplate",
-				type: "error",
-				value: undefined,
-				variant: "text",
-			});
+			setDisabled(true);
 		}
-		setDisabled(true);
 	};
 
 	const handleDuplicateTemplate = (newValue: any, count = 0) => {
