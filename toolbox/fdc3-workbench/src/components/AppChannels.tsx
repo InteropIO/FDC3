@@ -322,6 +322,12 @@ export const AppChannels = observer(({handleTabChange} : {handleTabChange:any}) 
                                                 helperText={channel.listenerError}
                                             />
                                         )}
+                                        onKeyDown={(event) => {
+                                            if (event.key === 'Enter') {
+                                              event.defaultPrevented = true;
+                                              handleAddContextListener(channel.id);
+                                            }
+                                          }}
                                     />
                                 </Grid>
 
