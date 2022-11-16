@@ -227,7 +227,7 @@ export const AppChannels = observer(({handleTabChange} : {handleTabChange:any}) 
 				<Typography variant="h5">Get Channel</Typography>
 			</Grid>
 
-            <form className={classes.form} noValidate autoComplete="off"onSubmit={(e) => handleGetorCreateChannel(e)}>
+            <form className={classes.form} noValidate autoComplete="off" onSubmit={(e) => handleGetorCreateChannel(e)}>
                 <Grid container direction="row" spacing={1}>
                     <Grid item className={classes.field}>
                         <TextField 
