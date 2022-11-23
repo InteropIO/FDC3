@@ -27,6 +27,9 @@ In any Desktop Agent bridging scenario, it is expected that each DA is being ope
 ## TODO list
 
 * Complete message exchange documentation for PrivateChannels
+* Add notes about flows for raiseIntentForContext and findIntentByContext
+* Add getAppMetadata to messages exchange
+* Add error details to the error handling
 * Expand on how the DAB should create the JWT token (and its claims, which must change to avoid replay attacks) which it sends out in the `hello` message for DAs to validate.
 * To create final PR:
   * Add new terms and acronyms to FDC3 glossary and ensure they are defined in this spec's introduction
@@ -74,14 +77,14 @@ As part of the Desktop Agent Bridging protocol, a bridge will implement "server"
 * Accepting connections from client Desktop Agents, receiving and authenticating credentials and assigning a name (for routing purposes)
 * Receiving requests from client Desktop Agents.
 * Routing requests to client Desktop Agents.
-* Receiving responses (and collating?) from client Desktop Agents.
+* Receiving responses from client Desktop Agents and collating them.
 * Routing responses to client Desktop Agents.
 
 A Desktop Agent will implement "client" behavior by:
 
 * Connecting to the bridge, providing authentication credentials and receiving an assigned named (for purposes)
 * Forwarding requests to the bridge.
-* Awaiting response(s) (and collating them?) from the bridge.
+* Awaiting response(s) from the bridge.
 * Receiving requests from the bridge.
 * Sending responses to the bridge.
 
@@ -341,7 +344,7 @@ Similarly, the Desktop Agent Bridge must process steps 3-6 of the connection pro
 
 #### Notification to users of connection events
 
-Desktop Agents SHOULD provide visual feedback to end users when they or other agents connect or disconnect from the Desktop Agent Bridge (i.e. whenever a `connectedAgentsUpdate` message is received). Doing so will ensure that the end user understands whether their apps and Desktop Agent can communicate with other apps running under other Desktop Agents, and can better attribute any issues with interoperability between them to the probable source.
+Desktop Agents SHOULD provide visual feedback to end users when they or other agents connect or disconnect from the Desktop Agent Bridge (i.e. whenever a `connectedAgentsUpdate` message is received, or a disconnection happens). Doing so will ensure that the end user understands whether their apps and Desktop Agent can communicate with other apps running under other Desktop Agents, and can better attribute any issues with interoperability between them to the probable source.
 
 ### Step 7. Disconnects
 
@@ -539,7 +542,7 @@ For example, a `raiseIntent` targeted at an app instance that no longer exists m
 
 For messages that target a specific agent, the Desktop Agent Bridge will augment the message with a `source` field and return it to the calling agent and the app that made the original request.
 
-However, API calls that require a collated response from all agents where at least one agent returns a successful response, will result in a successful response from the Desktop Agent Bridge (i.e. no `error` element should be included), with the agents returning errors listed in the `errorSources` array. This allows for successful exchanges on API calls such as `fdc3.raiseIntent` where some agents do not have options to return and would normally respond with (for example) `ResolveError.NoAppsFound`.
+However, API calls that require a collated response from all agents where at least one agent returns a successful response, will result in a successful response from the Desktop Agent Bridge (i.e. no `error` element should be included), with the agents returning errors listed in the `errorSources` array. This allows for successful exchanges on API calls such as `fdc3.findIntent` where some agents do not have options to return and would normally respond with (for example) `ResolveError.NoAppsFound`.
 
 Finally, to facilitate easier debugging, errors specific to Desktop Agent Bridge are added to those enumerations, including:
 
@@ -961,13 +964,13 @@ The bridge receives and collates the responses, producing the following collated
 ```
 
 :::note
-In the event that an agent times out or returns an error, where others respond, its `DesktopAgentIdentifier` should be added to the `meta.errorSources element` instead of `meta.sources`.
+In the event that an agent times out or returns an error, where others respond, its `DesktopAgentIdentifier` should be added to the `meta.errorSources` element instead of `meta.sources`.
 :::
 
 Finally, agent-A combines the data received from the bridge, with its own local response to produce the response to the requesting application:
 
 ```JSON
-// DAB -> agent-A
+// agent-A -> requesting App
 {
     "intent":  { "name": "StartChat", "displayName": "Chat" },
     "apps": [
@@ -1720,7 +1723,7 @@ The bridge receives and collates the responses, augmenting each appIdentifier wi
 ```
 
 :::note
-In the event that an agent times out or returns an error, where others respond, its `DesktopAgentIdentifier` should be added to the `meta.errorSources element` instead of `meta.sources`.
+In the event that an agent times out or returns an error, where others respond, its `DesktopAgentIdentifier` should be added to the `meta.errorSources` element instead of `meta.sources`.
 :::
 
 Finally, agent-A combines the data received from the bridge, with its own local response to produce the response to the requesting application:
