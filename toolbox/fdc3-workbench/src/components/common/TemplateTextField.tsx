@@ -1,7 +1,7 @@
-import { withStyles } from "@material-ui/core/styles";
-import { TextField } from "@material-ui/core";
+import { TextField } from "@mui/material";
+import { withStyles } from 'tss-react/mui';
 
-export const TemplateTextField = withStyles({
+export const TemplateTextField = withStyles(TextField, {
 	root: {
 		"& label.Mui-focused": {
 			color: "#0086bf",
@@ -21,4 +21,4 @@ export const TemplateTextField = withStyles({
 			},
 		},
 	},
-})(TextField);
+});

@@ -1,10 +1,10 @@
 import { makeObservable, observable, action } from "mobx";
-import { Color } from "@material-ui/lab/Alert";
+import { AlertColor } from "@mui/lab/Alert";
 import { nanoid } from "nanoid";
 
 interface SnackbarData {
 	message: string;
-	type: Color;
+	type: AlertColor;
 }
 
 interface SnackbarItem extends SnackbarData {

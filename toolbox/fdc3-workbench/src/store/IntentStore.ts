@@ -35,7 +35,7 @@ class IntentStore {
 		try {
 			const listenerId = nanoid();
 
-			const intentListener = fdc3.addIntentListener(intent, (context) => {
+			const intentListener = fdc3.addIntentListener(intent, (context: any) => {
 				const currentListener = this.intentListeners.find(({ id }) => id === listenerId);
 
 				runInAction(() => {

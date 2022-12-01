@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import { AppBar, Toolbar, Typography } from "@material-ui/core";
+import { createStyles, Theme } from "@mui/material/styles";
+import { AppBar, Toolbar, Typography } from "@mui/material";
 import * as fdc3 from "@finos/fdc3";
+import { makeStyles } from 'tss-react/mui';
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
+const useStyles = makeStyles()((theme: Theme) => {
+	return {
 		root: {
 			flexGrow: 1,
 		},
@@ -39,11 +40,12 @@ const useStyles = makeStyles((theme: Theme) =>
 			position: "absolute",
 			zIndex: -10,
 		},
-	})
-);
+	};	
+});
+
 
 export const Header = (props: { fdc3Available: boolean }) => {
-	const classes = useStyles();
+	const { classes } = useStyles();
 	const [appInfo, setAppInfo] = useState<fdc3.ImplementationMetadata>();
 
 	useEffect(() => {

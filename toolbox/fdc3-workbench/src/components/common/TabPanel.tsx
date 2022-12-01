@@ -1,22 +1,22 @@
 import React from "react";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-
+import { Theme } from "@mui/material/styles";
+import { makeStyles } from 'tss-react/mui';
 interface TabPanelProps {
 	children?: React.ReactNode;
 	index: any;
 	value: any;
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
+const useStyles = makeStyles()((theme: Theme) =>{
+	return {
 		tabPanel: {
 			padding: theme.spacing(2),
 		},
-	})
-);
+	};
+});
 
 export const TabPanel: React.FC<TabPanelProps> = (props: TabPanelProps) => {
-	const classes = useStyles();
+	const { classes } = useStyles();
 
 	const { children, value, index, ...other } = props;
 

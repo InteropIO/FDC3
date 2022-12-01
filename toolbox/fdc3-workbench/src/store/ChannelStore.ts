@@ -68,7 +68,7 @@ class ChannelStore {
 					body: JSON.stringify(e, null, 4),
 				});
 			}
-		}).catch((reason) => {
+		}).catch((reason: any) => {
 			systemLogStore.addLog({
 				name: "getFdc3",
 				type: "error",

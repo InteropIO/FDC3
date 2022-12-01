@@ -1,12 +1,13 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { TextField } from "@material-ui/core";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { TextField } from "@mui/material";
+import { createStyles, Theme } from "@mui/material/styles";
 import { AccordionContent } from "../common/AccordionContent";
 import contextStore from "../../store/ContextStore";
+import { makeStyles } from 'tss-react/mui';
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
+const useStyles = makeStyles()((theme: Theme) => {
+	return {
 		textField: {
 			marginTop: theme.spacing(2),
 			width: "100%",
@@ -18,11 +19,11 @@ const useStyles = makeStyles((theme: Theme) =>
 		"& .Mui-disabled": {
 			borderColor: theme.palette.text.primary,
 		},
-	})
-);
+	};
+});
 
 export const CurrentContext = observer(() => {
-	const classes = useStyles();
+	const { classes } = useStyles();
 	const context = JSON.stringify(contextStore.currentContext, undefined, 4);
 
 	return (

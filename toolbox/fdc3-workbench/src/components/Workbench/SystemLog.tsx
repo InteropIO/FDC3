@@ -1,20 +1,20 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { List } from "@material-ui/core";
+import { List } from "@mui/material";
 import systemLogStore from "../../store/SystemLogStore";
 import { SystemLogItem } from "./SystemLogItem";
+import { makeStyles } from 'tss-react/mui';
 
-const useStyles = makeStyles(() =>
-	createStyles({
+const useStyles = makeStyles()(() => {
+	return {
 		root: {
 			width: "100%",
 		},
-	})
-);
+	};
+});
 
 export const SystemLog = observer(() => {
-	const classes = useStyles();
+	const { classes } = useStyles();
 
 	return (
 		<List component="nav" className={classes.root} aria-label="mailbox folders">

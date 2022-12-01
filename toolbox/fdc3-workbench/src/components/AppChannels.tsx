@@ -1,18 +1,19 @@
 import React, { FormEvent, useState } from "react";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import { Button, IconButton, Tooltip, Typography, Grid, TextField } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import { Button, IconButton, Tooltip, Typography, Grid, TextField } from "@mui/material";
 import { observer } from "mobx-react";
-import FileCopyIcon from "@material-ui/icons/FileCopy";
-import Autocomplete, { createFilterOptions } from "@material-ui/lab/Autocomplete";
+import FileCopyIcon from "@mui/icons-material/FileCopy";
+import Autocomplete, { createFilterOptions } from "@mui/lab/Autocomplete";
 import contextStore, { ContextType } from "../store/ContextStore";
 import appChannelStore from "../store/AppChannelStore";
 import { codeExamples } from "../fixtures/codeExamples";
 import { TemplateTextField } from "./common/TemplateTextField";
 import { copyToClipboard } from "./common/CopyToClipboard";
 import { ContextTemplates } from "./ContextTemplates";
+import { makeStyles } from 'tss-react/mui';
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
+const useStyles = makeStyles()((theme: Theme) => {
+	return {
 		root: {
 			flexGrow: 1,
 		},
@@ -90,9 +91,8 @@ const useStyles = makeStyles((theme: Theme) =>
         rightPadding: {
             paddingRight: theme.spacing(.5),
         },
-	})
-);
-
+	};
+});
 interface ListenerOptionType {
 	title: string;
 	value: string;
@@ -107,7 +107,7 @@ interface FilterOptionsState<T> {
 const listenerFilter = createFilterOptions<ListenerOptionType>();
 
 export const AppChannels = observer(({handleTabChange} : {handleTabChange:any}) => {
-    const classes = useStyles();
+    const { classes } = useStyles();
     const [render, setRender] = useState<boolean>(false);
     const [currentAppChannelId, setCurrentAppChannelId] = useState<string>("");
     const contextListenersOptionsAll: ListenerOptionType[] = contextStore.contextsList.map(({ id, template }) => {
@@ -312,7 +312,7 @@ export const AppChannels = observer(({handleTabChange} : {handleTabChange:any}) 
                                         filterOptions={filterOptions}
                                         options={contextListenersOptions}
                                         getOptionLabel={getOptionLabel}
-                                        renderOption={(option) => option.type}
+                                        renderOption={(props, option) => option.type}
                                         renderInput={(params) => (
                                             <TemplateTextField
                                                 label="CONTEXT TYPE"

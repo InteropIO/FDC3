@@ -1,19 +1,20 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import { Tooltip } from "@material-ui/core";
-import InfoIcon from '@material-ui/icons/Info';
-import { Tabs, Tab } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import { createStyles, Tooltip } from "@mui/material";
+import InfoIcon from '@mui/icons-material/Info';
+import { Tabs, Tab } from "@mui/material";
 import { TabPanel } from "../common/TabPanel";
 import { ContextListeners } from "./ContextListeners";
 import { IntentListeners } from "./IntentListeners";
 import { AppChannelListeners } from "./AppChannelListeners";
 import { SystemLog } from "./SystemLog";
+import { makeStyles } from 'tss-react/mui';
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		'@global': {
-			".MuiTab-wrapper": {
+const useStyles = makeStyles()((theme: Theme) => {
+	return {
+		[`@global`]: {
+			[`.MuiTab-wrapper`]: {
 				flexDirection: "row !important"
 			}
 		},
@@ -23,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
 		paper: {
 			marginTop: theme.spacing(2),
 			padding: theme.spacing(2),
-			"&:first-child": {
+			[`&:first-child`]: {
 				marginTop: 0,
 			},
 		},
@@ -45,8 +46,9 @@ const useStyles = makeStyles((theme: Theme) =>
 			fontSize: "15px",
 			marginRight: "3px"
 		},
-	})
-);
+	}
+
+});
 
 const a11yProps = (index: any) => {
 	return {
@@ -56,7 +58,7 @@ const a11yProps = (index: any) => {
 };
 
 export const Workbench = observer(() => {
-	const classes = useStyles();
+	const { classes } = useStyles();
 	const [tabValue, setTabValue] = useState<number>(0);
 
 	const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {

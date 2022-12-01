@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import JSONEditor, { JSONEditorOptions, ParseError, SchemaValidationError } from "jsoneditor";
 import "jsoneditor/dist/jsoneditor.css";
 import $RefParser from "@apidevtools/json-schema-ref-parser";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import { makeStyles } from 'tss-react/mui';
 
 interface JsonInputProps {
 	json?: object | null;
@@ -14,8 +15,8 @@ interface JsonInputProps {
 	error?: string | false;
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
+const useStyles = makeStyles()((theme: Theme) => {
+	return {
 		root: {
 			position: "relative",
 			flexGrow: 1,
@@ -46,11 +47,11 @@ const useStyles = makeStyles((theme: Theme) =>
 			backgroundColor: "#fff",
 			color: theme.palette.error.main,
 		},
-	})
-);
+	};
+});
 
 export const JsonInput: React.FC<JsonInputProps> = (props: JsonInputProps) => {
-	const classes = useStyles();
+	const { classes } = useStyles();
 	const [jsoneditor, setJsoneditor] = useState<JSONEditor>();
 	const container = useRef<HTMLDivElement>(null);
 	const initialSettings: JSONEditorOptions = {

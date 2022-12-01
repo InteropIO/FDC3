@@ -2,11 +2,12 @@ import React from "react";
 import { observer } from "mobx-react";
 import appChannelStore from "../../store/AppChannelStore";
 import { AccordionList, AccordionListItem } from "../common/AccordionList";
-import { TextField } from "@material-ui/core";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { TextField } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import { makeStyles } from 'tss-react/mui';
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
+const useStyles = makeStyles()((theme: Theme) => {
+	return {
 		textField: {
 			marginTop: theme.spacing(2),
 			width: "100%",
@@ -14,11 +15,11 @@ const useStyles = makeStyles((theme: Theme) =>
 		input: {
 			fontSize: "14px",
 		},
-	})
-);
+	};
+});
 
 export const AppChannelListeners = observer(() => {
-	const classes = useStyles();
+	const { classes } = useStyles();
 
 	let contextListeners: AccordionListItem[] = [];
     

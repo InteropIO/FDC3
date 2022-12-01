@@ -1,15 +1,16 @@
 import React, { FormEvent, useState } from "react";
 import { observer } from "mobx-react";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import { Typography, Grid, Button, IconButton, Tooltip } from "@material-ui/core";
+import { createStyles, Theme } from "@mui/material/styles";
+import { Typography, Grid, Button, IconButton, Tooltip } from "@mui/material";
 import { codeExamples } from "../fixtures/codeExamples";
-import FileCopyIcon from "@material-ui/icons/FileCopy";
-import Autocomplete, { createFilterOptions } from "@material-ui/lab/Autocomplete";
+import FileCopyIcon from "@mui/icons-material/FileCopy";
+import Autocomplete, { createFilterOptions } from "@mui/lab/Autocomplete";
 import contextStore from "../store/ContextStore";
 import { TemplateTextField } from "./common/TemplateTextField";
 import { copyToClipboard } from "./common/CopyToClipboard";
+import { makeStyles } from 'tss-react/mui';
 
-// interface copied from lib @material-ui/lab/Autocomplete
+// interface copied from lib @mui/lab/Autocomplete
 interface FilterOptionsState<T> {
 	inputValue: string;
 	getOptionLabel: (option: T) => string;
@@ -25,8 +26,8 @@ type ListenerSetValue = (value: ListenerOptionType | null) => void;
 
 type ListenerSetError = (error: string | false) => void;
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
+const useStyles = makeStyles()((theme: Theme) => {
+	return {
 		root: {
 			flexGrow: 1,
 		},
@@ -57,13 +58,13 @@ const useStyles = makeStyles((theme: Theme) =>
 			flexDirection: "row",
 			justifyContent: "flex-end",
 		},
-	})
-);
+	};
+});
 
 const listenerFilter = createFilterOptions<ListenerOptionType>();
 
 export const ContextLinking = observer(() => {
-	const classes = useStyles();
+	const { classes } = useStyles();
 	const [contextListener, setContextListener] = useState<ListenerOptionType | null>(null);
 	const [contextError, setContextError] = useState<string | false>(false);
 	const contextListenersOptionsAll: ListenerOptionType[] = contextStore.contextsList.map(({ id, template }) => {
@@ -163,7 +164,7 @@ export const ContextLinking = observer(() => {
 							filterOptions={filterOptions}
 							options={contextListenersOptions}
 							getOptionLabel={getOptionLabel}
-							renderOption={(option) => option.type}
+							renderOption={(props, option) => option.type}
 							renderInput={(params) => (
 								<TemplateTextField
 									label="CONTEXT TYPE"

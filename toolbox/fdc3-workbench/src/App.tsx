@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import { Grid, Paper, Tabs, Tab, Typography, Link } from "@material-ui/core";
+import { Theme, createTheme } from "@mui/material/styles";
+import { Grid, Paper, Tabs, Tab, Typography, Link } from "@mui/material";
 import { observer } from "mobx-react";
-import { ThemeProvider } from "@material-ui/styles";
-import { createTheme } from "@material-ui/core/styles";
-import Snackbar from "@material-ui/core/Snackbar";
-import Alert from "@material-ui/lab/Alert";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/lab/Alert";
 import "normalize.css";
 import "@fontsource/roboto";
 import "@fontsource/source-code-pro";
@@ -18,6 +16,8 @@ import { Intents } from "./components/Intents";
 import { AppChannels } from "./components/AppChannels";
 import snackbarStore from "./store/SnackbarStore";
 import "./App.css";
+import { ThemeProvider } from '@emotion/react';
+import { makeStyles } from 'tss-react/mui';
 import { fdc3Ready } from "@finos/fdc3";
 
 const mainTheme = createTheme({
@@ -29,9 +29,11 @@ const mainTheme = createTheme({
 			contrastText: "#fff",
 		},
 	},
-	props: {
+	components: {
 		MuiLink: {
-			underline: "hover"
+			defaultProps: {
+				underline: "hover"
+			}
 		}
 	}
 });
@@ -58,8 +60,8 @@ mainTheme.typography.body1 = {
 	marginBlockEnd: "10px",
 };
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
+const useStyles = makeStyles() ((theme: Theme) => {
+	return {
 		"@global": {
 			".MuiFormHelperText-contained.Mui-error": {
 				position: "absolute",
@@ -138,8 +140,9 @@ const useStyles = makeStyles((theme: Theme) =>
 				marginTop: '30px'
 			}
 		}
-	})
-);
+
+	}
+});
 
 const openAPIDocs = (event: React.MouseEvent<HTMLElement>) => {
 	event.preventDefault();
@@ -160,7 +163,7 @@ const openSupportedPlatformsDocs = (event: React.MouseEvent<HTMLElement>) => {
 };
 
 export const App = observer(() => {
-	const classes = useStyles();
+	const { classes } = useStyles();
 	const [fdc3Available, setFdc3Available] = useState(false);
 	const [openSnackbar, setOpenSnackbar] = useState(false);
 	const [tabIndex, setTabIndex] = useState(0);
@@ -296,7 +299,7 @@ export const App = observer(() => {
 				</Grid>
 			</Grid>
 
-			<Snackbar key={snackbarStore.snackbarData?.id} open={openSnackbar} autoHideDuration={4000} onClose={handleClose}>
+			<Snackbar key={snackbarStore.snackbarData?.id} open={openSnackbar} autoHideDuration={4000} onClose={() => handleClose}>
 				<Alert elevation={6} variant="filled" onClose={handleClose} severity={snackbarStore.snackbarData?.type}>
 					{snackbarStore.snackbarData?.message}
 				</Alert>

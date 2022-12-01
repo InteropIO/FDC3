@@ -11,18 +11,19 @@ import {
 	IconButton,
 	Tooltip,
 	Grid,
-} from "@material-ui/core";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import FileCopyIcon from "@material-ui/icons/FileCopy";
+} from "@mui/material";
+import { createStyles, Theme } from "@mui/material/styles";
+import FileCopyIcon from "@mui/icons-material/FileCopy";
 import channelStore from "../store/ChannelStore";
 import { codeExamples } from "../fixtures/codeExamples";
 import { copyToClipboard } from "./common/CopyToClipboard";
 import { ContextLinking } from "./ContextLinking";
 import contextStore, { ContextType } from "../store/ContextStore";
 import { ContextTemplates } from "./ContextTemplates";
+import { makeStyles } from 'tss-react/mui';
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
+const useStyles = makeStyles()((theme: Theme) => {
+	return {
 		root: {
 			flexGrow: 1,
 		},
@@ -63,11 +64,11 @@ const useStyles = makeStyles((theme: Theme) =>
 			display: "flex",
 			alignItems: "center",
 		},
-	})
-);
+	};
+});
 
 export const Channels = observer(({handleTabChange} : {handleTabChange:any}) => {
-	const classes = useStyles();
+	const { classes } = useStyles();
 	const [channelId, setChannelId] = useState<string>("");
 	const [isError, setIsError] = useState<boolean>(false);
 	const [broadcastContext, setBroadcastContext] = useState<ContextType | null>(null)
@@ -153,7 +154,7 @@ export const Channels = observer(({handleTabChange} : {handleTabChange:any}) => 
 								labelId="channel"
 								id="channel-select"
 								value={channelId ?? ""}
-								onChange={handleSelectChange}
+								onChange={()=>handleSelectChange}
 								label="Channel"
 								MenuProps={{
 									anchorOrigin: {
@@ -164,7 +165,6 @@ export const Channels = observer(({handleTabChange} : {handleTabChange:any}) => 
 										vertical: "top",
 										horizontal: "left",
 									},
-									getContentAnchorEl: null,
 								}}
 							>
 								{!channelStore.systemChannels.length && (

@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import { Grid } from "@material-ui/core";
-import Autocomplete, { createFilterOptions } from "@material-ui/lab/Autocomplete";
+import { createStyles, Theme } from "@mui/material/styles";
+import { Grid } from "@mui/material";
+import Autocomplete, { createFilterOptions } from "@mui/lab/Autocomplete";
 import contextStore from "../store/ContextStore";
 import { TemplateTextField } from "./common/TemplateTextField";
+import { makeStyles } from 'tss-react/mui';
 
 interface FilterOptionsState<T> {
 	inputValue: string;
@@ -20,8 +21,8 @@ type SetValue = (value: OptionType | null) => void;
 
 type SetError = (error: string | false) => void;
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
+const useStyles = makeStyles()((theme: Theme) => {
+	return {
 		root: {
 			flexGrow: 1,
 		},
@@ -50,13 +51,13 @@ const useStyles = makeStyles((theme: Theme) =>
 			cursor: "pointer",
 			color: "black"
 		}
-	})
-);
+	};
+});
 
 const contextFilter = createFilterOptions<OptionType>();
 
 export const ContextTemplates = observer(({handleTabChange, contextStateSetter, channel} : {handleTabChange:any, contextStateSetter:any, channel?: any}) => {	
-	const classes = useStyles();
+	const { classes } = useStyles();
 	const [context, setContext] = useState<OptionType | null>(null);
 	const [contextError, setContextError] = useState<string | false>(false);
 	const contextsOptions: OptionType[] = contextStore.contextsList.map(({ id }) => {
@@ -133,7 +134,7 @@ export const ContextTemplates = observer(({handleTabChange, contextStateSetter, 
 						handleHomeEndKeys
 						value={context}
 						onChange={handleChange(setContext, setContextError)}
-						getOptionSelected={(option, value) => option.value === value.value}
+						isOptionEqualToValue={(option, value) => option.value === value.value}
 						filterOptions={filterOptions}
 						options={contextsOptions}
 						getOptionLabel={getOptionLabel}

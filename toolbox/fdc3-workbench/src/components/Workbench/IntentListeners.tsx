@@ -2,11 +2,12 @@ import React from "react";
 import { observer } from "mobx-react";
 import intentStore from "../../store/IntentStore";
 import { AccordionList, AccordionListItem } from "../common/AccordionList";
-import { TextField } from "@material-ui/core";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { TextField } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import { makeStyles } from 'tss-react/mui';
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
+const useStyles = makeStyles()((theme: Theme) => {
+	return {
 		textField: {
 			marginTop: theme.spacing(2),
 			width: "100%",
@@ -18,11 +19,11 @@ const useStyles = makeStyles((theme: Theme) =>
 		"& .Mui-disabled": {
 			borderColor: theme.palette.text.primary,
 		},
-	})
-);
+	};
+});
 
 export const IntentListeners = observer(() => {
-	const classes = useStyles();
+	const { classes } = useStyles();
 	const intentListeners: AccordionListItem[] = intentStore.intentListeners.map(({ id, type, lastReceivedContext }) => {
 		const receivedContextListenerValue = lastReceivedContext ? JSON.stringify(lastReceivedContext, undefined, 4) : "";
 

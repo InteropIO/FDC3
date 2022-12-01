@@ -1,25 +1,26 @@
 import React, { useEffect, useState, useRef, FormEvent } from "react";
 import { observer } from "mobx-react";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import { Button, Grid, Typography, Tooltip, IconButton, Table, TableBody, TableRow, TableCell, TableContainer } from "@material-ui/core";
-import FileCopyIcon from "@material-ui/icons/FileCopy";
-import FileCopyOutlinedIcon from "@material-ui/icons/FileCopyOutlined";
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
+import { createStyles, Theme } from "@mui/material/styles";
+import { Button, Grid, Typography, Tooltip, IconButton, Table, TableBody, TableRow, TableCell, TableContainer } from "@mui/material";
+import FileCopyIcon from "@mui/icons-material/FileCopy";
+import FileCopyOutlinedIcon from "@mui/icons-material/FileCopyOutlined";
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import contextStore, { ContextType, ContextItem } from "../store/ContextStore";
 import systemLogStore from "../store/SystemLogStore";
 import { JsonInput } from "./common/JsonInput";
 import { DialogModal } from "./common/DialogModal";
 import { TemplateTextField } from "./common/TemplateTextField";
 import { copyToClipboard } from "./common/CopyToClipboard";
+import { makeStyles } from 'tss-react/mui';
 
 interface OptionType {
 	title: string;
 	value: string;
 }
 
-const useStyles: any = makeStyles((theme: Theme) =>
-	createStyles({
-		root: {
+const useStyles: any = makeStyles()((theme: Theme) => {
+	return {
+	root: {
 			flexGrow: 1,
 		},
 		form: {
@@ -90,8 +91,9 @@ const useStyles: any = makeStyles((theme: Theme) =>
 		tableContainer: {
 			maxHeight: 350
 		}
-	})
-);
+	};
+});
+
 
 const emptyJson: ContextType = {
 	type: "",
@@ -99,7 +101,7 @@ const emptyJson: ContextType = {
 };
 
 export const ContextCreate = observer(({contextName}: {contextName:string}) => {
-	const classes = useStyles();
+	const { classes } = useStyles();
 	const [templateName, setTemplateName] = useState<OptionType | null>({
 		title: contextName,
 		value: contextName});
@@ -392,7 +394,7 @@ export const ContextCreate = observer(({contextName}: {contextName:string}) => {
 								className={classes.textField}
 								placeholder="Choose Context Template"
 								value={templateName?.value || ''}
-								onChange={(e) => handleChangeTemplateName({title: e.target.value, value: e.target.value})}
+								onChange={(e: any) => handleChangeTemplateName({title: e.target.value, value: e.target.value})}
 							/>
 						</Grid>
 					</Grid>

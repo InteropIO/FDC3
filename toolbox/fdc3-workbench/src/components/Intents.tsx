@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import * as fdc3 from "@finos/fdc3";
 import { toJS } from "mobx";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { createStyles, Theme } from "@mui/material/styles";
 import {
 	Button,
 	IconButton,
@@ -12,18 +12,19 @@ import {
 	InputLabel,
 	MenuItem,
 	Select,
-} from "@material-ui/core";
+} from "@mui/material";
 import { observer } from "mobx-react";
-import FileCopyIcon from "@material-ui/icons/FileCopy";
-import Autocomplete, { createFilterOptions } from "@material-ui/lab/Autocomplete";
+import FileCopyIcon from "@mui/icons-material/FileCopy";
+import Autocomplete, { createFilterOptions } from "@mui/lab/Autocomplete";
 import { ContextTemplates } from "../components/ContextTemplates";
 import intentStore from "../store/IntentStore";
 import { codeExamples } from "../fixtures/codeExamples";
 import { TemplateTextField } from "./common/TemplateTextField";
 import { copyToClipboard } from "./common/CopyToClipboard";
 import { AppIntent, AppMetadata, Context } from "@finos/fdc3";
+import { makeStyles } from 'tss-react/mui';
 
-// interface copied from lib @material-ui/lab/Autocomplete
+// interface copied from lib @mui/lab/Autocomplete
 interface FilterOptionsState<T> {
 	inputValue: string;
 	getOptionLabel: (option: T) => string;
@@ -38,8 +39,8 @@ type ListenerSetValue = (value: ListenerOptionType | null) => void;
 
 type ListenerSetError = (error: string | false) => void;
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
+const useStyles = makeStyles()((theme: Theme) => {
+	return {
 		root: {
 			flexGrow: 1,
 		},
@@ -119,13 +120,14 @@ const useStyles = makeStyles((theme: Theme) =>
 		rightPadding: {
 			paddingRight: theme.spacing(0.5),
 		},
-	})
-);
+	};
+
+});
 
 const filter = createFilterOptions<ListenerOptionType>();
 
 export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) => {
-	const classes = useStyles();
+	const { classes } = useStyles();
 	const [intentValue, setIntentValue] = useState<ListenerOptionType | null>(null);
 	const [raiseIntentError, setRaiseIntentError] = useState<string | false>(false);
 	const [intentListener, setIntentListener] = useState<ListenerOptionType | null>(null);
@@ -274,8 +276,8 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 				}
 
 				let pairObject: any[] = [];
-				appIntentsForContext.forEach((intent) => {
-					intent?.apps.forEach((app) => {
+				appIntentsForContext.forEach((intent: any) => {
+					intent?.apps.forEach((app: any) => {
 						pairObject.push({
 							name: `${app.appId || app.name} - ${intent.intent.name}`,
 							app,
@@ -331,7 +333,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 										labelId="intent-target-app"
 										id="intent-target-app-select"
 										value={targetApp ?? ""}
-										onChange={handleTargetChange}
+										onChange={(e) => handleTargetChange}
 										label="Target (optional)"
 										MenuProps={{
 											anchorOrigin: {
@@ -342,7 +344,6 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 												vertical: "top",
 												horizontal: "left",
 											},
-											getContentAnchorEl: null,
 										}}
 									>
 										{!intentTargets?.length && (
@@ -401,7 +402,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 										labelId="intent-context-target-app"
 										id="intent-context-target-app-select"
 										value={contextTargetApp ?? ""}
-										onChange={handleContextTargetChange}
+										onChange={(e) => handleContextTargetChange}
 										label="Target (optional)"
 										MenuProps={{
 											anchorOrigin: {
@@ -412,7 +413,6 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 												vertical: "top",
 												horizontal: "left",
 											},
-											getContentAnchorEl: null,
 										}}
 									>
 										{!contextIntentObjects?.length && (

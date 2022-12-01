@@ -1,15 +1,16 @@
 import React from "react";
-import { ListItem, TextField, Typography } from "@material-ui/core";
+import { ListItem, TextField, Typography } from "@mui/material";
 import { LogItem } from "../../store/SystemLogStore";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import { makeStyles } from 'tss-react/mui';
 
 interface SystemLogItemProps {
 	logItem: LogItem;
 }
 
 const useStyles = (props: SystemLogItemProps) =>
-	makeStyles((theme: Theme) =>
-		createStyles({
+	makeStyles()((theme: Theme) =>{
+		return {
 			root: {
 				flexDirection: "column",
 				justifyContent: "flex-start",
@@ -32,12 +33,12 @@ const useStyles = (props: SystemLogItemProps) =>
 			"& .Mui-disabled": {
 				borderColor: theme.palette.text.primary,
 			},
-		})
-	);
+		};
+	});
 
 export const SystemLogItem: React.FC<SystemLogItemProps> = (props: SystemLogItemProps) => {
 	const { logItem } = props;
-	const classes = useStyles(props)();
+	const { classes } = useStyles(props)();
 
 	return (
 		<ListItem className={classes.root} divider>

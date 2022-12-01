@@ -1,9 +1,10 @@
 import React from "react";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@material-ui/core";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { Tooltip } from "@material-ui/core";
-import InfoIcon from '@material-ui/icons/Info';
+import { Theme } from "@mui/material/styles";
+import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Tooltip } from "@mui/material";
+import InfoIcon from '@mui/icons-material/Info';
+import { makeStyles } from 'tss-react/mui';
 
 export interface AccordionContentProps {
 	title: string;
@@ -11,8 +12,8 @@ export interface AccordionContentProps {
 	icon?: string;
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
+const useStyles = makeStyles()((theme: Theme) => {
+	return {
 		accordion: {
 			margin: theme.spacing(1, 0, 0, 0),
 			boxShadow: "none",
@@ -57,11 +58,11 @@ const useStyles = makeStyles((theme: Theme) =>
 			fontSize: "15px",
 			marginLeft: "5px"
 		}
-	})
-);
+	};
+});
 
 export const AccordionContent: React.FC<AccordionContentProps> = ({ icon, title, children }: AccordionContentProps) => {
-	const classes = useStyles();
+	const { classes } = useStyles();
 
 	return (
 		<Accordion className={classes.accordion} defaultExpanded>

@@ -1,8 +1,9 @@
 import React from "react";
-import { List, ListItem, ListItemText, Typography, ListItemSecondaryAction, IconButton } from "@material-ui/core";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { List, ListItem, ListItemText, Typography, ListItemSecondaryAction, IconButton } from "@mui/material";
+import { Theme } from "@mui/material/styles";
 import { AccordionContent } from "./AccordionContent";
-import DeleteIcon from "@material-ui/icons/Delete";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { makeStyles } from 'tss-react/mui';
 
 export interface AccordionListItem {
 	id: string;
@@ -18,8 +19,8 @@ export interface AccordionListProps {
 	onDelete?: (id: string) => void;
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
+const useStyles = makeStyles()((theme: Theme) => {
+	return {
 		list: {
 			padding: 0,
 			width: "100%",
@@ -34,8 +35,8 @@ const useStyles = makeStyles((theme: Theme) =>
 			top: "2px",
 			transform: "none",
 		},
-	})
-);
+	};
+});
 
 export const AccordionList: React.FC<AccordionListProps> = ({
 	title,
@@ -44,7 +45,7 @@ export const AccordionList: React.FC<AccordionListProps> = ({
 	noItemsText,
 	onDelete,
 }: AccordionListProps) => {
-	const classes = useStyles();
+	const { classes } = useStyles();
 
 	const handleDelete = (id: string) => () => {
 		if (onDelete) {

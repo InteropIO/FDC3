@@ -178,7 +178,7 @@ class AppChannelStore {
 
             if (!foundListener && currentChannel && newListener !== undefined) {
                 const listenerId = nanoid();
-                const contactListener = currentChannel.channel.addContextListener(newListener?.toLowerCase() === "all" ? null : newListener, (context) => {
+                const contactListener = currentChannel.channel.addContextListener(newListener?.toLowerCase() === "all" ? null : newListener, (context: any) => {
                     const currentListener = this.appChannelListeners.find((listener)=>listener.type === newListener && listener.channelId === channelId);
 
                     runInAction(() => {
