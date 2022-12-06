@@ -12,6 +12,8 @@ import {
 	InputLabel,
 	MenuItem,
 	Select,
+	Radio,
+	TextField,
 } from "@material-ui/core";
 import { observer } from "mobx-react";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
@@ -22,6 +24,11 @@ import { codeExamples } from "../fixtures/codeExamples";
 import { TemplateTextField } from "./common/TemplateTextField";
 import { copyToClipboard } from "./common/CopyToClipboard";
 import { IntentResolutionField } from "./IntentResolutionField";
+import { Checkbox } from "@material-ui/core";
+import { FormGroup } from "@material-ui/core";
+import { FormControlLabel } from "@material-ui/core";
+import { RadioGroup } from "@material-ui/core";
+import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 
 // interface copied from lib @material-ui/lab/Autocomplete
 interface FilterOptionsState<T> {
@@ -119,6 +126,23 @@ const useStyles = makeStyles((theme: Theme) =>
 		rightPadding: {
 			paddingRight: theme.spacing(0.5),
 		},
+		input: {
+            color: "#0086bf",
+			outline: "1px",
+			'&.Mui-checked': {
+				color: "#0086bf",
+			}
+
+        },
+		toggle: {
+			'&.Mui-selected': {
+				color: "#0086bf",
+				backgroundColor: "rgba(0, 134, 191, 0.21)",
+			}
+		},
+		indentLeft: {
+			marginLeft: "30px",
+		}
 	})
 );
 
@@ -136,11 +160,18 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 	const [intentObjects, setIntentObjects] = useState<AppIntent[] | null>(null);
 	const [contextIntentObjects, setContextIntentObjects] = useState<any[] | null>(null);
 	const [raiseIntentContext, setRaiseIntentContext] = useState<Context | null>(null);
+	const [resultTypeContext, setResultTypeContext] = useState<Context | null>(null);
+	const [resultOverChannelContext, setResultOverChannelContext] = useState<Context | null>(null);
 	const [raiseIntentWithContextContext, setRaiseIntentWithContextContext] = useState<Context | null>(null);
 	const [intentError, setIntentError] = useState<string | false>(false);
 	const [intentResolution, setIntentResolution] = useState<IntentResolution | undefined>()
 	const intentListenersOptions: ListenerOptionType[] = intentStore.intentsList;
-
+	const [sendIntentResult, setSendIntentResult] = useState<boolean | undefined>(false);
+	const [resultType, setResultType] = useState<string | null>(null);
+	const [channelType, setChannelType] = useState<string | null>("app-channel");
+	const [sendResultOverChannel, setSendResultOverChannel] = useState<boolean | undefined>(false);
+	const [currentAppChannelId, setCurrentAppChannelId] = useState<string>("");
+	
 	const handleRaiseIntent = async () => {
 		if (!intentValue) {
 			setRaiseIntentError("enter intent name");
@@ -170,6 +201,10 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 			intentStore.raiseIntentForContext(raiseIntentWithContextContext);
 		}	
 	};
+
+	const handleChannelTypeChange = (event: React.MouseEvent<HTMLElement>, nextView: string) => {
+		setChannelType(nextView);
+	  };
 
 	const handleTargetChange = (event: React.ChangeEvent<{ value: unknown }>) => {
 		if (event.target.value === "None") {
@@ -222,12 +257,18 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 	};
 
 	const handleAddIntentListener = () => {
-		if (intentListener) {
-			intentStore.addIntentListener(intentListener.value);
-			setIntentListener(null);
-		} else {
+		if(!intentListener){
 			setIntentError("Enter intent");
+			return;
 		}
+
+		if(sendIntentResult || resultOverChannelContext){
+
+		}
+		
+		intentStore.addIntentListener(intentListener.value);
+		setIntentListener(null);
+		
 	};
 
 	useEffect(() => {
@@ -466,7 +507,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 					<Grid container item spacing={2} justifyContent="flex-end" className={classes.spread}>
 						<Grid item xs={12}>
 							<Typography className={classes.bottomMargin} variant="h5">
-								Add Context Listener
+								Add Intent Listener
 							</Typography>
 						</Grid>
 						<Grid item className={`${classes.field} ${classes.removeSidePadding}`}>
@@ -517,6 +558,67 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 								</IconButton>
 							</Tooltip>
 						</Grid>
+						<Grid item xs={12}>
+							<FormGroup>
+								<FormControlLabel control={<Checkbox className={classes.input} color="default" checked={sendIntentResult} onChange={(e)=> setSendIntentResult(e.target.checked)}/>} label="Send Intent Result"/>
+							</FormGroup>
+						</Grid>
+						{sendIntentResult && (
+							<Grid item xs={12} className={classes.indentLeft}>
+								<RadioGroup name="intent-result-type" value={resultType} onChange={(e)=>setResultType(e.target.value)}>
+									<FormControlLabel value="context-result" control={<Radio className={classes.input}/>} label="Context result" />
+									{resultType === "context-result" && (
+										<Grid item className={classes.indentLeft}>
+											<ContextTemplates handleTabChange={handleTabChange} contextStateSetter={setResultTypeContext} />
+										</Grid>
+									)}
+									<FormControlLabel value="channel-result" control={<Radio className={classes.input}/>} label="Channel result" />
+										{resultType === "channel-result" && (
+											<Grid item className={classes.indentLeft}>
+												<ToggleButtonGroup
+													value={channelType}
+													exclusive
+													onChange={handleChannelTypeChange}
+													aria-label="result channel type"
+													>
+													<ToggleButton className={classes.toggle} value="app-channel" aria-label="left aligned">
+														App Channel
+													</ToggleButton>
+													<ToggleButton className={classes.toggle} value="private-channel" aria-label="left aligned">
+														Private Channel
+													</ToggleButton>
+												</ToggleButtonGroup>
+
+												{channelType === "app-channel" && (
+													<Grid item className={classes.field}>
+														<TextField 
+															fullWidth 
+															variant="outlined" 
+															label="Channel Name" 
+															type="text" 
+															size="small" 
+															onChange={(e: any)=>setCurrentAppChannelId(e.target.value)}
+															value={currentAppChannelId}
+														/>
+													</Grid>
+												)}
+												<FormGroup>
+													<FormControlLabel control={<Checkbox className={classes.input} color="default" checked={sendResultOverChannel} onChange={(e)=> setSendResultOverChannel(e.target.checked)}/>} label="Send context result over channel"/>
+												</FormGroup>
+												{sendResultOverChannel && (
+													<Grid item className={classes.indentLeft}>
+														<ContextTemplates handleTabChange={handleTabChange} contextStateSetter={setResultOverChannelContext} />
+													</Grid>
+												)}
+
+											</Grid>
+										)}
+										{resultTypeContext}
+								</RadioGroup>
+							</Grid>
+						)}
+						
+
 					</Grid>
 				</Grid>
 			</form>
