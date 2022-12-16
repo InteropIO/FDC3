@@ -37,7 +37,7 @@ class AppChannelStore {
 
 	async getOrCreateChannel(channelId: string) {
 		try {
-			console.log('getcreate', channelId)
+			console.log("getcreate", channelId);
 			const currentAppChannel = await fdc3.getOrCreateChannel(channelId);
 			const isSuccess = currentAppChannel !== null;
 			if (isSuccess) {
@@ -171,7 +171,7 @@ class AppChannelStore {
 			let foundListener = this.channelListeners.find(
 				(currentListener) => currentListener.type === newListener && currentListener.channelId === channelId
 			);
-			console.log(currentChannel, foundListener, this.appChannelsList)
+			console.log(currentChannel, foundListener, this.appChannelsList);
 			if (!foundListener && currentChannel && newListener !== undefined) {
 				const listenerId = nanoid();
 				const contactListener = await currentChannel.channel.addContextListener(
@@ -251,7 +251,7 @@ class AppChannelStore {
 	remove(channel: Channel) {
 		this.channelListeners.forEach((listener) => {
 			console.log(listener.id);
-			this.removeContextListener(listener.id)
+			this.removeContextListener(listener.id);
 		});
 		this.appChannelsList = this.appChannelsList.filter((chan) => chan.id !== channel.id);
 	}

@@ -59,7 +59,9 @@ class IntentStore {
 					channel = await privateChannelStore.createPrivateChannel();
 					privateChannelStore.addChannelListener(<PrivateChannel>channel, "all");
 					console.log(`returning private channel: ${channel?.id}`);
-					privateChannelStore.onDisconnect(<PrivateChannel>channel, () => privateChannelStore.disconnect(<PrivateChannel>channel));
+					privateChannelStore.onDisconnect(<PrivateChannel>channel, () =>
+						privateChannelStore.disconnect(<PrivateChannel>channel)
+					);
 				}
 
 				if (channel) {
@@ -211,7 +213,7 @@ class IntentStore {
 				name: "raiseIntentForContext",
 				type: "success",
 			});
-			
+
 			return resolution;
 		} catch (e) {
 			console.log(e);

@@ -107,8 +107,8 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		caption: {
 			color: "#0086bf",
-			marginTop: "10px"
-		}
+			marginTop: "10px",
+		},
 	})
 );
 
@@ -117,17 +117,17 @@ export const ChannelField = observer(
 		handleTabChange,
 		channelsList,
 		isPrivateChannel = false,
-		channelName
+		channelName,
 	}: {
 		handleTabChange: any;
 		channelsList: any;
 		isPrivateChannel?: boolean;
-		channelName? : string;
+		channelName?: string;
 	}) => {
 		const classes = useStyles();
 		const [contextItem, setContextItem] = useState<ContextType | null>(null);
 		const [currentChannelList, setCurrentChannelList] = useState<any>(channelsList);
-		
+
 		const channelStore = isPrivateChannel ? privateChannelStore : appChannelStore;
 
 		const contextListenersOptionsAll: ListenerOptionType[] = contextStore.contextsList.map(({ id, template }) => {
@@ -228,19 +228,19 @@ export const ChannelField = observer(
 		};
 
 		const handleRemoveOrDisconnect = (channel: any) => {
-			console.log(channel, isPrivateChannel)
-			if(isPrivateChannel) {
+			console.log(channel, isPrivateChannel);
+			if (isPrivateChannel) {
 				privateChannelStore.disconnect(channel);
 			} else {
 				appChannelStore.remove(channel);
 			}
 			setCurrentChannelList(currentChannelList.filter((currentChannel: any) => currentChannel.id !== channel.id));
-		}
-		
+		};
+
 		useEffect(() => {
-		  setCurrentChannelList(channelsList);
-		}, [channelsList])
-		
+			setCurrentChannelList(channelsList);
+		}, [channelsList]);
+
 		return (
 			<div>
 				{currentChannelList.length > 0 &&
@@ -249,7 +249,11 @@ export const ChannelField = observer(
 							<Grid container key={channel.id} spacing={2} className={classes.spread}>
 								<Grid item className={classes.field}>
 									<Typography variant="h5">Channel: {channel.id}</Typography>
-									{isPrivateChannel && <Typography variant="caption" className={classes.caption}>Check listeners once results are received</Typography>}
+									{isPrivateChannel && (
+										<Typography variant="caption" className={classes.caption}>
+											Check listeners once results are received
+										</Typography>
+									)}
 								</Grid>
 								<Grid container className={classes.topMargin}>
 									<Grid item xs={12}>
@@ -287,7 +291,7 @@ export const ChannelField = observer(
 										</Tooltip>
 									</Grid>
 								</Grid>
-								{!isPrivateChannel && 
+								{!isPrivateChannel && (
 									<Grid container>
 										<Grid item xs={12}>
 											<Typography variant="h5" className={classes.h6}>
@@ -343,25 +347,20 @@ export const ChannelField = observer(
 											</Tooltip>
 										</Grid>
 									</Grid>
-								}
-								<Button
-									variant="contained"
-									color="secondary"
-									onClick={() => handleRemoveOrDisconnect(channel)}
-								>
-									{isPrivateChannel ? 'Disconnect' : 'Remove'}
+								)}
+								<Button variant="contained" color="secondary" onClick={() => handleRemoveOrDisconnect(channel)}>
+									{isPrivateChannel ? "Disconnect" : "Remove"}
 								</Button>
 								<div className={classes.border}></div>
 							</Grid>
 						);
 
-						if(channelName) {
-							return channel.id === channelName && element
+						if (channelName) {
+							return channel.id === channelName && element;
 						} else {
-							return element
+							return element;
 						}
-					})
-				}
+					})}
 			</div>
 		);
 	}

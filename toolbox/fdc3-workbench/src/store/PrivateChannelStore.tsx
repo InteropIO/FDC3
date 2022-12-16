@@ -26,7 +26,7 @@ class PrivateChannelStore {
 			onAddContextListener: action,
 			onDisconnect: action,
 			onUnsubscribe: action,
-			disconnect: action
+			disconnect: action,
 		});
 	}
 
@@ -60,9 +60,7 @@ class PrivateChannelStore {
 	}
 
 	isContextListenerExists(channelId: string, type: string | undefined) {
-		return !!this.channelListeners?.find(
-			(listener) => listener.type === type && listener.channelId === channelId
-		);
+		return !!this.channelListeners?.find((listener) => listener.type === type && listener.channelId === channelId);
 	}
 
 	isPrivateChannelExists(channelId: string) {
@@ -116,7 +114,7 @@ class PrivateChannelStore {
 			let foundListener = this.channelListeners.find(
 				(currentListener) => currentListener.type === newListener && currentListener.channelId === channelId
 			);
-			console.log(foundListener,currentChannel,newListener)
+			console.log(foundListener, currentChannel, newListener);
 			if (!foundListener && currentChannel && newListener !== undefined) {
 				const listenerId = nanoid();
 				const contactListener = await currentChannel.addContextListener(
@@ -212,7 +210,7 @@ class PrivateChannelStore {
 	disconnect(channel: PrivateChannel) {
 		this.channelListeners.forEach((listener) => {
 			console.log(listener.id);
-			this.removeContextListener(listener.id)
+			this.removeContextListener(listener.id);
 		});
 		this.privateChannelsList = this.privateChannelsList.filter((chan) => chan.id !== channel.id);
 		channel.disconnect();

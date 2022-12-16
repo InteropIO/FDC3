@@ -191,7 +191,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 			setRaiseIntentError("enter intent name");
 		} else if (!raiseIntentContext) {
 			setRaiseIntentError("enter context name");
-		} else if (targetInstance && intentInstances){
+		} else if (targetInstance && intentInstances) {
 			let targetObject = intentInstances.find((target) => target.instanceId === targetInstance.instanceId);
 			if (targetObject) {
 				setIntentResolution(await intentStore.raiseIntent(intentValue.value, raiseIntentContext, targetObject));
@@ -213,10 +213,14 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 		if (!raiseIntentWithContextContext) {
 			return;
 		}
-		if (targetContextInstance && intentContextInstances){
-			let targetObject = intentContextInstances.find((target) => target.instanceId === targetContextInstance.instanceId);
+		if (targetContextInstance && intentContextInstances) {
+			let targetObject = intentContextInstances.find(
+				(target) => target.instanceId === targetContextInstance.instanceId
+			);
 			if (targetObject) {
-				setIntentForContextResolution(await intentStore.raiseIntentForContext(raiseIntentWithContextContext, targetObject));
+				setIntentForContextResolution(
+					await intentStore.raiseIntentForContext(raiseIntentWithContextContext, targetObject)
+				);
 			}
 		} else if (contextTargetApp && contextIntentObjects) {
 			let targetObject = contextIntentObjects.find((target) => target.name === contextTargetApp);
@@ -234,10 +238,10 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 				setTargetApp("");
 				setIntentInstances([]);
 			} else {
-				const currentTargetApp= event.target.value as string;
+				const currentTargetApp = event.target.value as string;
 				setTargetApp(currentTargetApp);
-				if(window.fdc3Version == "2.0"){	
-					let instances = await fdc3.findInstances({appId: currentTargetApp });
+				if (window.fdc3Version == "2.0") {
+					let instances = await fdc3.findInstances({ appId: currentTargetApp });
 					setIntentInstances(instances);
 				}
 			}
@@ -249,7 +253,9 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 		if (event.target.value === "None") {
 			setTargetInstance("");
 		} else {
-			const instanceExists = intentInstances.find((currentInstance) => currentInstance.instanceId === event.target.value);
+			const instanceExists = intentInstances.find(
+				(currentInstance) => currentInstance.instanceId === event.target.value
+			);
 			setTargetInstance(instanceExists);
 		}
 	};
@@ -258,7 +264,9 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 		if (event.target.value === "None") {
 			setTargetContextInstance("");
 		} else {
-			const instanceExists = intentContextInstances.find((currentInstance) => currentInstance.instanceId === event.target.value);
+			const instanceExists = intentContextInstances.find(
+				(currentInstance) => currentInstance.instanceId === event.target.value
+			);
 			setTargetContextInstance(instanceExists);
 		}
 	};
@@ -269,11 +277,13 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 				setContextTargetApp("");
 				setIntentContextInstances([]);
 			} else {
-				const currentTargetApp= event.target.value as string;
+				const currentTargetApp = event.target.value as string;
 				setContextTargetApp(currentTargetApp);
-				if(window.fdc3Version == "2.0"){	
-					let foundAppObject = contextIntentObjects?.find((currentIntentObj)=>currentIntentObj.name === currentTargetApp);
-					let instances = await fdc3.findInstances({appId: foundAppObject.appId });
+				if (window.fdc3Version == "2.0") {
+					let foundAppObject = contextIntentObjects?.find(
+						(currentIntentObj) => currentIntentObj.name === currentTargetApp
+					);
+					let instances = await fdc3.findInstances({ appId: foundAppObject.appId });
 					setIntentContextInstances(instances);
 				}
 			}
@@ -336,7 +346,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 	const handleChannelTypeChange = (event: React.MouseEvent<HTMLElement>, nextView: string) => {
 		setChannelType(nextView);
 	};
-	
+
 	const handleInstanceTypeChange = (event: React.MouseEvent<HTMLElement>, nextView: string) => {
 		setInstanceType(nextView);
 	};
@@ -409,7 +419,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 	}, [raiseIntentContext]);
 
 	useEffect(() => {
-		if(!intentValue){
+		if (!intentValue) {
 			setTargetApp(null);
 			setIntentInstances([]);
 			setTargetInstance(null);
@@ -510,42 +520,42 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 
 								{instanceType === "dropdown" && (
 									<FormControl variant="outlined" size="small" className={classes.targetSelect}>
-									<InputLabel id="intent-target-app">Target App (optional)</InputLabel>
-									<Select
-										labelId="intent-target-app"
-										id="intent-target-app-select"
-										value={targetApp ?? ""}
-										onChange={handleTargetChange}
-										label="Target App (optional)"
-										MenuProps={{
-											anchorOrigin: {
-												vertical: "bottom",
-												horizontal: "left",
-											},
-											transformOrigin: {
-												vertical: "top",
-												horizontal: "left",
-											},
-											getContentAnchorEl: null,
-										}}
-									>
-										{!intentTargets?.length && (
-											<MenuItem value="" disabled>
-												No Target Apps Found
-											</MenuItem>
-										)}
-										{intentTargets?.length && (
-											<MenuItem key="" value="None">
-												None
-											</MenuItem>
-										)}
-										{intentTargets?.length &&
-											intentTargets.map((target) => (
-												<MenuItem key={target.appId || target.name} value={target.appId || target.name}>
-													{target.appId || target.name}
+										<InputLabel id="intent-target-app">Target App (optional)</InputLabel>
+										<Select
+											labelId="intent-target-app"
+											id="intent-target-app-select"
+											value={targetApp ?? ""}
+											onChange={handleTargetChange}
+											label="Target App (optional)"
+											MenuProps={{
+												anchorOrigin: {
+													vertical: "bottom",
+													horizontal: "left",
+												},
+												transformOrigin: {
+													vertical: "top",
+													horizontal: "left",
+												},
+												getContentAnchorEl: null,
+											}}
+										>
+											{!intentTargets?.length && (
+												<MenuItem value="" disabled>
+													No Target Apps Found
 												</MenuItem>
-											))}
-									</Select>
+											)}
+											{intentTargets?.length && (
+												<MenuItem key="" value="None">
+													None
+												</MenuItem>
+											)}
+											{intentTargets?.length &&
+												intentTargets.map((target) => (
+													<MenuItem key={target.appId || target.name} value={target.appId || target.name}>
+														{target.appId || target.name}
+													</MenuItem>
+												))}
+										</Select>
 									</FormControl>
 								)}
 								{instanceType === "dropdown" && intentInstances?.length > 0 && (
@@ -574,13 +584,12 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 													None
 												</MenuItem>
 											)}
-											{intentInstances?.length && 
+											{intentInstances?.length &&
 												intentInstances.map((target: any) => (
 													<MenuItem key={target.instanceId} value={target.instanceId}>
 														{target.instanceId}
 													</MenuItem>
-												))
-											}
+												))}
 										</Select>
 									</FormControl>
 								)}
@@ -680,7 +689,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 										</Select>
 									</FormControl>
 								)}
-								
+
 								{contextInstanceType === "dropdown" && intentContextInstances?.length > 0 && (
 									<FormControl variant="outlined" size="small" className={classes.targetSelect}>
 										<InputLabel id="intent-context-target-instance">Target Instance (optional)</InputLabel>
@@ -707,13 +716,12 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 													None
 												</MenuItem>
 											)}
-											{intentContextInstances?.length && 
+											{intentContextInstances?.length &&
 												intentContextInstances.map((target: any) => (
 													<MenuItem key={target.instanceId} value={target.instanceId}>
 														{target.instanceId}
 													</MenuItem>
-												))
-											}
+												))}
 										</Select>
 									</FormControl>
 								)}
