@@ -213,7 +213,7 @@ class IntentStore {
 				name: "raiseIntentForContext",
 				type: "success",
 			});
-			
+
 			return resolution;
 		} catch (e) {
 			console.log(e);

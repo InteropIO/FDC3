@@ -98,15 +98,15 @@ export const codeExamples = {
 		" const channel = await fdc3.createPrivateChannel();\n" +
 		" return channel;\n" +
 		"});",
-	raiseIntentForContext: 
+	raiseIntentForContext:
 		'let context = {type: "fdc3.instrument", name: "Tesla, inc.", id: {ticker: "TSLA"}}; \n' +
 		"const intentResolution = await fdc3.raiseIntentForContext(context);",
-	raiseIntentForContextTarget: 
+	raiseIntentForContextTarget:
 		'let context = {type: "fdc3.instrument", name: "Tesla, inc.", id: {ticker: "TSLA"}}; \n' +
 		"//Find appId in promise result\n" +
 		"await fdc3.findIntentsByContext(context); \n" +
 		'const intentResolution = await fdc3.raiseIntentForContext(context, {appId: "ChartIQ Example App"});"',
-	raiseIntentForContextInstance: 
+	raiseIntentForContextInstance:
 		'let context = {type: "fdc3.instrument", name: "Tesla, inc.", id: {ticker: "TSLA"}}; \n' +
 		"//Find appId in promise result\n" +
 		"await fdc3.findIntentsByContext(context); \n" +

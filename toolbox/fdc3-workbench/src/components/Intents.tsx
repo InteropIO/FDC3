@@ -33,7 +33,7 @@ import { FormGroup } from "@material-ui/core";
 import { FormControlLabel } from "@material-ui/core";
 import { RadioGroup } from "@material-ui/core";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
 
 // interface copied from lib @material-ui/lab/Autocomplete
 interface FilterOptionsState<T> {
@@ -194,7 +194,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 			setRaiseIntentError("enter intent name");
 		} else if (!raiseIntentContext) {
 			setRaiseIntentError("enter context name");
-		} else if (targetInstance && intentInstances){
+		} else if (targetInstance && intentInstances) {
 			let targetObject = intentInstances.find((target) => target.instanceId === targetInstance.instanceId);
 			if (targetObject) {
 				setIntentResolution(await intentStore.raiseIntent(intentValue.value, raiseIntentContext, targetObject));
@@ -216,10 +216,14 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 		if (!raiseIntentWithContextContext) {
 			return;
 		}
-		if (targetContextInstance && intentContextInstances){
-			let targetObject = intentContextInstances.find((target) => target.instanceId === targetContextInstance.instanceId);
+		if (targetContextInstance && intentContextInstances) {
+			let targetObject = intentContextInstances.find(
+				(target) => target.instanceId === targetContextInstance.instanceId
+			);
 			if (targetObject) {
-				setIntentForContextResolution(await intentStore.raiseIntentForContext(raiseIntentWithContextContext, targetObject));
+				setIntentForContextResolution(
+					await intentStore.raiseIntentForContext(raiseIntentWithContextContext, targetObject)
+				);
 			}
 		} else if (contextTargetApp && contextIntentObjects) {
 			let targetObject = contextIntentObjects.find((target) => target.name === contextTargetApp);
@@ -238,10 +242,10 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 				setIntentInstances([]);
 				setTargetInstance(null);
 			} else {
-				const currentTargetApp= event.target.value as string;
+				const currentTargetApp = event.target.value as string;
 				setTargetApp(currentTargetApp);
-				if(window.fdc3Version == "2.0"){
-					let instances = await fdc3.findInstances({appId: currentTargetApp});
+				if (window.fdc3Version == "2.0") {
+					let instances = await fdc3.findInstances({ appId: currentTargetApp });
 					if (!instances) return;
 					setIntentInstances(instances);
 				}
@@ -254,7 +258,9 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 		if (event.target.value === "None") {
 			setTargetInstance(null);
 		} else {
-			const instanceExists = intentInstances.find((currentInstance) => currentInstance.instanceId === event.target.value);
+			const instanceExists = intentInstances.find(
+				(currentInstance) => currentInstance.instanceId === event.target.value
+			);
 			setTargetInstance(instanceExists);
 		}
 	};
@@ -263,7 +269,9 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 		if (event.target.value === "None") {
 			setTargetContextInstance("");
 		} else {
-			const instanceExists = intentContextInstances.find((currentInstance) => currentInstance.instanceId === event.target.value);
+			const instanceExists = intentContextInstances.find(
+				(currentInstance) => currentInstance.instanceId === event.target.value
+			);
 			setTargetContextInstance(instanceExists);
 		}
 	};
@@ -274,11 +282,13 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 				setContextTargetApp("");
 				setIntentContextInstances([]);
 			} else {
-				const currentTargetApp= event.target.value as string;
+				const currentTargetApp = event.target.value as string;
 				setContextTargetApp(currentTargetApp);
-				if(window.fdc3Version == "2.0"){	
-					let foundAppObject = contextIntentObjects?.find((currentIntentObj)=>currentIntentObj.name === currentTargetApp);
-					let instances = await fdc3.findInstances({appId: foundAppObject.appId });
+				if (window.fdc3Version == "2.0") {
+					let foundAppObject = contextIntentObjects?.find(
+						(currentIntentObj) => currentIntentObj.name === currentTargetApp
+					);
+					let instances = await fdc3.findInstances({ appId: foundAppObject.appId });
 					setIntentContextInstances(instances);
 				}
 			}
@@ -346,32 +356,29 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 		setTargetApp(null);
 		setIntentInstances([]);
 		setTargetInstance(null);
-	}
+	};
 
 	const clearContextTargets = () => {
 		setContextTargetApp(null);
 		setIntentContextInstances([]);
 		setTargetContextInstance(null);
 		setUseContextTargets(false);
-	}
-	
+	};
+
 	const handleTargetToggle = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
-		debugger;	
+		debugger;
 		setUseTargets(checked);
-		if(!checked){
+		if (!checked) {
 			clearTargets();
 		}
-
 	};
 
 	const handleContextTargetToggle = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
 		debugger;
 		setUseContextTargets(checked);
-		if(!checked){
+		if (!checked) {
 			clearContextTargets();
 		}
-
-
 	};
 
 	const setChannelContextList = (context: ContextType, index: number) => {
@@ -398,7 +405,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 						label="Delay (ms)"
 						type="number"
 						size="small"
-						onChange={(e) => setChannelContextDelay(e.target.value, contextFields.length)}			
+						onChange={(e) => setChannelContextDelay(e.target.value, contextFields.length)}
 					/>
 				</Grid>
 				<Grid item className={`${classes.indentLeft} ${classes.field}`}>
@@ -412,15 +419,14 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 		console.log(contextFields);
 	};
 
-	useEffect(()=>{
-		if(!useTargets){
+	useEffect(() => {
+		if (!useTargets) {
 			clearTargets();
 		}
-
 	}, [useTargets]);
 
-	useEffect(()=>{
-		if(!useContextTargets){
+	useEffect(() => {
+		if (!useContextTargets) {
 			clearContextTargets();
 		}
 	}, [useContextTargets]);
@@ -434,7 +440,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 				}
 				setRaiseIntentError(false);
 				let appIntents = await fdc3.findIntentsByContext(toJS(raiseIntentContext));
-				
+
 				setUseTargets(false);
 				clearTargets();
 
@@ -457,7 +463,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 	}, [raiseIntentContext]);
 
 	useEffect(() => {
-		if(!intentValue){
+		if (!intentValue) {
 			setUseTargets(false);
 			clearTargets();
 		}
@@ -545,50 +551,60 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 							/>
 							<Grid className={classes.rightPadding}>
 								<FormGroup>
-									<FormControlLabel control={<Switch checked={useTargets} onChange={handleTargetToggle} color="primary" disabled={ !intentValue } />} label="Select Target" />
+									<FormControlLabel
+										control={
+											<Switch
+												checked={useTargets}
+												onChange={handleTargetToggle}
+												color="primary"
+												disabled={!intentValue}
+											/>
+										}
+										label="Select Target"
+									/>
 								</FormGroup>
 
-								{ useTargets && (
+								{useTargets && (
 									<FormControl variant="outlined" size="small" className={classes.targetSelect}>
-									<InputLabel id="intent-target-app">Target App (optional)</InputLabel>
-									<Select
-										labelId="intent-target-app"
-										id="intent-target-app-select"
-										value={targetApp ?? ""}
-										onChange={handleTargetChange}
-										label="Target App (optional)"
-										MenuProps={{
-											anchorOrigin: {
-												vertical: "bottom",
-												horizontal: "left",
-											},
-											transformOrigin: {
-												vertical: "top",
-												horizontal: "left",
-											},
-											getContentAnchorEl: null,
-										}}
-									>
-										{!intentTargets?.length && (
-											<MenuItem value="" disabled>
-												No Target Apps Found
-											</MenuItem>
-										)}
-										{intentTargets?.length && (
-											<MenuItem key="" value="None">
-												None
-											</MenuItem>
-										)}
-										{intentTargets?.length &&
-											intentTargets.map((target) => (
-												<MenuItem key={target.appId || target.name} value={target.appId || target.name}>
-													{target.appId || target.name}
+										<InputLabel id="intent-target-app">Target App (optional)</InputLabel>
+										<Select
+											labelId="intent-target-app"
+											id="intent-target-app-select"
+											value={targetApp ?? ""}
+											onChange={handleTargetChange}
+											label="Target App (optional)"
+											MenuProps={{
+												anchorOrigin: {
+													vertical: "bottom",
+													horizontal: "left",
+												},
+												transformOrigin: {
+													vertical: "top",
+													horizontal: "left",
+												},
+												getContentAnchorEl: null,
+											}}
+										>
+											{!intentTargets?.length && (
+												<MenuItem value="" disabled>
+													No Target Apps Found
 												</MenuItem>
-											))}
-									</Select>
+											)}
+											{intentTargets?.length && (
+												<MenuItem key="" value="None">
+													None
+												</MenuItem>
+											)}
+											{intentTargets?.length &&
+												intentTargets.map((target) => (
+													<MenuItem key={target.appId || target.name} value={target.appId || target.name}>
+														{target.appId || target.name}
+													</MenuItem>
+												))}
+										</Select>
 									</FormControl>
 								)}
-								{ useTargets && intentInstances?.length > 0 && (
+								{useTargets && intentInstances?.length > 0 && (
 									<FormControl variant="outlined" size="small" className={classes.targetSelect}>
 										<InputLabel id="intent-target-instance">Target Instance (optional)</InputLabel>
 										<Select
@@ -614,13 +630,12 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 													None
 												</MenuItem>
 											)}
-											{intentInstances?.length && 
+											{intentInstances?.length &&
 												intentInstances.map((target: any) => (
 													<MenuItem key={target.instanceId} value={target.instanceId}>
 														{target.instanceId}
 													</MenuItem>
-												))
-											}
+												))}
 										</Select>
 									</FormControl>
 								)}
@@ -638,12 +653,12 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 									color="primary"
 									onClick={() => {
 										let exampleToUse = codeExamples.raiseIntent;
-										if(targetInstance?.instanceId) {
+										if (targetInstance?.instanceId) {
 											exampleToUse = codeExamples.raiseIntentInstance;
-										} else if(targetApp) {
+										} else if (targetApp) {
 											exampleToUse = codeExamples.raiseIntentTarget;
 										}
-										copyToClipboard(exampleToUse, "raiseIntent")()
+										copyToClipboard(exampleToUse, "raiseIntent")();
 									}}
 								>
 									<FileCopyIcon />
@@ -679,12 +694,17 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 								contextStateSetter={setRaiseIntentWithContextContext}
 							/>
 							<Grid className={classes.rightPadding}>
-									<FormGroup>
-										<FormControlLabel control={<Switch checked={useContextTargets} color="primary" onChange={handleContextTargetToggle} />} label="Select Target" disabled={!raiseIntentWithContextContext}/>
-									</FormGroup>
+								<FormGroup>
+									<FormControlLabel
+										control={
+											<Switch checked={useContextTargets} color="primary" onChange={handleContextTargetToggle} />
+										}
+										label="Select Target"
+										disabled={!raiseIntentWithContextContext}
+									/>
+								</FormGroup>
 
-								
-								{ useContextTargets && (
+								{useContextTargets && (
 									<FormControl variant="outlined" size="small" className={classes.targetSelect}>
 										<InputLabel id="intent-context-target-app">Target (optional)</InputLabel>
 										<Select
@@ -724,8 +744,8 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 										</Select>
 									</FormControl>
 								)}
-								
-								{ useContextTargets && intentContextInstances?.length > 0 && (
+
+								{useContextTargets && intentContextInstances?.length > 0 && (
 									<FormControl variant="outlined" size="small" className={classes.targetSelect}>
 										<InputLabel id="intent-context-target-instance">Target Instance (optional)</InputLabel>
 										<Select
@@ -751,13 +771,12 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 													None
 												</MenuItem>
 											)}
-											{intentContextInstances?.length && 
+											{intentContextInstances?.length &&
 												intentContextInstances.map((target: any) => (
 													<MenuItem key={target.instanceId} value={target.instanceId}>
 														{target.instanceId}
 													</MenuItem>
-												))
-											}
+												))}
 										</Select>
 									</FormControl>
 								)}
@@ -780,18 +799,18 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 									color="primary"
 									onClick={() => {
 										let exampleToUse = codeExamples.raiseIntentForContext;
-										if(targetContextInstance?.instanceId) {
+										if (targetContextInstance?.instanceId) {
 											exampleToUse = codeExamples.raiseIntentForContextInstance;
-										} else if(contextTargetApp) {
+										} else if (contextTargetApp) {
 											exampleToUse = codeExamples.raiseIntentForContextTarget;
 										}
-										copyToClipboard(exampleToUse, "raiseIntentForContext")()
+										copyToClipboard(exampleToUse, "raiseIntentForContext")();
 									}}
 								>
 									<FileCopyIcon />
 								</IconButton>
 							</Tooltip>
-							
+
 							<Link target="_blank" href="https://fdc3.finos.org/docs/api/ref/DesktopAgent#raiseintentforcontext">
 								<InfoOutlinedIcon />
 							</Link>
@@ -861,16 +880,16 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 									color="primary"
 									onClick={() => {
 										let exampleToUse = codeExamples.intentListener;
-										if(resultType === "context-result") {
+										if (resultType === "context-result") {
 											exampleToUse = codeExamples.intentListenerWithContextResult;
-										} else if(resultType === "channel-result") {
-											if(channelType === "app-channel") {
+										} else if (resultType === "channel-result") {
+											if (channelType === "app-channel") {
 												exampleToUse = codeExamples.intentListenerWithAppChannel;
 											} else {
 												exampleToUse = codeExamples.intentListenerWithPrivateChannel;
 											}
 										}
-										copyToClipboard(exampleToUse, "addIntentListener")()
+										copyToClipboard(exampleToUse, "addIntentListener")();
 									}}
 								>
 									<FileCopyIcon />
@@ -880,24 +899,25 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 							<Link target="_blank" href="https://fdc3.finos.org/docs/api/ref/DesktopAgent#addintentlistener">
 								<InfoOutlinedIcon />
 							</Link>
-
 						</Grid>
 					</Grid>
-					{window.fdc3Version === "2.0" &&<Grid item xs={12}>
-						<FormGroup>
-							<FormControlLabel
-								control={
-									<Checkbox
-										className={classes.input}
-										color="default"
-										checked={sendIntentResult}
-										onChange={(e) => setSendIntentResult(e.target.checked)}
-									/>
-								}
-								label="Send Intent Result"
-							/>
-						</FormGroup>
-					</Grid>}
+					{window.fdc3Version === "2.0" && (
+						<Grid item xs={12}>
+							<FormGroup>
+								<FormControlLabel
+									control={
+										<Checkbox
+											className={classes.input}
+											color="default"
+											checked={sendIntentResult}
+											onChange={(e) => setSendIntentResult(e.target.checked)}
+										/>
+									}
+									label="Send Intent Result"
+								/>
+							</FormGroup>
+						</Grid>
+					)}
 					{sendIntentResult && (
 						<Grid item xs={12} className={classes.indentLeft}>
 							<RadioGroup name="intent-result-type" value={resultType} onChange={(e) => setResultType(e.target.value)}>
@@ -975,10 +995,12 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 														</IconButton>
 													</Tooltip>
 
-													<Link target="_blank" href="https://fdc3.finos.org/docs/api/ref/DesktopAgent#addintentlistener">
+													<Link
+														target="_blank"
+														href="https://fdc3.finos.org/docs/api/ref/DesktopAgent#addintentlistener"
+													>
 														<InfoOutlinedIcon />
 													</Link>
-													
 												</Grid>
 											</>
 										)}

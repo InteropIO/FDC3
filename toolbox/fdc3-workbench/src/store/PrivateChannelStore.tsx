@@ -26,7 +26,7 @@ class PrivateChannelStore {
 			onAddContextListener: action,
 			onDisconnect: action,
 			onUnsubscribe: action,
-			disconnect: action
+			disconnect: action,
 		});
 	}
 
@@ -60,9 +60,7 @@ class PrivateChannelStore {
 	}
 
 	isContextListenerExists(channelId: string, type: string | undefined) {
-		return !!this.channelListeners?.find(
-			(listener) => listener.type === type && listener.channelId === channelId
-		);
+		return !!this.channelListeners?.find((listener) => listener.type === type && listener.channelId === channelId);
 	}
 
 	isPrivateChannelExists(channelId: string) {
@@ -151,8 +149,7 @@ class PrivateChannelStore {
 					});
 				});
 			}
-		} catch (e) {
-		}
+		} catch (e) {}
 	}
 
 	removeContextListener(id: string) {
@@ -184,8 +181,8 @@ class PrivateChannelStore {
 	}
 
 	onAddContextListener(channel: PrivateChannel) {
-		channel.onAddContextListener(()=>{
-			try{
+		channel.onAddContextListener(() => {
+			try {
 				systemLogStore.addLog({
 					name: "pcAddContextListener",
 					type: "success",
@@ -202,7 +199,7 @@ class PrivateChannelStore {
 	}
 
 	onUnsubscribe(channel: PrivateChannel) {
-		channel.onUnsubscribe(()=>{
+		channel.onUnsubscribe(() => {
 			try {
 				systemLogStore.addLog({
 					name: "pcOnUnsubscribe",
@@ -216,14 +213,14 @@ class PrivateChannelStore {
 					value: `Could not unsubscribed listener '[all]' from channel [${channel.id}]`,
 				});
 			}
-		});		
+		});
 	}
 
 	onDisconnect(channel: PrivateChannel) {
 		channel.onDisconnect(() => {
 			try {
 				this.channelListeners.forEach((listener) => {
-					this.removeContextListener(listener.id)
+					this.removeContextListener(listener.id);
 				});
 				this.privateChannelsList = this.privateChannelsList.filter((chan) => chan.id !== channel.id);
 				systemLogStore.addLog({
@@ -243,12 +240,11 @@ class PrivateChannelStore {
 
 	disconnect(channel: PrivateChannel) {
 		this.channelListeners.forEach((listener) => {
-			this.removeContextListener(listener.id)
+			this.removeContextListener(listener.id);
 		});
 		this.privateChannelsList = this.privateChannelsList.filter((chan) => chan.id !== channel.id);
 		channel.disconnect();
 	}
-
 }
 
 const privateChannelStore = new PrivateChannelStore();
