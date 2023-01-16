@@ -54,6 +54,9 @@ const useStyles = makeStyles((theme: Theme) =>
 		topMargin: {
 			marginTop: theme.spacing(2),
 		},
+		secondMargin: {
+			marginTop: theme.spacing(1),
+		},
 		controls: {
 			"& > *:first-child": {
 				marginLeft: 0,
@@ -65,7 +68,11 @@ const useStyles = makeStyles((theme: Theme) =>
 				marginRight: 0,
 			},
 			"& .MuiIconButton-sizeSmall": {
-				padding: "6px",
+				padding: "6px 0px 6px 0px",
+			},
+			"& > a": {
+				display: "flex",
+				padding: "6px 0px 6px 0px",
 			},
 		},
 		rightAlign: {
@@ -105,7 +112,7 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		rightPadding: {
 			paddingRight: theme.spacing(0.5),
-		},
+		}
 	})
 );
 
@@ -242,14 +249,14 @@ export const ChannelField = observer(
 				{currentChannelList.length > 0 &&
 					currentChannelList.map((channel: any) => {
 						const element = (
-							<Grid container key={channel.id} spacing={2} className={classes.spread}>
+							<Grid container key={channel.id} className={classes.spread}>
 								<Grid item className={classes.field}>
 									<Typography variant="h5">Channel: {channel.id}</Typography>
 								</Grid>
 								<Grid container className={classes.topMargin}>
 									<Grid item xs={12}>
 										<Typography variant="h5" className={classes.h6}>
-											Broadcast Context
+											Broadcast
 										</Typography>
 									</Grid>
 
@@ -267,7 +274,7 @@ export const ChannelField = observer(
 											color="primary"
 											onClick={() => handleBroadcast(channel)}
 										>
-											Broadcast Context
+											Broadcast
 										</Button>
 
 										<Tooltip title="Copy code example" aria-label="Copy code example">
@@ -285,7 +292,7 @@ export const ChannelField = observer(
 										</Link>
 									</Grid>
 								</Grid>
-								<Grid container>
+								<Grid container className={classes.secondMargin}>
 									<Grid item xs={12}>
 										<Typography variant="h5" className={classes.h6}>
 											Add Context Listener
@@ -343,8 +350,8 @@ export const ChannelField = observer(
 										</Link>
 									</Grid>
 								</Grid>
-								<Button variant="contained" color="secondary" onClick={() => handleRemoveOrDisconnect(channel)}>
-									{isPrivateChannel ? "Disconnect" : "Remove"}
+								<Button variant="contained" color="secondary" onClick={() => handleRemoveOrDisconnect(channel)} className={classes.secondMargin}>
+									{isPrivateChannel ? "Disconnect" : "Discard Channel"}
 								</Button>
 								<div className={classes.border}></div>
 							</Grid>

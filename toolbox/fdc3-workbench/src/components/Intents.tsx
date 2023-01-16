@@ -81,7 +81,11 @@ const useStyles = makeStyles((theme: Theme) =>
 				marginRight: 0,
 			},
 			"& .MuiIconButton-sizeSmall": {
-				padding: "6px",
+				padding: "6px 0px 6px 0px",
+			},
+			"& > a": {
+				display: "flex",
+				padding: "6px 0px 6px 0px",
 			},
 			display: "flex",
 			alignItems: "center",
