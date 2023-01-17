@@ -8,6 +8,7 @@ import { ContextTemplates } from "./ContextTemplates";
 import { ContextType } from "../utility/Fdc3Api";
 import { copyToClipboard } from "./common/CopyToClipboard";
 import { codeExamples } from "../fixtures/codeExamples";
+import { openApiDocsLink } from "../fixtures/openApiDocs";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import Autocomplete, { createFilterOptions } from "@material-ui/lab/Autocomplete";
 import contextStore from "../store/ContextStore";
@@ -287,7 +288,7 @@ export const ChannelField = observer(
 												<FileCopyIcon />
 											</IconButton>
 										</Tooltip>
-										<Link target="_blank" href="https://fdc3.finos.org/docs/api/ref/Channel#broadcast">
+										<Link onClick={openApiDocsLink} target="FDC3APIDocs" href="https://fdc3.finos.org/docs/api/ref/Channel#broadcast">
 											<InfoOutlinedIcon />
 										</Link>
 									</Grid>
@@ -345,7 +346,7 @@ export const ChannelField = observer(
 												<FileCopyIcon />
 											</IconButton>
 										</Tooltip>
-										<Link target="_blank" href="https://fdc3.finos.org/docs/api/ref/Channel#addcontextlistener">
+										<Link onClick={openApiDocsLink} target="FDC3APIDocs" href="https://fdc3.finos.org/docs/api/ref/Channel#addcontextlistener">
 											<InfoOutlinedIcon />
 										</Link>
 									</Grid>

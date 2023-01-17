@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { Typography, Grid, Button, IconButton, Tooltip, Link } from "@material-ui/core";
 import { codeExamples } from "../fixtures/codeExamples";
+import { openApiDocsLink } from "../fixtures/openApiDocs";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import Autocomplete, { createFilterOptions } from "@material-ui/lab/Autocomplete";
 import contextStore from "../store/ContextStore";
@@ -43,6 +44,10 @@ const useStyles = makeStyles((theme: Theme) =>
 			"& .MuiIconButton-sizeSmall": {
 				padding: "6px 0px 6px 0px",
 			},
+			"& > a": {
+				display: "flex",
+				padding: "6px 0px 6px 0px",
+			},
 		},
 		spread: {
 			flexDirection: "row",
@@ -60,10 +65,6 @@ const useStyles = makeStyles((theme: Theme) =>
 		rightAlign: {
 			flexDirection: "row",
 			justifyContent: "flex-end",
-		},
-		infoLink: {
-			display: "flex",
-			padding: "6px 0px 6px 0px",
 		}
 	})
 );
@@ -206,7 +207,7 @@ export const ContextLinking = observer(() => {
 							</Tooltip>
 						</Grid>
 						<Grid item className={classes.controls}>
-							<Link className={classes.infoLink} target="_blank" href="https://fdc3.finos.org/docs/api/ref/Channel#addcontextlistener">
+							<Link onClick={openApiDocsLink} target="FDC3APIDocs" href="https://fdc3.finos.org/docs/api/ref/Channel#addcontextlistener">
 								<InfoOutlinedIcon />
 							</Link>
 						</Grid>

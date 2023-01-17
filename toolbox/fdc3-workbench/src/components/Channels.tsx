@@ -18,6 +18,7 @@ import FileCopyIcon from "@material-ui/icons/FileCopy";
 import channelStore from "../store/ChannelStore";
 import { codeExamples } from "../fixtures/codeExamples";
 import { copyToClipboard } from "./common/CopyToClipboard";
+import { openApiDocsLink } from "../fixtures/openApiDocs";
 import { ContextLinking } from "./ContextLinking";
 import contextStore from "../store/ContextStore";
 import { ContextTemplates } from "./ContextTemplates";
@@ -153,7 +154,7 @@ export const Channels = observer(({ handleTabChange }: { handleTabChange: any })
 							</Tooltip>
 						</Grid>
 						<Grid item className={classes.controls}>
-							<Link target="_blank" href="https://fdc3.finos.org/docs/api/ref/DesktopAgent#getcurrentchannel">
+							<Link onClick={openApiDocsLink} target="FDC3APIDocs" href="https://fdc3.finos.org/docs/api/ref/DesktopAgent#getcurrentchannel">
 								<InfoOutlinedIcon />
 							</Link>
 						</Grid>
@@ -231,7 +232,7 @@ export const Channels = observer(({ handleTabChange }: { handleTabChange: any })
 							</Tooltip>
 						</Grid>
 						<Grid item className={classes.controls}>
-							<Link target="_blank" href="https://fdc3.finos.org/docs/api/ref/DesktopAgent#joinuserchannel">
+							<Link onClick={openApiDocsLink} target="FDC3APIDocs" href="https://fdc3.finos.org/docs/api/ref/DesktopAgent#joinuserchannel">
 								<InfoOutlinedIcon />
 							</Link>
 						</Grid>
@@ -274,7 +275,7 @@ export const Channels = observer(({ handleTabChange }: { handleTabChange: any })
 							</Tooltip>
 						</Grid>
 						<Grid item className={classes.controls}>
-							<Link target="_blank" href="https://fdc3.finos.org/docs/api/ref/DesktopAgent#broadcast">
+							<Link onClick={openApiDocsLink} target="FDC3APIDocs" href="https://fdc3.finos.org/docs/api/ref/DesktopAgent#broadcast">
 								<InfoOutlinedIcon />
 							</Link>
 						</Grid>

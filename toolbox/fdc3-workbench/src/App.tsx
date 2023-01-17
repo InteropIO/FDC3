@@ -40,7 +40,7 @@ const mainTheme = createTheme({
 			underline: "hover",
 		},
 		MuiTableCell: {
-			padding: "default"
+			padding: "normal"
 		}
 	},
 	overrides: {
