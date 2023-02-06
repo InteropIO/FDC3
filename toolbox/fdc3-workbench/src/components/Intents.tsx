@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import fdc3, { AppMetadata, ContextType, IntentResolution } from "../utility/Fdc3Api";
+import fdc3, { AppIntent, AppMetadata, ContextType, IntentResolution } from "../utility/Fdc3Api";
 import { toJS } from "mobx";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import {
@@ -169,13 +169,8 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 	const [raiseIntentError, setRaiseIntentError] = useState<string | false>(false);
 	const [intentListener, setIntentListener] = useState<ListenerOptionType | null>(null);
 	const [intentsForContext, setIntentsForContext] = useState<ListenerOptionType[] | null>(null);
-	const [intentTargets, setIntentTargets] = useState<any[] | null>(null);
-	const [intentInstances, setIntentInstances] = useState<AppMetadata[]>([]);
-	const [intentContextInstances, setIntentContextInstances] = useState<any[]>([]);
 	const [targetApp, setTargetApp] = useState<AppMetadata | null>(null);
-	const [targetContextInstance, setTargetContextInstance] = useState<any | null>(null);
 	const [contextTargetApp, setContextTargetApp] = useState<any | null>(null);
-	const [contextIntentObjects, setContextIntentObjects] = useState<any[] | null>(null);
 	const [raiseIntentContext, setRaiseIntentContext] = useState<ContextType | null>(null);
 	const [raiseIntentWithContextContext, setRaiseIntentWithContextContext] = useState<ContextType | null>(null);
 	const [intentError, setIntentError] = useState<string | false>(false);
@@ -195,7 +190,9 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 	const [channelType, setChannelType] = useState<string | null>("app-channel");
 	const [sendResultOverChannel, setSendResultOverChannel] = useState<boolean | undefined>(false);
 	const [currentAppChannelId, setCurrentAppChannelId] = useState<string>("");
-	const [currContextIntents, setCurrContextIntents] = useState<any[]>([]);
+	const [currContextIntents, setCurrContextIntents] = useState<AppIntent[]>([]);
+	const [targetOptions, setTargetOptions] = useState<AppIdentifier[]>([]);
+	const [targetOptionsforContext, setTargetOptionsforContext] = useState<AppIdentifier[]>([]);
 
 	const handleRaiseIntent = async () => {
 		setIntentResolution(null);
@@ -217,7 +214,6 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 			return;
 		}
 		if (contextTargetApp) {
-			debugger;
 			setIntentForContextResolution(
 				await intentStore.raiseIntentForContext(raiseIntentWithContextContext, contextTargetApp)
 			);
@@ -240,7 +236,6 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 	};
 
 	const handleContextTargetChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-		debugger;
 			if (event.target.value === "None") {
 				setContextTargetApp(null);
 			} else {
@@ -311,14 +306,13 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 
 	const clearTargets = () => {
 		setTargetApp(null);
-		setIntentInstances([]);
+		setTargetOptions([]);
 	};
 
 	const clearContextTargets = () => {
 		setContextTargetApp(null);
-		setIntentContextInstances([]);
-		setTargetContextInstance(null);
 		setUseContextTargets(false);
+		setTargetOptionsforContext([]);
 	};
 
 	const handleTargetToggle = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
@@ -411,21 +405,22 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 			clearTargets();
 			return;
 		}
+
 		let foundIntent = currContextIntents.find((currIntent)=>currIntent.intent.name === intentValue?.value);
-		if(!foundIntent.apps) {
+		if(!foundIntent?.apps) {
 			setUseTargets(false);
 			clearTargets();
 			return;
 		}
+
 		let sortedApps: any[] = [];
-		foundIntent.apps.forEach((currentApp: any)=>{
+		foundIntent.apps.forEach((currentApp)=>{
 			let foundAppIndex = sortedApps.find((app)=>app.appId === currentApp.appId);
 			if(!foundAppIndex) {
-				debugger;
-				if (!currentApp.instanceId) {
+				if (!currentApp?.instanceId) {
 					sortedApps.push({
 						appId: currentApp.appId || currentApp.name,
-						apps: [currentApp]
+						app: currentApp
 					});
 				} else {
 					sortedApps.push({
@@ -437,65 +432,166 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 			}
 			else {
 				if (!currentApp.instanceId) {
-					foundAppIndex.apps = foundAppIndex.apps ? foundAppIndex.apps.concat([currentApp]): [currentApp];
+					foundAppIndex.app = currentApp;
 				} else {
 					foundAppIndex.instances = foundAppIndex.instances ? foundAppIndex.instances.concat([currentApp]) : [currentApp];
 				}
 				
 			}
 		});
-		debugger;
-		setIntentTargets(sortedApps);
+		const fullApps: any[] = [];
+		sortedApps.map((appSet) => {
+			if(!appSet.app){
+				fullApps.push(
+					<MenuItem value="" disabled>
+						No Target Apps Found
+					</MenuItem>
+				);
+			}
+			if(appSet.app) {
+				fullApps.push(
+					<MenuItem key="" value="None">
+						None
+					</MenuItem>
+				);
+			}
+			if(appSet.app && window.fdc3Version.includes("2.0")) {
+				fullApps.push(
+					<ListSubheader>Launch New: ({appSet.appId})</ListSubheader>
+				);
+			}
+
+			fullApps.push(
+			<MenuItem className="app" key={appSet?.app.appId || appSet?.app.name} value={JSON.stringify(appSet?.app)}>
+				{appSet?.app.appId || appSet?.app.name}
+			</MenuItem>
+			);
+			
+			if(appSet.instances?.length && window.fdc3Version.includes("2.0")) {
+				fullApps.push(<ListSubheader>Launch Existing: ({appSet.appId})</ListSubheader>);
+			}
+			appSet?.instances?.map((target: any) => {
+				fullApps.push(
+				<MenuItem className="instance" key={target.instanceId} value={JSON.stringify(target)}>
+					{target.instanceId}
+				</MenuItem>
+				);
+			});
+			
+		});
+		setTargetOptions(fullApps);
 	}, [intentValue]);
 
 	useEffect(() => {
 		const fetchIntents = async () => {
 			if (!raiseIntentWithContextContext) {
+				setUseContextTargets(false);
+				clearContextTargets();
 				return;
 			}
 			try {
-				let appIntentsForContext = await fdc3.findIntentsByContext(toJS(raiseIntentWithContextContext));
-				if (!appIntentsForContext) {
-					return;
-				}
-
+				let appIntentsForContext = await fdc3.findIntentsByContext(toJS(raiseIntentWithContextContext)) || [];
 				setUseContextTargets(false);
 				clearContextTargets();
-
-				let pairObject: any[] = [];
+				if (!appIntentsForContext) {
+					return;
+				}				
 				
-				appIntentsForContext.forEach((intent) => {
-					intent?.apps.forEach((app) => {
-						pairObject.push({
-							appId: app.appId || app.name,
-							name: `${app.appId || app.name} - ${intent.intent.name}`,
-							app,
-						});
+				if (appIntentsForContext.length > 0) {
 
-
+					let sortedIntents: any[] = [];
+					
+					appIntentsForContext.map((currentIntent)=>{
+						let foundIntent = sortedIntents.find((currentLoopIntent)=>currentIntent.intent.name === currentLoopIntent.intent);
+						if(!foundIntent) {
+							let sortedApps: any[] = [];
+							currentIntent.apps.forEach((currentApp: any)=>{
+								let foundAppIndex = sortedApps.find((app)=>app.appId === currentApp.appId);
+								if(!foundAppIndex) {
+									if (!currentApp.instanceId) {
+										sortedApps.push({
+											appId: currentApp.appId || currentApp.name,
+											app: currentApp
+										});
+									} else {
+										sortedApps.push({
+											appId: currentApp.appId || currentApp.name,
+											instances: [currentApp]
+										});
+									}
+								}
+								else {
+									if (!currentApp.instanceId) {
+										foundAppIndex.app = currentApp;
+									} else {
+										foundAppIndex.instances = foundAppIndex.instances ? foundAppIndex.instances.concat([currentApp]) : [currentApp];
+									}
+								}
+							});
+							sortedIntents.push({intent: currentIntent.intent.name, sortedApps });
+						}
 					});
-				});
-				setContextIntentObjects(pairObject as any[]);
-
-				if (window.fdc3Version == "2.0") {
-					debugger;
-					let contextInstances: (AppMetadata | AppMetadata)[] = [];
-					const contextAppPromises = await Promise.all(
-						pairObject.map(async (app: any) => {
-							let currentContextInstances = await fdc3.findInstances({ appId: app.appId });
-							return currentContextInstances;
-						})
-					);
-
-					contextAppPromises.forEach((currApp)=>{
-						currApp.forEach((currAppInstance)=>{
-							contextInstances.push(currAppInstance);
+					
+					const fullContextApps: any[] = [];
+					let totalNumApps = 0;
+					let totalNumInstances = 0;
+					sortedIntents.map((sI: any)=>{
+						totalNumApps = totalNumApps + (sI.sortedApps.length || 0);
+						sI.sortedApps.map((sII: any)=>{
+							totalNumInstances = totalNumInstances + ( sII.instances?.length || 0)
 						});
 					});
+					if(totalNumApps > 0){
+						fullContextApps.push(
+							<MenuItem key="" value="None">
+								None
+							</MenuItem>
+						);
+					} else {
+						fullContextApps.push(
+							<MenuItem value="" disabled>
+								No Target Apps Found
+							</MenuItem>
+						);
+					}
 
-					setIntentContextInstances(contextInstances);
+					sortedIntents.map((currentSortedIntent)=>{
+						currentSortedIntent.sortedApps.map((appSet: any)=>{
+							if(appSet.app) {
+								if( window.fdc3Version == "2.0") {
+									fullContextApps.push(<ListSubheader>Launch new ({appSet.appId}):</ListSubheader>);
+								}
+
+								fullContextApps.push(
+									<MenuItem value={JSON.stringify(appSet.app)} key={appSet.app.name}>
+										{currentSortedIntent.intent} - {appSet.app.name}
+									</MenuItem>
+								);
+								
+							}
+
+							if(appSet.instances?.length){
+								if(window.fdc3Version == "2.0" ) {
+									fullContextApps.push(<ListSubheader>Launch Existing: ({appSet.appId})</ListSubheader>);
+								}
+								appSet.instances.map((target: any) => {
+									fullContextApps.push(<MenuItem key={target.instanceId} value={JSON.stringify(target)}>
+										{currentSortedIntent.intent} - {target.instanceId}
+									</MenuItem>);
+								});	
+							}												
+						});
+					})
+					
+					setTargetOptionsforContext(fullContextApps);
 				}
-			} catch (e) {}
+
+
+			} catch (e) {
+				setUseContextTargets(false);
+				clearContextTargets();
+				console.log(e);
+			}
 		};
 		fetchIntents();
 	}, [raiseIntentWithContextContext]);
@@ -580,61 +676,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 												getContentAnchorEl: null,
 											}}
 										>
-											{!intentTargets?.length && (
-												<MenuItem value="" disabled>
-													No Target Apps Found
-												</MenuItem>
-											)}
-											{(intentTargets?.length) && (
-												<MenuItem key="" value="None">
-													None
-												</MenuItem>
-											)}
-
-											{intentTargets?.length &&
-												// eslint-disable-next-line arrow-body-style
-												intentTargets.map((appSet) => {
-													return (
-														<>
-													{(appSet.apps?.length && window.fdc3Version.includes("2.0")) && (
-														<ListSubheader>Launch New: ({appSet.appId})</ListSubheader>
-													) }
-
-													{appSet.apps?.length && appSet?.apps?.map((target: any) => (
-														<MenuItem className="app" key={target.appId || target.name} value={JSON.stringify(target)}>
-															{target.appId || target.name}
-														</MenuItem>
-													))}
-
-													{(appSet.instances?.length && window.fdc3Version.includes("2.0")) && (
-														<ListSubheader>Launch Existing: ({appSet.appId})</ListSubheader>
-													) }
-
-													{appSet.instances?.length && appSet?.instances?.map((target: any) => (
-														<MenuItem className="instance" key={target.instanceId} value={JSON.stringify(target)}>
-															{target.instanceId}
-														</MenuItem>
-													))}
-													</>
-													);
-												})
-											}
-											{/*
-
-											 {(window.fdc3Version == "2.0" && intentInstances?.length) && (
-												<ListSubheader>Launch Existing:</ListSubheader>
-											)}
-											{(window.fdc3Version == "2.0" && !intentInstances?.length) && (
-												<MenuItem value="" disabled>
-													No Existing Instances Found
-												</MenuItem>
-											)}
-											{(window.fdc3Version == "2.0" && intentInstances?.length ) &&
-												intentInstances.map((target: any) => (
-													<MenuItem className="instance" key={target.instanceId} value={JSON.stringify(target)}>
-														{target.instanceId}
-													</MenuItem>
-											))} */}
+											{targetOptions}
 										</Select>
 									</FormControl>
 								)}
@@ -702,7 +744,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 											<Switch checked={useContextTargets} color="primary" onChange={handleContextTargetToggle} />
 										}
 										label="Select Target"
-										disabled={!raiseIntentWithContextContext}
+										disabled={!raiseIntentWithContextContext || targetOptionsforContext.length < 1}
 									/>
 								</FormGroup>
 
@@ -727,42 +769,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 												getContentAnchorEl: null,
 											}}
 										>
-											{(contextIntentObjects?.length || intentContextInstances?.length ) && (
-												<MenuItem key="" value="None">
-													None
-												</MenuItem>
-											)}
-											{ (window.fdc3Version == "2.0" && contextIntentObjects?.length) && (
-												<ListSubheader>Launch new:</ListSubheader>
-											)}
-											{!contextIntentObjects?.length && (
-												<MenuItem value="" disabled>
-													No Target Apps Found
-												</MenuItem>
-											)}
-											
-											{contextIntentObjects?.length &&
-												contextIntentObjects.map((target) => (
-													<MenuItem value={JSON.stringify(target)} key={target.name}>
-														{target.name}
-													</MenuItem>
-												))
-											}
-											{(window.fdc3Version == "2.0" && intentContextInstances?.length) && (
-												<ListSubheader>Launch Existing:</ListSubheader>
-											)}
-											{(window.fdc3Version == "2.0" && !intentContextInstances?.length) && (
-												<MenuItem value="" disabled>
-													No Existing Instances Found
-												</MenuItem>
-											)}
-											{(window.fdc3Version == "2.0" && intentContextInstances?.length ) &&
-												intentContextInstances.map((target: any) => (
-													<MenuItem key={target.instanceId} value={JSON.stringify(target)}>
-														{target.instanceId}
-													</MenuItem>
-												))
-											}
+											{targetOptionsforContext}
 										</Select>
 									</FormControl>
 								)}
@@ -786,7 +793,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 									onClick={() => {
 										const context = JSON.stringify(raiseIntentWithContextContext, null, 2);
 										let exampleToUse = codeExamples.raiseIntentForContext(context);
-										if (targetContextInstance?.instanceId) {
+										if (contextTargetApp?.instanceId) {
 											exampleToUse = codeExamples.raiseIntentForContextInstance(context);
 										} else if (contextTargetApp) {
 											exampleToUse = codeExamples.raiseIntentForContextTarget(context);
