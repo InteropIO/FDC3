@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import fdc3, { AppIdentifier, AppIntent, AppMetadata, ContextType, IntentResolution } from "../utility/Fdc3Api";
+import fdc3, { AppMetadata, ContextType, IntentResolution } from "../utility/Fdc3Api";
 import { toJS } from "mobx";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import {
@@ -16,6 +16,7 @@ import {
 	TextField,
 	Switch,
 	Link,
+	ListSubheader,
 } from "@material-ui/core";
 import { observer } from "mobx-react";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
@@ -35,6 +36,7 @@ import { FormControlLabel } from "@material-ui/core";
 import { RadioGroup } from "@material-ui/core";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
+import { AppIdentifier } from "fdc3-2.0";
 
 // interface copied from lib @material-ui/lab/Autocomplete
 interface FilterOptionsState<T> {
@@ -167,14 +169,12 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 	const [raiseIntentError, setRaiseIntentError] = useState<string | false>(false);
 	const [intentListener, setIntentListener] = useState<ListenerOptionType | null>(null);
 	const [intentsForContext, setIntentsForContext] = useState<ListenerOptionType[] | null>(null);
-	const [intentTargets, setIntentTargets] = useState<AppMetadata[] | null>(null);
-	const [intentInstances, setIntentInstances] = useState<AppIdentifier[]>([]);
+	const [intentTargets, setIntentTargets] = useState<any[] | null>(null);
+	const [intentInstances, setIntentInstances] = useState<AppMetadata[]>([]);
 	const [intentContextInstances, setIntentContextInstances] = useState<any[]>([]);
-	const [targetApp, setTargetApp] = useState<string | null>(null);
-	const [targetInstance, setTargetInstance] = useState<any | null>(null);
+	const [targetApp, setTargetApp] = useState<AppMetadata | null>(null);
 	const [targetContextInstance, setTargetContextInstance] = useState<any | null>(null);
-	const [contextTargetApp, setContextTargetApp] = useState<string | null>(null);
-	const [intentObjects, setIntentObjects] = useState<AppIntent[] | null>(null);
+	const [contextTargetApp, setContextTargetApp] = useState<any | null>(null);
 	const [contextIntentObjects, setContextIntentObjects] = useState<any[] | null>(null);
 	const [raiseIntentContext, setRaiseIntentContext] = useState<ContextType | null>(null);
 	const [raiseIntentWithContextContext, setRaiseIntentWithContextContext] = useState<ContextType | null>(null);
@@ -185,7 +185,6 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 	);
 	const intentListenersOptions: ListenerOptionType[] = intentStore.intentsList;
 	const [contextFields, setContextFields] = useState<any[]>([]);
-
 	const [resultTypeContext, setResultTypeContext] = useState<ContextType | null>(null);
 	const [resultOverChannelContextList, setResultOverChannelContextList] = useState<any>({});
 	const [resultOverChannelContextDelays, setResultOverChannelContextDelays] = useState<any>({});
@@ -196,6 +195,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 	const [channelType, setChannelType] = useState<string | null>("app-channel");
 	const [sendResultOverChannel, setSendResultOverChannel] = useState<boolean | undefined>(false);
 	const [currentAppChannelId, setCurrentAppChannelId] = useState<string>("");
+	const [currContextIntents, setCurrContextIntents] = useState<any[]>([]);
 
 	const handleRaiseIntent = async () => {
 		setIntentResolution(null);
@@ -203,18 +203,9 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 			setRaiseIntentError("enter intent name");
 		} else if (!raiseIntentContext) {
 			setRaiseIntentError("enter context name");
-		} else if (targetInstance && intentInstances) {
-			let targetObject = intentInstances.find((target) => target.instanceId === targetInstance.instanceId);
-			if (targetObject) {
-				setIntentResolution(await intentStore.raiseIntent(intentValue.value, raiseIntentContext, targetObject));
-				setRaiseIntentError("");
-			}
-		} else if (targetApp && intentTargets) {
-			let targetObject = intentTargets.find((target) => target.appId === targetApp || target.name === targetApp);
-			if (targetObject) {
-				setIntentResolution(await intentStore.raiseIntent(intentValue.value, raiseIntentContext, targetObject));
-				setRaiseIntentError("");
-			}
+		} else if (targetApp) {
+			setIntentResolution(await intentStore.raiseIntent(intentValue.value, raiseIntentContext, targetApp));
+			setRaiseIntentError("");
 		} else {
 			setIntentResolution(await intentStore.raiseIntent(intentValue.value, raiseIntentContext));
 			setRaiseIntentError("");
@@ -225,84 +216,41 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 		if (!raiseIntentWithContextContext) {
 			return;
 		}
-		if (targetContextInstance && intentContextInstances) {
-			let targetObject = intentContextInstances.find(
-				(target) => target.instanceId === targetContextInstance.instanceId
-			);
-			if (targetObject) {
-				setIntentForContextResolution(
-					await intentStore.raiseIntentForContext(raiseIntentWithContextContext, targetObject)
-				);
-			}
-		} else if (contextTargetApp && contextIntentObjects) {
-			let targetObject = contextIntentObjects.find((target) => target.name === contextTargetApp);
+		if (contextTargetApp) {
+			debugger;
 			setIntentForContextResolution(
-				await intentStore.raiseIntentForContext(raiseIntentWithContextContext, targetObject.app)
+				await intentStore.raiseIntentForContext(raiseIntentWithContextContext, contextTargetApp)
 			);
 		} else {
 			setIntentForContextResolution(await intentStore.raiseIntentForContext(raiseIntentWithContextContext));
 		}
 	};
 
-	const handleTargetChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-		const fetchInstances = async () => {
-			if (event.target.value === "None") {
-				setTargetApp("");
-				setIntentInstances([]);
-				setTargetInstance(null);
-			} else {
-				const currentTargetApp = event.target.value as string;
-				setTargetApp(currentTargetApp);
-				if (window.fdc3Version == "2.0") {
-					let instances = await fdc3.findInstances({ appId: currentTargetApp });
-					if (!instances) return;
-					setIntentInstances(instances);
-				}
-			}
-		};
-		fetchInstances();
-	};
-
-	const handleAppInstancesChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+	const handleTargetChange = (event: React.ChangeEvent<{value: unknown}>) => {
 		if (event.target.value === "None") {
-			setTargetInstance(null);
+			setTargetApp(null);
 		} else {
-			const instanceExists = intentInstances.find(
-				(currentInstance) => currentInstance.instanceId === event.target.value
-			);
-			setTargetInstance(instanceExists);
-		}
-	};
-
-	const handleAppContextInstancesChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-		if (event.target.value === "None") {
-			setTargetContextInstance("");
-		} else {
-			const instanceExists = intentContextInstances.find(
-				(currentInstance) => currentInstance.instanceId === event.target.value
-			);
-			setTargetContextInstance(instanceExists);
+			const targetObj = JSON.parse(event.target.value as string);
+			let target = {
+				appId: targetObj.appId || targetObj.name, 
+				...(targetObj.instanceId && {instanceId: targetObj.instanceId || ""})
+			};
+			setTargetApp(target);
 		}
 	};
 
 	const handleContextTargetChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-		const fetchInstances = async () => {
+		debugger;
 			if (event.target.value === "None") {
-				setContextTargetApp("");
-				setIntentContextInstances([]);
+				setContextTargetApp(null);
 			} else {
-				const currentTargetApp = event.target.value as string;
+				const contextTargetObj = JSON.parse(event.target.value as string);
+				const currentTargetApp = {
+					appId: contextTargetObj.appId || contextTargetObj.name, 
+					...(contextTargetObj.instanceId && {instanceId: contextTargetObj.instanceId || ""})
+				};
 				setContextTargetApp(currentTargetApp);
-				if (window.fdc3Version == "2.0") {
-					let foundAppObject = contextIntentObjects?.find(
-						(currentIntentObj) => currentIntentObj.name === currentTargetApp
-					);
-					let instances = await fdc3.findInstances({ appId: foundAppObject.appId });
-					setIntentContextInstances(instances);
-				}
 			}
-		};
-		fetchInstances();
 	};
 
 	const handleChangeListener =
@@ -364,7 +312,6 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 	const clearTargets = () => {
 		setTargetApp(null);
 		setIntentInstances([]);
-		setTargetInstance(null);
 	};
 
 	const clearContextTargets = () => {
@@ -375,7 +322,6 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 	};
 
 	const handleTargetToggle = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
-		debugger;
 		setUseTargets(checked);
 		if (!checked) {
 			clearTargets();
@@ -383,7 +329,6 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 	};
 
 	const handleContextTargetToggle = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
-		debugger;
 		setUseContextTargets(checked);
 		if (!checked) {
 			clearContextTargets();
@@ -439,8 +384,10 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 				setUseTargets(false);
 				clearTargets();
 
-				if (appIntents) {
-					setIntentObjects(appIntents);
+				if (appIntents.length > 0) {
+
+					setCurrContextIntents(appIntents);
+					
 					setIntentsForContext(
 						appIntents.map(({ intent }: { intent: any }) => {
 							return {
@@ -451,6 +398,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 					);
 				}
 			} catch (e) {
+				setIntentsForContext([]);
 				setRaiseIntentError("no intents found");
 			}
 		};
@@ -461,13 +409,43 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 		if (!intentValue) {
 			setUseTargets(false);
 			clearTargets();
+			return;
 		}
-		if (intentObjects) {
-			const targets = intentObjects.find((obj) => obj.intent.name === intentValue?.value);
-			if (targets?.apps) {
-				setIntentTargets(targets.apps);
+		let foundIntent = currContextIntents.find((currIntent)=>currIntent.intent.name === intentValue?.value);
+		if(!foundIntent.apps) {
+			setUseTargets(false);
+			clearTargets();
+			return;
+		}
+		let sortedApps: any[] = [];
+		foundIntent.apps.forEach((currentApp: any)=>{
+			let foundAppIndex = sortedApps.find((app)=>app.appId === currentApp.appId);
+			if(!foundAppIndex) {
+				debugger;
+				if (!currentApp.instanceId) {
+					sortedApps.push({
+						appId: currentApp.appId || currentApp.name,
+						apps: [currentApp]
+					});
+				} else {
+					sortedApps.push({
+						appId: currentApp.appId || currentApp.name,
+						instances: [currentApp]
+					});
+				}
+				
 			}
-		}
+			else {
+				if (!currentApp.instanceId) {
+					foundAppIndex.apps = foundAppIndex.apps ? foundAppIndex.apps.concat([currentApp]): [currentApp];
+				} else {
+					foundAppIndex.instances = foundAppIndex.instances ? foundAppIndex.instances.concat([currentApp]) : [currentApp];
+				}
+				
+			}
+		});
+		debugger;
+		setIntentTargets(sortedApps);
 	}, [intentValue]);
 
 	useEffect(() => {
@@ -485,6 +463,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 				clearContextTargets();
 
 				let pairObject: any[] = [];
+				
 				appIntentsForContext.forEach((intent) => {
 					intent?.apps.forEach((app) => {
 						pairObject.push({
@@ -492,9 +471,30 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 							name: `${app.appId || app.name} - ${intent.intent.name}`,
 							app,
 						});
+
+
 					});
 				});
 				setContextIntentObjects(pairObject as any[]);
+
+				if (window.fdc3Version == "2.0") {
+					debugger;
+					let contextInstances: (AppMetadata | AppMetadata)[] = [];
+					const contextAppPromises = await Promise.all(
+						pairObject.map(async (app: any) => {
+							let currentContextInstances = await fdc3.findInstances({ appId: app.appId });
+							return currentContextInstances;
+						})
+					);
+
+					contextAppPromises.forEach((currApp)=>{
+						currApp.forEach((currAppInstance)=>{
+							contextInstances.push(currAppInstance);
+						});
+					});
+
+					setIntentContextInstances(contextInstances);
+				}
 			} catch (e) {}
 		};
 		fetchIntents();
@@ -565,7 +565,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 										<Select
 											labelId="intent-target-app"
 											id="intent-target-app-select"
-											value={targetApp ?? ""}
+											value={targetApp?.instanceId || targetApp?.appId }
 											onChange={handleTargetChange}
 											label="Target App (optional)"
 											MenuProps={{
@@ -585,52 +585,56 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 													No Target Apps Found
 												</MenuItem>
 											)}
-											{intentTargets?.length && (
+											{(intentTargets?.length) && (
 												<MenuItem key="" value="None">
 													None
 												</MenuItem>
 											)}
+
 											{intentTargets?.length &&
-												intentTargets.map((target) => (
-													<MenuItem key={target.appId || target.name} value={target.appId || target.name}>
-														{target.appId || target.name}
-													</MenuItem>
-												))}
-										</Select>
-									</FormControl>
-								)}
-								{useTargets && intentInstances?.length > 0 && (
-									<FormControl variant="outlined" size="small" className={classes.targetSelect}>
-										<InputLabel id="intent-target-instance">Target Instance (optional)</InputLabel>
-										<Select
-											labelId="intent-target-instance"
-											id="intent-target-instance-select"
-											value={targetInstance?.instanceId ?? ""}
-											onChange={handleAppInstancesChange}
-											label="Target Instance (optional)"
-											MenuProps={{
-												anchorOrigin: {
-													vertical: "bottom",
-													horizontal: "left",
-												},
-												transformOrigin: {
-													vertical: "top",
-													horizontal: "left",
-												},
-												getContentAnchorEl: null,
-											}}
-										>
-											{intentInstances?.length && (
-												<MenuItem key="" value="None">
-													None
+												// eslint-disable-next-line arrow-body-style
+												intentTargets.map((appSet) => {
+													return (
+														<>
+													{(appSet.apps?.length && window.fdc3Version.includes("2.0")) && (
+														<ListSubheader>Launch New: ({appSet.appId})</ListSubheader>
+													) }
+
+													{appSet.apps?.length && appSet?.apps?.map((target: any) => (
+														<MenuItem className="app" key={target.appId || target.name} value={JSON.stringify(target)}>
+															{target.appId || target.name}
+														</MenuItem>
+													))}
+
+													{(appSet.instances?.length && window.fdc3Version.includes("2.0")) && (
+														<ListSubheader>Launch Existing: ({appSet.appId})</ListSubheader>
+													) }
+
+													{appSet.instances?.length && appSet?.instances?.map((target: any) => (
+														<MenuItem className="instance" key={target.instanceId} value={JSON.stringify(target)}>
+															{target.instanceId}
+														</MenuItem>
+													))}
+													</>
+													);
+												})
+											}
+											{/*
+
+											 {(window.fdc3Version == "2.0" && intentInstances?.length) && (
+												<ListSubheader>Launch Existing:</ListSubheader>
+											)}
+											{(window.fdc3Version == "2.0" && !intentInstances?.length) && (
+												<MenuItem value="" disabled>
+													No Existing Instances Found
 												</MenuItem>
 											)}
-											{intentInstances?.length &&
+											{(window.fdc3Version == "2.0" && intentInstances?.length ) &&
 												intentInstances.map((target: any) => (
-													<MenuItem key={target.instanceId} value={target.instanceId}>
+													<MenuItem className="instance" key={target.instanceId} value={JSON.stringify(target)}>
 														{target.instanceId}
 													</MenuItem>
-												))}
+											))} */}
 										</Select>
 									</FormControl>
 								)}
@@ -651,7 +655,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 										const intent = String(intentValue);
 
 										let exampleToUse = codeExamples.raiseIntent(context, intent);
-										if (targetInstance?.instanceId) {
+										if (targetApp?.instanceId) {
 											exampleToUse = codeExamples.raiseIntentInstance(context, intent);
 										} else if (targetApp) {
 											exampleToUse = codeExamples.raiseIntentTarget(context, intent);
@@ -708,9 +712,9 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 										<Select
 											labelId="intent-context-target-app"
 											id="intent-context-target-app-select"
-											value={contextTargetApp ?? ""}
+											value={contextTargetApp?.instanceId || contextTargetApp?.appId}
 											onChange={handleContextTargetChange}
-											label="Target (optional)"
+											label="Target App (optional)"
 											MenuProps={{
 												anchorOrigin: {
 													vertical: "bottom",
@@ -723,58 +727,42 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 												getContentAnchorEl: null,
 											}}
 										>
+											{(contextIntentObjects?.length || intentContextInstances?.length ) && (
+												<MenuItem key="" value="None">
+													None
+												</MenuItem>
+											)}
+											{ (window.fdc3Version == "2.0" && contextIntentObjects?.length) && (
+												<ListSubheader>Launch new:</ListSubheader>
+											)}
 											{!contextIntentObjects?.length && (
 												<MenuItem value="" disabled>
 													No Target Apps Found
 												</MenuItem>
 											)}
-											{contextIntentObjects?.length && (
-												<MenuItem key="" value="None">
-													None
-												</MenuItem>
-											)}
+											
 											{contextIntentObjects?.length &&
 												contextIntentObjects.map((target) => (
-													<MenuItem value={target.name} key={target.name}>
+													<MenuItem value={JSON.stringify(target)} key={target.name}>
 														{target.name}
 													</MenuItem>
-												))}
-										</Select>
-									</FormControl>
-								)}
-
-								{useContextTargets && intentContextInstances?.length > 0 && (
-									<FormControl variant="outlined" size="small" className={classes.targetSelect}>
-										<InputLabel id="intent-context-target-instance">Target Instance (optional)</InputLabel>
-										<Select
-											labelId="intent-context-target-instance"
-											id="intent-context-target-instance-select"
-											value={targetContextInstance?.instanceId ?? ""}
-											onChange={handleAppContextInstancesChange}
-											label="Target Instance (optional)"
-											MenuProps={{
-												anchorOrigin: {
-													vertical: "bottom",
-													horizontal: "left",
-												},
-												transformOrigin: {
-													vertical: "top",
-													horizontal: "left",
-												},
-												getContentAnchorEl: null,
-											}}
-										>
-											{intentContextInstances?.length && (
-												<MenuItem key="" value="None">
-													None
+												))
+											}
+											{(window.fdc3Version == "2.0" && intentContextInstances?.length) && (
+												<ListSubheader>Launch Existing:</ListSubheader>
+											)}
+											{(window.fdc3Version == "2.0" && !intentContextInstances?.length) && (
+												<MenuItem value="" disabled>
+													No Existing Instances Found
 												</MenuItem>
 											)}
-											{intentContextInstances?.length &&
+											{(window.fdc3Version == "2.0" && intentContextInstances?.length ) &&
 												intentContextInstances.map((target: any) => (
-													<MenuItem key={target.instanceId} value={target.instanceId}>
+													<MenuItem key={target.instanceId} value={JSON.stringify(target)}>
 														{target.instanceId}
 													</MenuItem>
-												))}
+												))
+											}
 										</Select>
 									</FormControl>
 								)}
