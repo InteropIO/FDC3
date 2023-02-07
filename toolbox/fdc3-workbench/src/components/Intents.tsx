@@ -191,8 +191,8 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 	const [sendResultOverChannel, setSendResultOverChannel] = useState<boolean | undefined>(false);
 	const [currentAppChannelId, setCurrentAppChannelId] = useState<string>("");
 	const [currContextIntents, setCurrContextIntents] = useState<AppIntent[]>([]);
-	const [targetOptions, setTargetOptions] = useState<AppIdentifier[]>([]);
-	const [targetOptionsforContext, setTargetOptionsforContext] = useState<AppIdentifier[]>([]);
+	const [targetOptions, setTargetOptions] = useState<AppMetadata[]>([]);
+	const [targetOptionsforContext, setTargetOptionsforContext] = useState<AppMetadata[]>([]);
 
 	const handleRaiseIntent = async () => {
 		setIntentResolution(null);
