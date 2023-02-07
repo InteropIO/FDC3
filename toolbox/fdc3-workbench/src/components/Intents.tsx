@@ -440,21 +440,25 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 			}
 		});
 		const fullApps: any[] = [];
+		let totalNumApps = 0;
+		let totalNumInstances = 0;
+
+		if (sortedApps.length < 1) {
+			fullApps.push(
+				<MenuItem value="" disabled>
+					No Target Apps Found
+				</MenuItem>
+			);
+		} else {
+			fullApps.push(
+				<MenuItem key="" value="None">
+					None
+				</MenuItem>
+			);
+		}
+
 		sortedApps.map((appSet) => {
-			if(!appSet.app){
-				fullApps.push(
-					<MenuItem value="" disabled>
-						No Target Apps Found
-					</MenuItem>
-				);
-			}
-			if(appSet.app) {
-				fullApps.push(
-					<MenuItem key="" value="None">
-						None
-					</MenuItem>
-				);
-			}
+			
 			if(appSet.app && window.fdc3Version.includes("2.0")) {
 				fullApps.push(
 					<ListSubheader>Launch New: ({appSet.appId})</ListSubheader>
