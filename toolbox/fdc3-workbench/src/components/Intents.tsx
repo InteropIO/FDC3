@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import fdc3, { AppIntent, AppMetadata, ContextType, IntentResolution } from "../utility/Fdc3Api";
+import fdc3, { AppIntent, ContextType, IntentResolution } from "../utility/Fdc3Api";
 import { toJS } from "mobx";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import {
@@ -36,7 +36,7 @@ import { FormControlLabel } from "@material-ui/core";
 import { RadioGroup } from "@material-ui/core";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
-import { AppIdentifier } from "fdc3-2.0";
+import { AppIdentifier, AppMetadata } from "fdc3-2.0";
 
 // interface copied from lib @material-ui/lab/Autocomplete
 interface FilterOptionsState<T> {
@@ -414,7 +414,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 		}
 
 		let sortedApps: any[] = [];
-		foundIntent.apps.forEach((currentApp)=>{
+		foundIntent.apps.forEach((currentApp: any)=>{
 			let foundAppIndex = sortedApps.find((app)=>app.appId === currentApp.appId);
 			if(!foundAppIndex) {
 				if (!currentApp?.instanceId) {
@@ -422,7 +422,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 						appId: currentApp.appId || currentApp.name,
 						app: currentApp
 					});
-				} else {
+				} else if(window.fdc3Version.includes("2.0")){
 					sortedApps.push({
 						appId: currentApp.appId || currentApp.name,
 						instances: [currentApp]
@@ -433,15 +433,13 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 			else {
 				if (!currentApp.instanceId) {
 					foundAppIndex.app = currentApp;
-				} else {
+				} else if(window.fdc3Version.includes("2.0")){
 					foundAppIndex.instances = foundAppIndex.instances ? foundAppIndex.instances.concat([currentApp]) : [currentApp];
 				}
 				
 			}
 		});
 		const fullApps: any[] = [];
-		let totalNumApps = 0;
-		let totalNumInstances = 0;
 
 		if (sortedApps.length < 1) {
 			fullApps.push(
@@ -517,7 +515,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 											appId: currentApp.appId || currentApp.name,
 											app: currentApp
 										});
-									} else {
+									} else if(window.fdc3Version.includes("2.0")){
 										sortedApps.push({
 											appId: currentApp.appId || currentApp.name,
 											instances: [currentApp]
@@ -527,7 +525,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 								else {
 									if (!currentApp.instanceId) {
 										foundAppIndex.app = currentApp;
-									} else {
+									} else if(window.fdc3Version.includes("2.0")){
 										foundAppIndex.instances = foundAppIndex.instances ? foundAppIndex.instances.concat([currentApp]) : [currentApp];
 									}
 								}
