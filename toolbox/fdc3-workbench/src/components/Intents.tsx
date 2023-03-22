@@ -190,7 +190,6 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 	const [channelType, setChannelType] = useState<string | null>("app-channel");
 	const [sendResultOverChannel, setSendResultOverChannel] = useState<boolean | undefined>(false);
 	const [currentAppChannelId, setCurrentAppChannelId] = useState<string>("");
-	const [currContextIntents, setCurrContextIntents] = useState<AppIntent[]>([]);
 	const [targetOptions, setTargetOptions] = useState<AppMetadata[]>([]);
 	const [targetOptionsforContext, setTargetOptionsforContext] = useState<AppMetadata[]>([]);
 
@@ -220,6 +219,17 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 		} else {
 			setIntentForContextResolution(await intentStore.raiseIntentForContext(raiseIntentWithContextContext));
 		}
+	};
+
+	const clearTargets = () => {
+		setTargetApp(null);
+		setTargetOptions([]);
+	};
+
+	const clearContextTargets = () => {
+		setContextTargetApp(null);
+		setUseContextTargets(false);
+		setTargetOptionsforContext([]);
 	};
 
 	const handleTargetChange = (event: React.ChangeEvent<{value: unknown}>) => {
@@ -282,222 +292,97 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 		return filtered;
 	};
 
-	const handleAddIntentListener = () => {
-		if (!intentListener) {
-			setIntentError("Enter intent");
-			return;
-		} else {
-			intentStore.addIntentListener(
-				intentListener.value,
-				toJS(resultTypeContext),
-				currentAppChannelId,
-				channelType === "private-channel",
-				resultOverChannelContextList,
-				resultOverChannelContextDelays
-			);
-			setIntentListener(null);
-		}
-		setSendIntentResult(false);
-	};
+	const getIntent = (intents:AppIntent[] ) =>intents.find((currIntent: any)=>currIntent.intent.name === intentValue?.value);
 
-	const handleChannelTypeChange = (event: React.MouseEvent<HTMLElement>, nextView: string) => {
-		setChannelType(nextView);
-	};
-
-	const clearTargets = () => {
-		setTargetApp(null);
-		setTargetOptions([]);
-	};
-
-	const clearContextTargets = () => {
-		setContextTargetApp(null);
-		setUseContextTargets(false);
-		setTargetOptionsforContext([]);
-	};
-
-	const handleTargetToggle = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
-		setUseTargets(checked);
-		if (!checked) {
-			clearTargets();
-		}
-	};
-
-	const handleContextTargetToggle = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
-		setUseContextTargets(checked);
-		if (!checked) {
-			clearContextTargets();
-		}
-	};
-
-	const setChannelContextList = (context: ContextType, index: number) => {
-		setResultOverChannelContextList((curr: any) => {
-			return { ...curr, [index]: context };
-		});
-	};
-
-	const setChannelContextDelay = (delay: string, index: number) => {
-		setResultOverChannelContextDelays((curr: any) => {
-			const lastDelay = curr[index - 1] || 0;
-			return { ...curr, [index]: lastDelay + Number(delay) };
-		});
-	};
-
-	const handleAddContextField = () => {
-		setContextFields((current) => [
-			...current,
-			<Grid container direction="row" key={contextFields.length}>
-				<Grid item className={classes.indentLeft}>
-					<TextField
-						variant="outlined"
-						label="Delay (ms)"
-						type="number"
-						size="small"
-						onChange={(e) => setChannelContextDelay(e.target.value, contextFields.length)}
-					/>
-				</Grid>
-				<Grid item className={`${classes.indentLeft} ${classes.field}`}>
-					<ContextTemplates
-						handleTabChange={handleTabChange}
-						contextStateSetter={(context: any) => setChannelContextList(context, contextFields.length)}
-					/>
-				</Grid>
-			</Grid>,
-		]);
-	};
-
-	useEffect(() => {
-		setIntentValue(null);
-		const fetchIntents = async () => {
-			try {
-				if (!raiseIntentContext) {
-					return;
-				}
-				setRaiseIntentError(false);
-				let appIntents = await fdc3.findIntentsByContext(toJS(raiseIntentContext));
-
+	const handleTargetMenuOpen = () => {
+		const fetchAppsInstances = async () => {
+			let appIntents = await fdc3.findIntentsByContext(toJS(raiseIntentContext) as ContextType);
+			let foundIntent = getIntent(appIntents);
+			if(!foundIntent?.apps) {
 				setUseTargets(false);
 				clearTargets();
-
-				if (appIntents.length > 0) {
-
-					setCurrContextIntents(appIntents);
-					
-					setIntentsForContext(
-						appIntents.map(({ intent }: { intent: any }) => {
-							return {
-								title: intent.name,
-								value: intent.name,
-							};
-						})
-					);
-				}
-			} catch (e) {
-				setIntentsForContext([]);
-				setRaiseIntentError("no intents found");
-			}
-		};
-		fetchIntents();
-	}, [raiseIntentContext]);
-
-	useEffect(() => {
-		if (!intentValue) {
-			setUseTargets(false);
-			clearTargets();
-			return;
-		}
-
-		let foundIntent = currContextIntents.find((currIntent)=>currIntent.intent.name === intentValue?.value);
-		if(!foundIntent?.apps) {
-			setUseTargets(false);
-			clearTargets();
-			return;
-		}
-
-		let sortedApps: any[] = [];
-		foundIntent.apps.forEach((currentApp: any)=>{
-			let foundAppIndex = sortedApps.find((app)=>app.appId === currentApp.appId);
-			if(!foundAppIndex) {
-				if (!currentApp?.instanceId) {
-					sortedApps.push({
-						appId: currentApp.appId || currentApp.name,
-						app: currentApp
-					});
-				} else if(window.fdc3Version.includes("2.0")){
-					sortedApps.push({
-						appId: currentApp.appId || currentApp.name,
-						instances: [currentApp]
-					});
-				}
-				
-			}
-			else {
-				if (!currentApp.instanceId) {
-					foundAppIndex.app = currentApp;
-				} else if(window.fdc3Version.includes("2.0")){
-					foundAppIndex.instances = foundAppIndex.instances ? foundAppIndex.instances.concat([currentApp]) : [currentApp];
-				}
-				
-			}
-		});
-		const fullApps: any[] = [];
-
-		if (sortedApps.length < 1) {
-			fullApps.push(
-				<MenuItem value="" disabled>
-					No Target Apps Found
-				</MenuItem>
-			);
-		} else {
-			fullApps.push(
-				<MenuItem key="" value="None">
-					None
-				</MenuItem>
-			);
-		}
-
-		sortedApps.map((appSet) => {
-			
-			if(appSet.app && window.fdc3Version.includes("2.0")) {
-				fullApps.push(
-					<ListSubheader>Launch New: ({appSet.appId})</ListSubheader>
-				);
-			}
-
-			fullApps.push(
-			<MenuItem className="app" key={appSet?.app.appId || appSet?.app.name} value={JSON.stringify(appSet?.app)}>
-				{appSet?.app.appId || appSet?.app.name}
-			</MenuItem>
-			);
-			
-			if(appSet.instances?.length && window.fdc3Version.includes("2.0")) {
-				fullApps.push(<ListSubheader>Launch Existing: ({appSet.appId})</ListSubheader>);
-			}
-			appSet?.instances?.map((target: any) => {
-				fullApps.push(
-				<MenuItem className="instance" key={target.instanceId} value={JSON.stringify(target)}>
-					{target.instanceId}
-				</MenuItem>
-				);
-			});
-			
-		});
-		setTargetOptions(fullApps);
-	}, [intentValue]);
-
-	useEffect(() => {
-		const fetchIntents = async () => {
-			if (!raiseIntentWithContextContext) {
-				setUseContextTargets(false);
-				clearContextTargets();
 				return;
 			}
+
+			const sortedApps: any[] = [];
+			const fullApps: any[] = [];
+
+			foundIntent.apps .forEach((currentApp: any)=>{
+				let foundAppIndex = sortedApps.find((app)=>app.appId === currentApp.appId);
+				if(!foundAppIndex) {
+					if (!currentApp?.instanceId) {
+						sortedApps.push({
+							appId: currentApp.appId || currentApp.name,
+							app: currentApp
+						});
+					} else if(window.fdc3Version.includes("2.0")){
+						sortedApps.push({
+							appId: currentApp.appId || currentApp.name,
+							instances: [currentApp]
+						});
+					}
+					
+				}
+				else {
+					if (!currentApp.instanceId) {
+						foundAppIndex.app = currentApp;
+					} else if(window.fdc3Version.includes("2.0")){
+						foundAppIndex.instances = foundAppIndex.instances ? foundAppIndex.instances.concat([currentApp]) : [currentApp];
+					}
+					
+				}
+			});	
+
+			if (sortedApps.length < 1) {
+				fullApps.push(
+					<MenuItem value="" disabled>
+						No Target Apps Found
+					</MenuItem>
+				);
+			} else {
+				fullApps.push(
+					<MenuItem key="" value="None">
+						None
+					</MenuItem>
+				);
+			}
+
+			sortedApps.map((appSet) => {
+				
+				if(appSet.app && window.fdc3Version.includes("2.0")) {
+					fullApps.push(
+						<ListSubheader>Launch New: ({appSet.appId})</ListSubheader>
+					);
+				}
+
+				fullApps.push(
+				<MenuItem className="app" key={appSet?.app.appId || appSet?.app.name} value={JSON.stringify(appSet?.app)}>
+					{appSet?.app.appId || appSet?.app.name}
+				</MenuItem>
+				);
+				
+				if(appSet.instances?.length && window.fdc3Version.includes("2.0")) {
+					fullApps.push(<ListSubheader>Launch Existing: ({appSet.appId})</ListSubheader>);
+				}
+				appSet?.instances?.map((target: any) => {
+					fullApps.push(
+					<MenuItem className="instance" key={target.instanceId} value={JSON.stringify(target)}>
+						{target.instanceId}
+					</MenuItem>
+					);
+				});
+				
+			});
+			setTargetOptions(fullApps);
+
+		}
+		fetchAppsInstances();
+	};
+
+	const handleContextTargetMenuOpen = () => {
+		const fetchIntents = async () => {
 			try {
-				let appIntentsForContext = await fdc3.findIntentsByContext(toJS(raiseIntentWithContextContext)) || [];
-				setUseContextTargets(false);
-				clearContextTargets();
-				if (!appIntentsForContext) {
-					return;
-				}				
+				let appIntentsForContext = await fdc3.findIntentsByContext(toJS(raiseIntentWithContextContext) as ContextType ) || [];			
 				
 				if (appIntentsForContext.length > 0) {
 
@@ -588,14 +473,139 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 					setTargetOptionsforContext(fullContextApps);
 				}
 
-
 			} catch (e) {
-				setUseContextTargets(false);
-				clearContextTargets();
+				const fullContextApps: any[] = [];
+				fullContextApps.push(
+					<MenuItem value="" disabled>
+						No Target Apps Found
+					</MenuItem>
+				);
+				setTargetOptionsforContext(fullContextApps);
 				console.log(e);
+			}	
+		};
+		fetchIntents();
+	}
+
+	const handleAddIntentListener = () => {
+		if (!intentListener) {
+			setIntentError("Enter intent");
+			return;
+		} else {
+			intentStore.addIntentListener(
+				intentListener.value,
+				toJS(resultTypeContext),
+				currentAppChannelId,
+				channelType === "private-channel",
+				resultOverChannelContextList,
+				resultOverChannelContextDelays
+			);
+			setIntentListener(null);
+		}
+		setSendIntentResult(false);
+	};
+
+	const handleChannelTypeChange = (event: React.MouseEvent<HTMLElement>, nextView: string) => {
+		setChannelType(nextView);
+	};
+
+	const handleTargetToggle = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
+		setUseTargets(checked);
+		if (!checked) {
+			clearTargets();
+		}
+	};
+
+	const handleContextTargetToggle = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
+		setUseContextTargets(checked);
+		if (!checked) {
+			clearContextTargets();
+		}
+	};
+
+	const setChannelContextList = (context: ContextType, index: number) => {
+		setResultOverChannelContextList((curr: any) => {
+			return { ...curr, [index]: context };
+		});
+	};
+
+	const setChannelContextDelay = (delay: string, index: number) => {
+		setResultOverChannelContextDelays((curr: any) => {
+			const lastDelay = curr[index - 1] || 0;
+			return { ...curr, [index]: lastDelay + Number(delay) };
+		});
+	};
+
+	const handleAddContextField = () => {
+		setContextFields((current) => [
+			...current,
+			<Grid container direction="row" key={contextFields.length}>
+				<Grid item className={classes.indentLeft}>
+					<TextField
+						variant="outlined"
+						label="Delay (ms)"
+						type="number"
+						size="small"
+						onChange={(e) => setChannelContextDelay(e.target.value, contextFields.length)}
+					/>
+				</Grid>
+				<Grid item className={`${classes.indentLeft} ${classes.field}`}>
+					<ContextTemplates
+						handleTabChange={handleTabChange}
+						contextStateSetter={(context: any) => setChannelContextList(context, contextFields.length)}
+					/>
+				</Grid>
+			</Grid>,
+		]);
+	};
+
+	useEffect(() => {
+		setIntentValue(null);
+		const fetchIntents = async () => {
+			try {
+				if (!raiseIntentContext) {
+					return;
+				}
+				setRaiseIntentError(false);
+				let appIntents = await fdc3.findIntentsByContext(toJS(raiseIntentContext));
+
+				setUseTargets(false);
+				clearTargets();
+
+				if (appIntents.length > 0) {
+					
+					setIntentsForContext(
+						appIntents.map(({ intent }: { intent: any }) => {
+							return {
+								title: intent.name,
+								value: intent.name,
+							};
+						})
+					);
+				}
+			} catch (e) {
+				setIntentsForContext([]);
+				setRaiseIntentError("no intents found");
 			}
 		};
 		fetchIntents();
+	}, [raiseIntentContext]);
+
+	useEffect(() => {
+		if (!intentValue) {
+			setUseTargets(false);
+			clearTargets();
+			return;
+		}
+	}, [intentValue]);
+
+	useEffect(() => {
+		clearContextTargets();
+		if (!raiseIntentWithContextContext) {
+			setUseContextTargets(false);
+			return;
+		}		
+
 	}, [raiseIntentWithContextContext]);
 
 	useEffect(() => {
@@ -665,6 +675,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 											id="intent-target-app-select"
 											value={targetApp?.instanceId || targetApp?.appId }
 											onChange={handleTargetChange}
+											onOpen={handleTargetMenuOpen}
 											label="Target App (optional)"
 											MenuProps={{
 												anchorOrigin: {
@@ -685,7 +696,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 							</Grid>
 						</Grid>
 						<Grid item className={classes.controls}>
-							<Button variant="contained" color="primary" onClick={handleRaiseIntent} disabled={!raiseIntentContext}>
+							<Button variant="contained" color="primary" onClick={handleRaiseIntent} disabled={!intentValue}>
 								Raise Intent
 							</Button>
 
@@ -746,7 +757,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 											<Switch checked={useContextTargets} color="primary" onChange={handleContextTargetToggle} />
 										}
 										label="Select Target"
-										disabled={!raiseIntentWithContextContext || targetOptionsforContext.length < 1}
+										disabled={!raiseIntentWithContextContext }
 									/>
 								</FormGroup>
 
@@ -758,6 +769,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 											id="intent-context-target-app-select"
 											value={contextTargetApp?.instanceId || contextTargetApp?.appId}
 											onChange={handleContextTargetChange}
+											onOpen={handleContextTargetMenuOpen}
 											label="Target App (optional)"
 											MenuProps={{
 												anchorOrigin: {
