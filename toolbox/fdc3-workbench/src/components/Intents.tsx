@@ -219,6 +219,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 	};
 
 	const handleRaiseIntentForContext = async () => {
+		setIntentForContextResolution(null);
 		if (!raiseIntentWithContextContext) {
 			return;
 		}
@@ -762,7 +763,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 								<IntentResolutionField data={intentForContextResolution} handleTabChange={handleTabChange} />
 							</Grid>
 							<Grid item>
-								<Button variant="contained" color="secondary" onClick={() => setIntentResolution(null)}>
+								<Button variant="contained" color="secondary" onClick={() => setIntentForContextResolution(null)}>
 									Clear result
 								</Button>
 							</Grid>
