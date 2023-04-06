@@ -52,8 +52,6 @@ type ListenerSetValue = (value: ListenerOptionType | null) => void;
 
 type ListenerSetError = (error: string | false) => void;
 
-type RaiseIntentForContextOption = { intent: string, app: AppMetadata };
-
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		root: {
@@ -345,7 +343,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 					}
 
 					if(option.instances?.length) {
-						menuItems.push(<ListSubheader key={"subheading-"+targetLabel}>Target existing &quot;{targetLabel}&quot;</ListSubheader>);
+						menuItems.push(<ListSubheader key={`subheading-${targetLabel}`}>Target existing &quot;{targetLabel}&quot;</ListSubheader>);
 					}
 					option?.instances.forEach((instance) => {
 						menuItems.push(
@@ -391,7 +389,7 @@ export const Intents = observer(({ handleTabChange }: { handleTabChange: any }) 
 							}
 
 							if(option.instances?.length) {
-								menuItems.push(<ListSubheader key={"subheading-"+targetLabel}>Target existing &quot;{targetLabel}&quot;</ListSubheader>);
+								menuItems.push(<ListSubheader key={`subheading-${targetLabel}`}>Target existing &quot;{targetLabel}&quot;</ListSubheader>);
 							}
 							option?.instances.forEach((instance) => {
 								menuItems.push(
