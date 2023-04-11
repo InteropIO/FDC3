@@ -163,6 +163,7 @@ class Fdc3Api {
 				let foundApp = groupedApps.find((app)=>app.appId === currentApp.appId);
 				if(!foundApp) {
 					//separate out the instanceId if present
+					// eslint-disable-next-line @typescript-eslint/no-unused-vars
 					const {instanceId: _, ...metadata} = currentApp;
 					const option: IntentTargetOption = {
 						appId: currentApp.appId,
@@ -189,12 +190,17 @@ class Fdc3Api {
 			//no instances in FDC3 < 2
 			appIntent = appIntent as fdc3_1.AppIntent;
 			appIntent.apps.forEach((currentApp)=>{
-				groupedApps.push({
-					appId: currentApp.appId ?? currentApp.name,
-					metadata: currentApp as fdc3_2.AppMetadata, //hack to avoid type error
-					instances: [],
-					launchNew: true
-				})
+				//deduplicate results in case a 2.0 implementation returned instances
+				let foundApp = groupedApps.find((app)=>app.appId === currentApp.appId);
+				if (!foundApp) {
+					groupedApps.push({
+						appId: currentApp.appId ?? currentApp.name,
+						metadata: currentApp as fdc3_2.AppMetadata, //hack to avoid type error
+						instances: [],
+						launchNew: true
+					});
+				}
+				
 			});
 		}
 
@@ -218,6 +224,7 @@ class Fdc3Api {
 					let foundApp = groupedApps.find((app)=>app.appId === currentApp.appId);
 					if(!foundApp) {
 						//separate out the instanceId if present
+						// eslint-disable-next-line @typescript-eslint/no-unused-vars
 						const {instanceId: _, ...metadata} = currentApp;
 						const option: IntentTargetOption = {
 							appId: currentApp.appId,
@@ -247,13 +254,16 @@ class Fdc3Api {
 			appIntents = appIntents as fdc3_1.AppIntent[];
 			appIntents.forEach((currentIntent) => {
 				currentIntent.apps.forEach((currentApp) => {
-					//no instances in FDC3 < 2
-					groupedApps.push({
-						appId: currentApp.appId ?? currentApp.name,
-						metadata: currentApp as fdc3_2.AppMetadata, //hack to avoid type error
-						instances: [],
-						launchNew: true
-					})
+					//deduplicate in case a 2.0 implementation returned some instances
+					let foundApp = groupedApps.find((app)=>app.appId === currentApp.appId);
+					if (!foundApp) {
+						groupedApps.push({
+							appId: currentApp.appId ?? currentApp.name,
+							metadata: currentApp as fdc3_2.AppMetadata, //hack to avoid type error
+							instances: [],
+							launchNew: true
+						});
+					}
 				});
 				
 			});
