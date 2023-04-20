@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://fdc3.finos.org/schemas/next/bridging/bridgeRequest.schema.json",
+  "title": "BridgeRequest",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "Identifies the type of the message and it is typically set to the FDC3 function name that the message relates to, e.g. 'findIntent', with 'Request' or 'Response' appended."
+    },
+    "payload": {
+      "type": "object",
+      "description": "The message payload contains the arguments to FDC3 API functions for request messages, and return values for response messages."
+    },
+    "meta": {
+      "$ref": "#/$defs/RequestMeta"
+    }
+  },
+  "required": ["type", "payload", "meta"],
+  "additionalProperties": false,
+  "$defs": {
+    "RequestMeta": {
+      "type": "object",
+      "properties": {
+        "requestGuid": {
+          "type": "string",
+          "description": "Unique GUID for the request"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp at which request or response was generated"
+        },
+        "source": {
+          "$ref": "../api/appIdentifier.schema.json"
+        }
+      },
+      "required": ["requestGuid", "timestamp", "source"]
+    }
+  }
+}

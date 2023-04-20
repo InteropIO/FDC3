@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://fdc3.finos.org/schemas/next/bridging/getAppMetadataRequest.schema.json",
+  "title": "GetAppMetadataRequest",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "bridgeRequest.schema.json"
+    }
+  ],
+  "properties": {
+    "type": {
+      "const": "getAppMetadataRequest"
+    },
+    "payload": {
+      "type": "object",
+      "properties": {
+        "app": {
+          "$ref": "../api/appIdentifier.schema.json"
+        }
+      },
+      "required": ["app"],
+      "additionalProperties": false
+    },
+    "meta": {
+      "allOf": [
+        {
+          "$ref": "bridgeRequest.schema.json#/$defs/RequestMeta"
+        }
+      ]
+    }
+  },
+  "required": ["type", "payload", "meta"],
+  "additionalProperties": false
+}

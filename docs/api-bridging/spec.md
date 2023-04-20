@@ -442,17 +442,18 @@ Response messages will be differentiated from requests by the presence of a `met
         timestamp:  Date,
         /** Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
          *  responses to the request. Will contain a single value for individual responses and
-         *  multiple values for responses that were collated by the bridge.*/
-        sources: (AppIdentifier | DesktopAgentIdentifier)[],
+         *  multiple values for responses that were collated by the bridge.
+         * May be omitted if all sources errored. */
+        sources?: (AppIdentifier | DesktopAgentIdentifier)[],
         /** Array of AppIdentifiers or DesktopAgentIdentifiers for responses that were not returned
          * to the bridge before the timeout or because an error occurred. 
          * May be omitted if all sources responded. */
-        errorSources: (AppIdentifier | DesktopAgentIdentifier)[],
+        errorSources?: (AppIdentifier | DesktopAgentIdentifier)[],
         /** Array of error message strings for responses that were not returned
          * to the bridge before the timeout or because an error occurred. 
          * Should be the same length as the `errorSources array and ordered the same.
          * May be omitted if all sources responded. */
-        errorDetails: string[]
+        errorDetails?: string[]
     }
 }
 ```
@@ -477,18 +478,7 @@ There are several types of GUIDs, which vary how they are generated. As Desktop 
 
 Desktop Agents will prepare messages in the above format and transmit them to the bridge. However, to target intents and perform other actions that require specific routing between DAs, DAs need to have an identity. Identities should be assigned to clients when they connect to the bridge. This allows for multiple copies of the same underlying Desktop Agent implementation to be bridged and ensures that id clashes can be avoided.
 
-To facilitate routing of messages between agents, the `AppIdentifier` is expanded to contain an optional `desktopAgent` field:
-
-```typescript
-interface AppIdentifier {
-  readonly appId: string;
-  readonly instanceId?: string;
-  /** Field that represents the Desktop Agent that the app is available on.**/
-  readonly desktopAgent?: string;
-}
-```
-
-Further, a new `DesktopAgentIdentifier` type is introduced to handle cases where a response message is returned by the Desktop Agent (or more specifically its resolver) rather than a specific app. This is particularly relevant for `findIntent` responses:
+To facilitate routing of messages between agents, a new `DesktopAgentIdentifier` type is introduced to handle cases where a response message is returned by a Desktop Agent (or more specifically its resolver) rather than a specific app. This is particularly relevant for `findIntent` responses:
 
 ```typescript
 interface DesktopAgentIdentifier {
@@ -496,6 +486,17 @@ interface DesktopAgentIdentifier {
    * the Desktop Agent Identifier that is the source of the message. 
    **/
   readonly desktopAgent: string;
+}
+```
+
+Further, the `AppIdentifier` is expanded to contain an optional `desktopAgent` field allowing it to indicate which Desktop Agent is managing the app that a message has been received from:
+
+```typescript
+interface AppIdentifier {
+  readonly appId: string;
+  readonly instanceId?: string;
+  /** Field that represents the Desktop Agent that the app is available on.**/
+  readonly desktopAgent?: string;
 }
 ```
 

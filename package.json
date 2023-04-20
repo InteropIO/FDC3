@@ -27,7 +27,8 @@
     "test": "tsdx test --verbose",
     "lint": "tsdx lint src/api test",
     "prepare": "tsdx build",
-    "typegen": "node quicktypeUtil.js src/context/schemas src/context/ContextTypes.ts && tsdx lint src/context --fix"
+    "typegen": "node quicktypeUtil.js schemas/context src/context/ContextTypes.ts && tsdx lint types/ --fix",
+    "typegen-bridging": "node quicktypeUtil.js schemas/api schemas/bridging schemas/context/context.schema.json types/BridgingTypes.ts && tsdx lint types/ --fix"
   },
   "peerDependencies": {},
   "husky": {
