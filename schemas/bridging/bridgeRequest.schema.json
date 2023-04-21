@@ -43,7 +43,7 @@
           ]
         },
         "destination": {
-          "description": "Optional field that represents the destination that the request should be routed to. Must be set by the Desktop Agent for API calls that include a target app parameter and muat include the name of the Desktop Agent hosting the target application.",
+          "description": "Optional field that represents the destination that the request should be routed to. Must be set by the Desktop Agent for API calls that include a target app parameter and must include the name of the Desktop Agent hosting the target application.",
           "oneOf": [
             {
               "$ref": "../api/appIdentifier.schema.json"

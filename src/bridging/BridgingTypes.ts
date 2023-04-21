@@ -9,7 +9,7 @@
 //   const contextMetadata = Convert.toContextMetadata(json);
 //   const desktopAgentIdentifier = Convert.toDesktopAgentIdentifier(json);
 //   const displayMetadata = Convert.toDisplayMetadata(json);
-//   const schemasApiErrorsSchema = Convert.toSchemasApiErrorsSchema(json);
+//   const schemasAPIErrorsSchema = Convert.toSchemasAPIErrorsSchema(json);
 //   const icon = Convert.toIcon(json);
 //   const image = Convert.toImage(json);
 //   const implementationMetadata = Convert.toImplementationMetadata(json);
@@ -273,7 +273,7 @@ export interface BridgeRequest {
 export interface BridgeRequestMeta {
   /**
    * Optional field that represents the destination that the request should be routed to. Must
-   * be set by the Desktop Agent for API calls that include a target app parameter and muat
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
   destination?: ErrorSourceObject;
@@ -294,7 +294,7 @@ export interface BridgeRequestMeta {
 
 /**
  * Optional field that represents the destination that the request should be routed to. Must
- * be set by the Desktop Agent for API calls that include a target app parameter and muat
+ * be set by the Desktop Agent for API calls that include a target app parameter and must
  * include the name of the Desktop Agent hosting the target application.
  *
  * Field that represents the source application that the request was received from.
@@ -331,7 +331,7 @@ export interface BridgeResponse {
 export interface BridgeResponseMeta {
   /**
    * Optional field that represents the destination that the request should be routed to. Must
-   * be set by the Desktop Agent for API calls that include a target app parameter and muat
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
   destination?: ErrorSourceObject;
@@ -401,7 +401,7 @@ export interface FindInstancesRequest {
 export interface FindInstancesRequestMeta {
   /**
    * Optional field that represents the destination that the request should be routed to. Must
-   * be set by the Desktop Agent for API calls that include a target app parameter and muat
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
   destination?: DestinationClass;
@@ -422,7 +422,7 @@ export interface FindInstancesRequestMeta {
 
 /**
  * Optional field that represents the destination that the request should be routed to. Must
- * be set by the Desktop Agent for API calls that include a target app parameter and muat
+ * be set by the Desktop Agent for API calls that include a target app parameter and must
  * include the name of the Desktop Agent hosting the target application.
  *
  * Field that represents the source application that the request was received from.
@@ -559,7 +559,7 @@ export interface FindIntentsForContextResponse {
 export interface FindIntentsForContextResponseMeta {
   /**
    * Optional field that represents the destination that the request should be routed to. Must
-   * be set by the Desktop Agent for API calls that include a target app parameter and muat
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
   destination?: ErrorSourceObject;
@@ -705,7 +705,7 @@ export interface RaiseIntentRequest {
 export interface RaiseIntentRequestMeta {
   /**
    * Optional field that represents the destination that the request should be routed to. Must
-   * be set by the Desktop Agent for API calls that include a target app parameter and muat
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
   destination?: PurpleIdentifier;
@@ -726,7 +726,7 @@ export interface RaiseIntentRequestMeta {
 
 /**
  * Optional field that represents the destination that the request should be routed to. Must
- * be set by the Desktop Agent for API calls that include a target app parameter and muat
+ * be set by the Desktop Agent for API calls that include a target app parameter and must
  * include the name of the Desktop Agent hosting the target application.
  *
  * Field that represents the source application that the request was received from.
@@ -869,11 +869,11 @@ export class Convert {
     return JSON.stringify(uncast(value, r('DisplayMetadata')), null, 2);
   }
 
-  public static toSchemasApiErrorsSchema(json: string): any {
+  public static toSchemasAPIErrorsSchema(json: string): any {
     return cast(JSON.parse(json), 'any');
   }
 
-  public static schemasApiErrorsSchemaToJson(value: any): string {
+  public static schemasAPIErrorsSchemaToJson(value: any): string {
     return JSON.stringify(uncast(value, 'any'), null, 2);
   }
 
