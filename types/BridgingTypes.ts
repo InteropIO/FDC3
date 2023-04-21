@@ -45,6 +45,7 @@ export interface AppIdentifier {
   appId: string;
   desktopAgent?: string;
   instanceId?: string;
+  [property: string]: any;
 }
 
 /**
@@ -57,10 +58,14 @@ export interface AppIntent {
 
 /**
  * Extends an AppIdentifier, describing an application or instance of an application.
+ *
+ * Identifies an application, or instance of an application, and is used to target FDC3 API
+ * calls at specific applications.
  */
 export interface AppMetadataElement {
   appId: string;
   description?: string;
+  desktopAgent?: string;
   icons?: IconElement[];
   instanceId?: string;
   instanceMetadata?: { [key: string]: any };
@@ -102,10 +107,14 @@ export interface IntentClass {
 
 /**
  * Extends an AppIdentifier, describing an application or instance of an application.
+ *
+ * Identifies an application, or instance of an application, and is used to target FDC3 API
+ * calls at specific applications.
  */
 export interface AppMetadata {
   appId: string;
   description?: string;
+  desktopAgent?: string;
   icons?: IconElement[];
   instanceId?: string;
   instanceMetadata?: { [key: string]: any };
@@ -147,22 +156,25 @@ export enum Type {
  * addContextListener and addIntentListener functions.
  */
 export interface ContextMetadata {
-  source: SourceClass;
+  source: SourceObject;
 }
 
 /**
  * Identifies an application, or instance of an application, and is used to target FDC3 API
  * calls at specific applications.
  */
-export interface SourceClass {
+export interface SourceObject {
   appId: string;
   desktopAgent?: string;
   instanceId?: string;
+  [property: string]: any;
 }
 
 /**
- * A string filled in by the Desktop Agent Bridge on receipt of a message, that represents
- * the Desktop Agent Identifier that is the source of the message.
+ * Identifies a particular Desktop Agent. Used by Desktop Agent Bridging to indicate the
+ * source or destination of a message which was produced by or should be processed by the
+ * Desktop Agent itself rather than a specific application. Often added to messages by the
+ * Desktop Agent Bridge.
  */
 export interface DesktopAgentIdentifier {
   desktopAgent: string;
@@ -227,7 +239,7 @@ export interface IntentMetadata {
  */
 export interface IntentResolution {
   intent: string;
-  source: SourceClass;
+  source: SourceObject;
   version?: string;
 }
 
@@ -248,23 +260,31 @@ export interface IntentResult {
 export interface BridgeRequest {
   meta: BridgeRequestMeta;
   /**
-   * The message payload contains the arguments to FDC3 API functions for request messages,
-   * and return values for response messages.
+   * The message payload typically contains the arguments to FDC3 API functions.
    */
   payload: { [key: string]: any };
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
-   * the message relates to, e.g. 'findIntent', with 'Request' or 'Response' appended.
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
    */
   type: string;
 }
 
 export interface BridgeRequestMeta {
   /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and muat
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: ErrorSourceObject;
+  /**
    * Unique GUID for the request
    */
   requestGuid: string;
-  source: SourceClass;
+  /**
+   * Field that represents the source application that the request was received from.
+   */
+  source: ErrorSourceObject;
   /**
    * Timestamp at which request or response was generated
    */
@@ -272,16 +292,37 @@ export interface BridgeRequestMeta {
   [property: string]: any;
 }
 
+/**
+ * Optional field that represents the destination that the request should be routed to. Must
+ * be set by the Desktop Agent for API calls that include a target app parameter and muat
+ * include the name of the Desktop Agent hosting the target application.
+ *
+ * Field that represents the source application that the request was received from.
+ *
+ * Identifies an application, or instance of an application, and is used to target FDC3 API
+ * calls at specific applications.
+ *
+ * Identifies a particular Desktop Agent. Used by Desktop Agent Bridging to indicate the
+ * source or destination of a message which was produced by or should be processed by the
+ * Desktop Agent itself rather than a specific application. Often added to messages by the
+ * Desktop Agent Bridge.
+ */
+export interface ErrorSourceObject {
+  appId?: string;
+  desktopAgent?: string;
+  instanceId?: string;
+  [property: string]: any;
+}
+
 export interface BridgeResponse {
   meta?: BridgeResponseMeta;
   /**
-   * The message payload contains the arguments to FDC3 API functions for request messages,
-   * and return values for response messages.
+   * The message payload typically contains return values for FDC3 API functions.
    */
   payload?: { [key: string]: any };
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
-   * the message relates to, e.g. 'findIntent', with 'Request' or 'Response' appended.
+   * the message relates to, e.g. 'findIntent', with 'Response' appended.
    */
   type?: string;
   [property: string]: any;
@@ -289,63 +330,57 @@ export interface BridgeResponse {
 
 export interface BridgeResponseMeta {
   /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and muat
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: ErrorSourceObject;
+  /**
    * Unique GUID for the request
    */
   requestGuid: string;
-  source: SourceClass;
+  /**
+   * Field that represents the source application that the request was received from.
+   */
+  source: ErrorSourceObject;
   /**
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
-  destination?: any;
   /**
    * Array of error message strings for responses that were not returned to the bridge before
-   * the timeout or because an error occurred. Should be the same length as the `errorSources
-   * array and ordered the same. May be omitted if all sources responded.
+   * the timeout or because an error occurred. Should be the same length as the `errorSources`
+   * array and ordered the same. May be omitted if all sources responded without errors.
    */
   errorDetails?: string[];
   /**
    * Array of AppIdentifiers or DesktopAgentIdentifiers for responses that were not returned
    * to the bridge before the timeout or because an error occurred. May be omitted if all
-   * sources responded.
+   * sources responded without errors.
    */
-  errorSources?: Identifier[];
+  errorSources?: ErrorSourceObject[];
   /**
    * Unique GUID for the response
    */
-  responseGuid?: string;
+  responseGuid: string;
   /**
    * Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
    * responses to the request. Will contain a single value for individual responses and
    * multiple values for responses that were collated by the bridge. May be omitted if all
    * sources errored.
    */
-  sources?: Identifier[];
-}
-
-/**
- * Identifies an application, or instance of an application, and is used to target FDC3 API
- * calls at specific applications.
- *
- * A string filled in by the Desktop Agent Bridge on receipt of a message, that represents
- * the Desktop Agent Identifier that is the source of the message.
- */
-export interface Identifier {
-  appId?: string;
-  desktopAgent?: string;
-  instanceId?: string;
+  sources?: ErrorSourceObject[];
 }
 
 export interface BroadcastRequest {
   meta: BridgeRequestMeta;
   /**
-   * The message payload contains the arguments to FDC3 API functions for request messages,
-   * and return values for response messages.
+   * The message payload typically contains the arguments to FDC3 API functions.
    */
   payload: { [key: string]: any };
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
-   * the message relates to, e.g. 'findIntent', with 'Request' or 'Response' appended.
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
    */
   type: string;
 }
@@ -353,64 +388,79 @@ export interface BroadcastRequest {
 export interface FindInstancesRequest {
   meta: FindInstancesRequestMeta;
   /**
-   * The message payload contains the arguments to FDC3 API functions for request messages,
-   * and return values for response messages.
+   * The message payload typically contains the arguments to FDC3 API functions.
    */
   payload: FindInstancesRequestPayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
-   * the message relates to, e.g. 'findIntent', with 'Request' or 'Response' appended.
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
    */
   type: string;
 }
 
 export interface FindInstancesRequestMeta {
   /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and muat
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: DestinationClass;
+  /**
    * Unique GUID for the request
    */
   requestGuid: string;
-  source: SourceClass;
+  /**
+   * Field that represents the source application that the request was received from.
+   */
+  source: ErrorSourceObject;
   /**
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
-  destination?: DestinationClass;
   [property: string]: any;
 }
 
 /**
- * A string filled in by the Desktop Agent Bridge on receipt of a message, that represents
- * the Desktop Agent Identifier that is the source of the message.
+ * Optional field that represents the destination that the request should be routed to. Must
+ * be set by the Desktop Agent for API calls that include a target app parameter and muat
+ * include the name of the Desktop Agent hosting the target application.
+ *
+ * Field that represents the source application that the request was received from.
+ *
+ * Identifies an application, or instance of an application, and is used to target FDC3 API
+ * calls at specific applications.
+ *
+ * Identifies a particular Desktop Agent. Used by Desktop Agent Bridging to indicate the
+ * source or destination of a message which was produced by or should be processed by the
+ * Desktop Agent itself rather than a specific application. Often added to messages by the
+ * Desktop Agent Bridge.
  */
 export interface DestinationClass {
   desktopAgent: string;
 }
 
 /**
- * The message payload contains the arguments to FDC3 API functions for request messages,
- * and return values for response messages.
+ * The message payload typically contains the arguments to FDC3 API functions.
  */
 export interface FindInstancesRequestPayload {
-  app: SourceClass;
+  app: SourceObject;
 }
 
 export interface FindInstancesResponse {
   meta: BridgeResponseMeta;
   /**
-   * The message payload contains the arguments to FDC3 API functions for request messages,
-   * and return values for response messages.
+   * The message payload typically contains return values for FDC3 API functions.
    */
   payload: FindInstancesResponsePayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
-   * the message relates to, e.g. 'findIntent', with 'Request' or 'Response' appended.
+   * the message relates to, e.g. 'findIntent', with 'Response' appended.
    */
   type: string;
 }
 
 /**
- * The message payload contains the arguments to FDC3 API functions for request messages,
- * and return values for response messages.
+ * The message payload typically contains return values for FDC3 API functions.
  */
 export interface FindInstancesResponsePayload {
   appIdentifiers: AppMetadataElement[];
@@ -419,20 +469,18 @@ export interface FindInstancesResponsePayload {
 export interface FindIntentRequest {
   meta: BridgeRequestMeta;
   /**
-   * The message payload contains the arguments to FDC3 API functions for request messages,
-   * and return values for response messages.
+   * The message payload typically contains the arguments to FDC3 API functions.
    */
   payload: FindIntentRequestPayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
-   * the message relates to, e.g. 'findIntent', with 'Request' or 'Response' appended.
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
    */
   type: string;
 }
 
 /**
- * The message payload contains the arguments to FDC3 API functions for request messages,
- * and return values for response messages.
+ * The message payload typically contains the arguments to FDC3 API functions.
  */
 export interface FindIntentRequestPayload {
   context: ContextObject;
@@ -449,20 +497,18 @@ export interface ContextObject {
 export interface FindIntentResponse {
   meta: BridgeResponseMeta;
   /**
-   * The message payload contains the arguments to FDC3 API functions for request messages,
-   * and return values for response messages.
+   * The message payload typically contains return values for FDC3 API functions.
    */
   payload: FindIntentResponsePayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
-   * the message relates to, e.g. 'findIntent', with 'Request' or 'Response' appended.
+   * the message relates to, e.g. 'findIntent', with 'Response' appended.
    */
   type: string;
 }
 
 /**
- * The message payload contains the arguments to FDC3 API functions for request messages,
- * and return values for response messages.
+ * The message payload typically contains return values for FDC3 API functions.
  */
 export interface FindIntentResponsePayload {
   appIntent: AppIntentElement;
@@ -480,20 +526,18 @@ export interface AppIntentElement {
 export interface FindIntentsForContextRequest {
   meta: BridgeRequestMeta;
   /**
-   * The message payload contains the arguments to FDC3 API functions for request messages,
-   * and return values for response messages.
+   * The message payload typically contains the arguments to FDC3 API functions.
    */
   payload: FindIntentsForContextRequestPayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
-   * the message relates to, e.g. 'findIntent', with 'Request' or 'Response' appended.
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
    */
   type: string;
 }
 
 /**
- * The message payload contains the arguments to FDC3 API functions for request messages,
- * and return values for response messages.
+ * The message payload typically contains the arguments to FDC3 API functions.
  */
 export interface FindIntentsForContextRequestPayload {
   context: ContextObject;
@@ -502,56 +546,62 @@ export interface FindIntentsForContextRequestPayload {
 export interface FindIntentsForContextResponse {
   meta: FindIntentsForContextResponseMeta;
   /**
-   * The message payload contains the arguments to FDC3 API functions for request messages,
-   * and return values for response messages.
+   * The message payload typically contains return values for FDC3 API functions.
    */
   payload: FindIntentsForContextResponsePayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
-   * the message relates to, e.g. 'findIntent', with 'Request' or 'Response' appended.
+   * the message relates to, e.g. 'findIntent', with 'Response' appended.
    */
   type: string;
 }
 
 export interface FindIntentsForContextResponseMeta {
   /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and muat
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: ErrorSourceObject;
+  /**
    * Unique GUID for the request
    */
   requestGuid: string;
-  source: SourceClass;
+  /**
+   * Field that represents the source application that the request was received from.
+   */
+  source: ErrorSourceObject;
   /**
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
-  destination?: any;
   /**
    * Array of error message strings for responses that were not returned to the bridge before
-   * the timeout or because an error occurred. Should be the same length as the `errorSources
-   * array and ordered the same. May be omitted if all sources responded.
+   * the timeout or because an error occurred. Should be the same length as the `errorSources`
+   * array and ordered the same. May be omitted if all sources responded without errors.
    */
   errorDetails?: string[];
   /**
    * Array of AppIdentifiers or DesktopAgentIdentifiers for responses that were not returned
    * to the bridge before the timeout or because an error occurred. May be omitted if all
-   * sources responded.
+   * sources responded without errors.
    */
-  errorSources?: Identifier[];
+  errorSources?: ErrorSourceObject[];
   /**
    * Unique GUID for the response
    */
-  responseGuid?: string;
+  responseGuid: string;
   /**
    * Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
    * responses to the request. Will contain a single value for individual responses and
    * multiple values for responses that were collated by the bridge. May be omitted if all
    * sources errored.
    */
-  sources?: Identifier[];
+  sources?: ErrorSourceObject[];
 }
 
 /**
- * The message payload contains the arguments to FDC3 API functions for request messages,
- * and return values for response messages.
+ * The message payload typically contains return values for FDC3 API functions.
  */
 export interface FindIntentsForContextResponsePayload {
   appIntents?: AppIntentElement[];
@@ -561,42 +611,38 @@ export interface FindIntentsForContextResponsePayload {
 export interface GetAppMetadataRequest {
   meta: BridgeRequestMeta;
   /**
-   * The message payload contains the arguments to FDC3 API functions for request messages,
-   * and return values for response messages.
+   * The message payload typically contains the arguments to FDC3 API functions.
    */
   payload: GetAppMetadataRequestPayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
-   * the message relates to, e.g. 'findIntent', with 'Request' or 'Response' appended.
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
    */
   type: string;
 }
 
 /**
- * The message payload contains the arguments to FDC3 API functions for request messages,
- * and return values for response messages.
+ * The message payload typically contains the arguments to FDC3 API functions.
  */
 export interface GetAppMetadataRequestPayload {
-  app: SourceClass;
+  app: SourceObject;
 }
 
 export interface GetAppMetadataResponse {
   meta: BridgeResponseMeta;
   /**
-   * The message payload contains the arguments to FDC3 API functions for request messages,
-   * and return values for response messages.
+   * The message payload typically contains return values for FDC3 API functions.
    */
   payload: GetAppMetadataResponsePayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
-   * the message relates to, e.g. 'findIntent', with 'Request' or 'Response' appended.
+   * the message relates to, e.g. 'findIntent', with 'Response' appended.
    */
   type: string;
 }
 
 /**
- * The message payload contains the arguments to FDC3 API functions for request messages,
- * and return values for response messages.
+ * The message payload typically contains return values for FDC3 API functions.
  */
 export interface GetAppMetadataResponsePayload {
   appMetadata: AppMetadataElement;
@@ -605,102 +651,124 @@ export interface GetAppMetadataResponsePayload {
 export interface OpenRequest {
   meta: BridgeRequestMeta;
   /**
-   * The message payload contains the arguments to FDC3 API functions for request messages,
-   * and return values for response messages.
+   * The message payload typically contains the arguments to FDC3 API functions.
    */
   payload: OpenRequestPayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
-   * the message relates to, e.g. 'findIntent', with 'Request' or 'Response' appended.
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
    */
   type: string;
 }
 
 /**
- * The message payload contains the arguments to FDC3 API functions for request messages,
- * and return values for response messages.
+ * The message payload typically contains the arguments to FDC3 API functions.
  */
 export interface OpenRequestPayload {
-  app: SourceClass;
+  app: SourceObject;
   context: ContextObject;
 }
 
 export interface OpenResponse {
   meta: BridgeResponseMeta;
   /**
-   * The message payload contains the arguments to FDC3 API functions for request messages,
-   * and return values for response messages.
+   * The message payload typically contains return values for FDC3 API functions.
    */
   payload: OpenResponsePayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
-   * the message relates to, e.g. 'findIntent', with 'Request' or 'Response' appended.
+   * the message relates to, e.g. 'findIntent', with 'Response' appended.
    */
   type: string;
 }
 
 /**
- * The message payload contains the arguments to FDC3 API functions for request messages,
- * and return values for response messages.
+ * The message payload typically contains return values for FDC3 API functions.
  */
 export interface OpenResponsePayload {
-  appIdentifier: SourceClass;
+  appIdentifier: SourceObject;
 }
 
 export interface RaiseIntentRequest {
   meta: RaiseIntentRequestMeta;
   /**
-   * The message payload contains the arguments to FDC3 API functions for request messages,
-   * and return values for response messages.
+   * The message payload typically contains the arguments to FDC3 API functions.
    */
   payload: RaiseIntentRequestPayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
-   * the message relates to, e.g. 'findIntent', with 'Request' or 'Response' appended.
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
    */
   type: string;
 }
 
 export interface RaiseIntentRequestMeta {
   /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and muat
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: PurpleIdentifier;
+  /**
    * Unique GUID for the request
    */
   requestGuid: string;
-  source: SourceClass;
+  /**
+   * Field that represents the source application that the request was received from.
+   */
+  source: ErrorSourceObject;
   /**
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
-  destination?: SourceClass;
   [property: string]: any;
 }
 
 /**
- * The message payload contains the arguments to FDC3 API functions for request messages,
- * and return values for response messages.
+ * Optional field that represents the destination that the request should be routed to. Must
+ * be set by the Desktop Agent for API calls that include a target app parameter and muat
+ * include the name of the Desktop Agent hosting the target application.
+ *
+ * Field that represents the source application that the request was received from.
+ *
+ * Identifies an application, or instance of an application, and is used to target FDC3 API
+ * calls at specific applications.
+ *
+ * Identifies a particular Desktop Agent. Used by Desktop Agent Bridging to indicate the
+ * source or destination of a message which was produced by or should be processed by the
+ * Desktop Agent itself rather than a specific application. Often added to messages by the
+ * Desktop Agent Bridge.
+ */
+export interface PurpleIdentifier {
+  appId: string;
+  desktopAgent?: string;
+  instanceId?: string;
+  [property: string]: any;
+}
+
+/**
+ * The message payload typically contains the arguments to FDC3 API functions.
  */
 export interface RaiseIntentRequestPayload {
-  app: SourceClass;
+  app: SourceObject;
   context: ContextObject;
 }
 
 export interface RaiseIntentResponse {
   meta: BridgeResponseMeta;
   /**
-   * The message payload contains the arguments to FDC3 API functions for request messages,
-   * and return values for response messages.
+   * The message payload typically contains return values for FDC3 API functions.
    */
   payload: RaiseIntentResponsePayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
-   * the message relates to, e.g. 'findIntent', with 'Request' or 'Response' appended.
+   * the message relates to, e.g. 'findIntent', with 'Response' appended.
    */
   type: string;
 }
 
 /**
- * The message payload contains the arguments to FDC3 API functions for request messages,
- * and return values for response messages.
+ * The message payload typically contains return values for FDC3 API functions.
  */
 export interface RaiseIntentResponsePayload {
   intentResolution: IntentResolutionClass;
@@ -711,27 +779,25 @@ export interface RaiseIntentResponsePayload {
  */
 export interface IntentResolutionClass {
   intent: string;
-  source: SourceClass;
+  source: SourceObject;
   version?: string;
 }
 
 export interface RaiseIntentResultResponse {
   meta: BridgeResponseMeta;
   /**
-   * The message payload contains the arguments to FDC3 API functions for request messages,
-   * and return values for response messages.
+   * The message payload typically contains return values for FDC3 API functions.
    */
   payload: RaiseIntentResultResponsePayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
-   * the message relates to, e.g. 'findIntent', with 'Request' or 'Response' appended.
+   * the message relates to, e.g. 'findIntent', with 'Response' appended.
    */
   type: string;
 }
 
 /**
- * The message payload contains the arguments to FDC3 API functions for request messages,
- * and return values for response messages.
+ * The message payload typically contains return values for FDC3 API functions.
  */
 export interface RaiseIntentResultResponsePayload {
   intentResult: ContextObject;
@@ -1169,7 +1235,7 @@ const typeMap: any = {
       { json: 'desktopAgent', js: 'desktopAgent', typ: u(undefined, '') },
       { json: 'instanceId', js: 'instanceId', typ: u(undefined, '') },
     ],
-    false
+    'any'
   ),
   AppIntent: o(
     [
@@ -1182,6 +1248,7 @@ const typeMap: any = {
     [
       { json: 'appId', js: 'appId', typ: '' },
       { json: 'description', js: 'description', typ: u(undefined, '') },
+      { json: 'desktopAgent', js: 'desktopAgent', typ: u(undefined, '') },
       { json: 'icons', js: 'icons', typ: u(undefined, a(r('IconElement'))) },
       { json: 'instanceId', js: 'instanceId', typ: u(undefined, '') },
       { json: 'instanceMetadata', js: 'instanceMetadata', typ: u(undefined, m('any')) },
@@ -1222,6 +1289,7 @@ const typeMap: any = {
     [
       { json: 'appId', js: 'appId', typ: '' },
       { json: 'description', js: 'description', typ: u(undefined, '') },
+      { json: 'desktopAgent', js: 'desktopAgent', typ: u(undefined, '') },
       { json: 'icons', js: 'icons', typ: u(undefined, a(r('IconElement'))) },
       { json: 'instanceId', js: 'instanceId', typ: u(undefined, '') },
       { json: 'instanceMetadata', js: 'instanceMetadata', typ: u(undefined, m('any')) },
@@ -1250,14 +1318,14 @@ const typeMap: any = {
     ],
     false
   ),
-  ContextMetadata: o([{ json: 'source', js: 'source', typ: r('SourceClass') }], false),
-  SourceClass: o(
+  ContextMetadata: o([{ json: 'source', js: 'source', typ: r('SourceObject') }], false),
+  SourceObject: o(
     [
       { json: 'appId', js: 'appId', typ: '' },
       { json: 'desktopAgent', js: 'desktopAgent', typ: u(undefined, '') },
       { json: 'instanceId', js: 'instanceId', typ: u(undefined, '') },
     ],
-    false
+    'any'
   ),
   DesktopAgentIdentifier: o([{ json: 'desktopAgent', js: 'desktopAgent', typ: '' }], false),
   DisplayMetadata: o(
@@ -1312,7 +1380,7 @@ const typeMap: any = {
   IntentResolution: o(
     [
       { json: 'intent', js: 'intent', typ: '' },
-      { json: 'source', js: 'source', typ: r('SourceClass') },
+      { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'version', js: 'version', typ: u(undefined, '') },
     ],
     false
@@ -1336,9 +1404,18 @@ const typeMap: any = {
   ),
   BridgeRequestMeta: o(
     [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('ErrorSourceObject')) },
       { json: 'requestGuid', js: 'requestGuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('SourceClass') },
+      { json: 'source', js: 'source', typ: r('ErrorSourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
+    ],
+    'any'
+  ),
+  ErrorSourceObject: o(
+    [
+      { json: 'appId', js: 'appId', typ: u(undefined, '') },
+      { json: 'desktopAgent', js: 'desktopAgent', typ: u(undefined, '') },
+      { json: 'instanceId', js: 'instanceId', typ: u(undefined, '') },
     ],
     'any'
   ),
@@ -1352,22 +1429,14 @@ const typeMap: any = {
   ),
   BridgeResponseMeta: o(
     [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('ErrorSourceObject')) },
       { json: 'requestGuid', js: 'requestGuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('SourceClass') },
+      { json: 'source', js: 'source', typ: r('ErrorSourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
-      { json: 'destination', js: 'destination', typ: u(undefined, 'any') },
       { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
-      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('Identifier'))) },
-      { json: 'responseGuid', js: 'responseGuid', typ: u(undefined, '') },
-      { json: 'sources', js: 'sources', typ: u(undefined, a(r('Identifier'))) },
-    ],
-    false
-  ),
-  Identifier: o(
-    [
-      { json: 'appId', js: 'appId', typ: u(undefined, '') },
-      { json: 'desktopAgent', js: 'desktopAgent', typ: u(undefined, '') },
-      { json: 'instanceId', js: 'instanceId', typ: u(undefined, '') },
+      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('ErrorSourceObject'))) },
+      { json: 'responseGuid', js: 'responseGuid', typ: '' },
+      { json: 'sources', js: 'sources', typ: u(undefined, a(r('ErrorSourceObject'))) },
     ],
     false
   ),
@@ -1389,15 +1458,15 @@ const typeMap: any = {
   ),
   FindInstancesRequestMeta: o(
     [
-      { json: 'requestGuid', js: 'requestGuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('SourceClass') },
-      { json: 'timestamp', js: 'timestamp', typ: Date },
       { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationClass')) },
+      { json: 'requestGuid', js: 'requestGuid', typ: '' },
+      { json: 'source', js: 'source', typ: r('ErrorSourceObject') },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
     'any'
   ),
   DestinationClass: o([{ json: 'desktopAgent', js: 'desktopAgent', typ: '' }], false),
-  FindInstancesRequestPayload: o([{ json: 'app', js: 'app', typ: r('SourceClass') }], false),
+  FindInstancesRequestPayload: o([{ json: 'app', js: 'app', typ: r('SourceObject') }], false),
   FindInstancesResponse: o(
     [
       { json: 'meta', js: 'meta', typ: r('BridgeResponseMeta') },
@@ -1474,14 +1543,14 @@ const typeMap: any = {
   ),
   FindIntentsForContextResponseMeta: o(
     [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('ErrorSourceObject')) },
       { json: 'requestGuid', js: 'requestGuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('SourceClass') },
+      { json: 'source', js: 'source', typ: r('ErrorSourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
-      { json: 'destination', js: 'destination', typ: u(undefined, 'any') },
       { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
-      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('Identifier'))) },
-      { json: 'responseGuid', js: 'responseGuid', typ: u(undefined, '') },
-      { json: 'sources', js: 'sources', typ: u(undefined, a(r('Identifier'))) },
+      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('ErrorSourceObject'))) },
+      { json: 'responseGuid', js: 'responseGuid', typ: '' },
+      { json: 'sources', js: 'sources', typ: u(undefined, a(r('ErrorSourceObject'))) },
     ],
     false
   ),
@@ -1500,7 +1569,7 @@ const typeMap: any = {
     ],
     false
   ),
-  GetAppMetadataRequestPayload: o([{ json: 'app', js: 'app', typ: r('SourceClass') }], false),
+  GetAppMetadataRequestPayload: o([{ json: 'app', js: 'app', typ: r('SourceObject') }], false),
   GetAppMetadataResponse: o(
     [
       { json: 'meta', js: 'meta', typ: r('BridgeResponseMeta') },
@@ -1520,7 +1589,7 @@ const typeMap: any = {
   ),
   OpenRequestPayload: o(
     [
-      { json: 'app', js: 'app', typ: r('SourceClass') },
+      { json: 'app', js: 'app', typ: r('SourceObject') },
       { json: 'context', js: 'context', typ: r('ContextObject') },
     ],
     false
@@ -1533,7 +1602,7 @@ const typeMap: any = {
     ],
     false
   ),
-  OpenResponsePayload: o([{ json: 'appIdentifier', js: 'appIdentifier', typ: r('SourceClass') }], false),
+  OpenResponsePayload: o([{ json: 'appIdentifier', js: 'appIdentifier', typ: r('SourceObject') }], false),
   RaiseIntentRequest: o(
     [
       { json: 'meta', js: 'meta', typ: r('RaiseIntentRequestMeta') },
@@ -1544,16 +1613,24 @@ const typeMap: any = {
   ),
   RaiseIntentRequestMeta: o(
     [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('PurpleIdentifier')) },
       { json: 'requestGuid', js: 'requestGuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('SourceClass') },
+      { json: 'source', js: 'source', typ: r('ErrorSourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
-      { json: 'destination', js: 'destination', typ: u(undefined, r('SourceClass')) },
+    ],
+    'any'
+  ),
+  PurpleIdentifier: o(
+    [
+      { json: 'appId', js: 'appId', typ: '' },
+      { json: 'desktopAgent', js: 'desktopAgent', typ: u(undefined, '') },
+      { json: 'instanceId', js: 'instanceId', typ: u(undefined, '') },
     ],
     'any'
   ),
   RaiseIntentRequestPayload: o(
     [
-      { json: 'app', js: 'app', typ: r('SourceClass') },
+      { json: 'app', js: 'app', typ: r('SourceObject') },
       { json: 'context', js: 'context', typ: r('ContextObject') },
     ],
     false
@@ -1573,7 +1650,7 @@ const typeMap: any = {
   IntentResolutionClass: o(
     [
       { json: 'intent', js: 'intent', typ: '' },
-      { json: 'source', js: 'source', typ: r('SourceClass') },
+      { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'version', js: 'version', typ: u(undefined, '') },
     ],
     false

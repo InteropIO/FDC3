@@ -13,6 +13,13 @@
       "description": "The message payload typically contains the arguments to FDC3 API functions."
     },
     "meta": {
+      "$ref": "#/$defs/RequestMeta"
+    }
+  },
+  "required": ["type", "payload", "meta"],
+  "additionalProperties": false,
+  "$defs": {
+    "RequestMeta": {
       "type": "object",
       "properties": {
         "requestGuid": {
@@ -47,10 +54,7 @@
           ]
         }
       },
-      "required": ["requestGuid", "timestamp", "source"],
-      "additionalProperties": false
+      "required": ["requestGuid", "timestamp", "source"]
     }
-  },
-  "required": ["type", "payload", "meta"],
-  "additionalProperties": false
+  }
 }

@@ -10,6 +10,12 @@
         }
     ],
     "properties": {
+        "appId": true,
+        "instanceId": true,
+        "desktopAgent": true,
+        "name": {
+            "type": "string"
+        },
         "version": {
             "type": "string"
         },
@@ -44,8 +50,5 @@
             ]
         }
     },
-    "additionalProperties": false,
-    "required": [
-        "appId"
-    ]
+    "additionalProperties": false
 }
