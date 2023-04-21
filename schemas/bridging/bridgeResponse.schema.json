@@ -6,11 +6,11 @@
   "properties": {
     "type": {
       "type": "string",
-      "description": "Identifies the type of the message and it is typically set to the FDC3 function name that the message relates to, e.g. 'findIntent', with 'Request' or 'Response' appended."
+      "description": "Identifies the type of the message and it is typically set to the FDC3 function name that the message relates to, e.g. 'findIntent', with 'Response' appended."
     },
     "payload": {
       "type": "object",
-      "description": "The message payload contains the arguments to FDC3 API functions for request messages, and return values for response messages."
+      "description": "The message payload typically contains return values for FDC3 API functions."
     },
     "meta": {
       "$ref": "#/$defs/ResponseMeta"
@@ -59,14 +59,14 @@
                   }
                 ]
               },
-              "description": "Array of AppIdentifiers or DesktopAgentIdentifiers for responses that were not returned to the bridge before the timeout or because an error occurred. May be omitted if all sources responded."
+              "description": "Array of AppIdentifiers or DesktopAgentIdentifiers for responses that were not returned to the bridge before the timeout or because an error occurred. May be omitted if all sources responded without errors."
             },
             "errorDetails": {
               "type": "array",
               "items": {
                 "type": "string"
               },
-              "description": "Array of error message strings for responses that were not returned to the bridge before the timeout or because an error occurred. Should be the same length as the `errorSources array and ordered the same. May be omitted if all sources responded."
+              "description": "Array of error message strings for responses that were not returned to the bridge before the timeout or because an error occurred. Should be the same length as the `errorSources` array and ordered the same. May be omitted if all sources responded without errors."
             }
           },
           "additionalProperties": false

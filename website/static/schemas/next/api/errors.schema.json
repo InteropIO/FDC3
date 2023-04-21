@@ -9,7 +9,8 @@
                 "AppNotFound",
                 "ErrorOnLaunch",
                 "AppTimeout",
-                "ResolverUnavailable"
+                "ResolverUnavailable",
+                "DesktopAgentNotFound"
             ]
         },
         "ResolveError": {
@@ -22,7 +23,8 @@
                 "ResolverTimeout",
                 "TargetAppUnavailable",
                 "TargetInstanceUnavailable",
-                "IntentDeliveryFailed"
+                "IntentDeliveryFailed",
+                "DesktopAgentNotFound"
             ]
         },
         "ResultError": {
@@ -40,6 +42,14 @@
                 "NoChannelFound",
                 "AccessDenied",
                 "CreationFailed"
+            ]
+        },
+        "BridgingError": {
+            "type": "string",
+            "description": "Contains constants representing the errors that can be encountered by Desktop Agents when exchanging bridging messages.",
+            "enum": [
+                "ResponseToBridgeTimedOut",
+                "AgentDisconnected"
             ]
         }
     }

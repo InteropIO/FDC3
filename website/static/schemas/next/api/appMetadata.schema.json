@@ -4,16 +4,12 @@
     "title": "AppMetadata",
     "description": "Extends an AppIdentifier, describing an application or instance of an application.",
     "type": "object",
+    "allOf": [
+        {
+            "$ref": "appIdentifier.schema.json"
+        }
+    ],
     "properties": {
-        "appId": {
-            "type": "string"
-        },
-        "instanceId": {
-            "type": "string"
-        },
-        "name": {
-            "type": "string"
-        },
         "version": {
             "type": "string"
         },

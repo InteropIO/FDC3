@@ -20,13 +20,7 @@
         "$ref": "../context/context.schema.json"
       }
     },
-    "meta": {
-      "allOf": [
-        {
-          "$ref": "bridgeRequest.schema.json#/$defs/RequestMeta"
-        }
-      ]
-    }
+    "meta": true
   },
   "additionalProperties": false,
   "required": ["type", "payload", "meta"]

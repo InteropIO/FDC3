@@ -28,13 +28,7 @@
       "required": ["appIntent", "apps"],
       "additionalProperties": false
     },
-    "meta": {
-      "allOf": [
-        {
-          "$ref": "bridgeResponse.schema.json#/$defs/ResponseMeta"
-        }
-      ]
-    }
+    "meta": true
   },
   "required": ["type", "payload", "meta"],
   "additionalProperties": false

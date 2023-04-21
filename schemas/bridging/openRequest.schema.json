@@ -25,13 +25,7 @@
       "required": ["app", "context"],
       "additionalProperties": false
     },
-    "meta": {
-      "allOf": [
-        {
-          "$ref": "bridgeRequest.schema.json#/$defs/RequestMeta"
-        }
-      ]
-    }
+    "meta": true
   },
   "required": ["type", "payload", "meta"],
   "additionalProperties": false
