@@ -26,7 +26,13 @@
           "additionalProperties": false,
           "required": ["channel", "context"]
         },
-        "meta": true
+        "meta": {
+          "properties": {
+            "source": {
+              "$ref": "../api/appIdentifier.schema.json"
+            }
+          }
+        }
       }
     }
   ]

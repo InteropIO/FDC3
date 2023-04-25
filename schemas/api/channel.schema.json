@@ -17,7 +17,7 @@
             ]
         },
         "displayMetadata": {
-            "$ref": "displayMetadata.schema.json#"
+            "$ref": "displayMetadata.schema.json"
         }
     },
     "required": [

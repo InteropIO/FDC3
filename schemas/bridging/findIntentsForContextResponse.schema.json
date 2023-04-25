@@ -33,6 +33,12 @@
               "items": {
                 "$ref": "../api/desktopAgentIdentifier.schema.json"
               }
+            },
+            "errorSources": {
+              "type": "array",
+              "items": {
+                "$ref": "../api/desktopAgentIdentifier.schema.json"
+              }
             }
           }
         }

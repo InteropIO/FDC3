@@ -102,7 +102,7 @@ export interface ScreenshotElement {
  */
 export interface IntentClass {
   displayName: string;
-  name: string;
+  name?: string;
 }
 
 /**
@@ -156,14 +156,14 @@ export enum Type {
  * addContextListener and addIntentListener functions.
  */
 export interface ContextMetadata {
-  source: SourceObject;
+  source: SourceElement;
 }
 
 /**
  * Identifies an application, or instance of an application, and is used to target FDC3 API
  * calls at specific applications.
  */
-export interface SourceObject {
+export interface SourceElement {
   appId: string;
   desktopAgent?: string;
   instanceId?: string;
@@ -231,7 +231,7 @@ export interface OptionalFeatures {
  */
 export interface IntentMetadata {
   displayName: string;
-  name: string;
+  name?: string;
 }
 
 /**
@@ -239,7 +239,7 @@ export interface IntentMetadata {
  */
 export interface IntentResolution {
   intent: string;
-  source: SourceObject;
+  source: SourceElement;
   version?: string;
 }
 
@@ -362,7 +362,7 @@ export interface BridgeResponseMeta {
 }
 
 export interface BroadcastRequest {
-  meta: BridgeRequestMeta;
+  meta: BroadcastRequestMeta;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
@@ -372,6 +372,50 @@ export interface BroadcastRequest {
    * the message relates to, e.g. 'findIntent', with 'Request' appended.
    */
   type: string;
+}
+
+export interface BroadcastRequestMeta {
+  /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: DestinationElement;
+  /**
+   * Unique GUID for the request
+   */
+  requestGuid: string;
+  /**
+   * Field that represents the source application that the request was received from.
+   */
+  source: PurpleIdentifier;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  [property: string]: any;
+}
+
+/**
+ * Optional field that represents the destination that the request should be routed to. Must
+ * be set by the Desktop Agent for API calls that include a target app parameter and must
+ * include the name of the Desktop Agent hosting the target application.
+ *
+ * Field that represents the source application that the request was received from.
+ *
+ * Identifies an application, or instance of an application, and is used to target FDC3 API
+ * calls at specific applications.
+ *
+ * Identifies a particular Desktop Agent. Used by Desktop Agent Bridging to indicate the
+ * source or destination of a message which was produced by or should be processed by the
+ * Desktop Agent itself rather than a specific application. Often added to messages by the
+ * Desktop Agent Bridge.
+ */
+export interface PurpleIdentifier {
+  appId: string;
+  desktopAgent?: string;
+  instanceId?: string;
+  [property: string]: any;
 }
 
 /**
@@ -456,11 +500,11 @@ export interface DestinationClass {
  * The message payload typically contains the arguments to FDC3 API functions.
  */
 export interface FindInstancesRequestPayload {
-  app: SourceObject;
+  app: SourceElement;
 }
 
 export interface FindInstancesResponse {
-  meta: BridgeResponseMeta;
+  meta: FindInstancesResponseMeta;
   /**
    * The message payload typically contains return values for FDC3 API functions.
    */
@@ -472,6 +516,50 @@ export interface FindInstancesResponse {
   type: string;
 }
 
+export interface FindInstancesResponseMeta {
+  /**
+   * Unique GUID for the request
+   */
+  requestGuid: string;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  /**
+   * Array of error message strings for responses that were not returned to the bridge before
+   * the timeout or because an error occurred. Should be the same length as the `errorSources`
+   * array and ordered the same. May be omitted if all sources responded without errors.
+   */
+  errorDetails?: string[];
+  /**
+   * Array of AppIdentifiers or DesktopAgentIdentifiers for responses that were not returned
+   * to the bridge before the timeout or because an error occurred. May be omitted if all
+   * sources responded without errors.
+   */
+  errorSources?: DestinationElement[];
+  /**
+   * Unique GUID for the response
+   */
+  responseGuid: string;
+  /**
+   * Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
+   * responses to the request. Will contain a single value for individual responses and
+   * multiple values for responses that were collated by the bridge. May be omitted if all
+   * sources errored.
+   */
+  sources?: ErrorSourceElement[];
+}
+
+/**
+ * Identifies a particular Desktop Agent. Used by Desktop Agent Bridging to indicate the
+ * source or destination of a message which was produced by or should be processed by the
+ * Desktop Agent itself rather than a specific application. Often added to messages by the
+ * Desktop Agent Bridge.
+ */
+export interface ErrorSourceElement {
+  desktopAgent: string;
+}
+
 /**
  * The message payload typically contains return values for FDC3 API functions.
  */
@@ -480,7 +568,7 @@ export interface FindInstancesResponsePayload {
 }
 
 export interface FindIntentRequest {
-  meta: BridgeRequestMeta;
+  meta: FindIntentRequestMeta;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
@@ -490,6 +578,28 @@ export interface FindIntentRequest {
    * the message relates to, e.g. 'findIntent', with 'Request' appended.
    */
   type: string;
+}
+
+export interface FindIntentRequestMeta {
+  /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: DestinationClass;
+  /**
+   * Unique GUID for the request
+   */
+  requestGuid: string;
+  /**
+   * Field that represents the source application that the request was received from.
+   */
+  source: DestinationElement;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  [property: string]: any;
 }
 
 /**
@@ -548,16 +658,6 @@ export interface FindIntentResponseMeta {
 }
 
 /**
- * Identifies a particular Desktop Agent. Used by Desktop Agent Bridging to indicate the
- * source or destination of a message which was produced by or should be processed by the
- * Desktop Agent itself rather than a specific application. Often added to messages by the
- * Desktop Agent Bridge.
- */
-export interface ErrorSourceElement {
-  desktopAgent: string;
-}
-
-/**
  * The message payload typically contains return values for FDC3 API functions.
  */
 export interface FindIntentResponsePayload {
@@ -573,7 +673,7 @@ export interface AppIntentElement {
 }
 
 export interface FindIntentsForContextRequest {
-  meta: BridgeRequestMeta;
+  meta: FindIntentsForContextRequestMeta;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
@@ -583,6 +683,28 @@ export interface FindIntentsForContextRequest {
    * the message relates to, e.g. 'findIntent', with 'Request' appended.
    */
   type: string;
+}
+
+export interface FindIntentsForContextRequestMeta {
+  /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: DestinationClass;
+  /**
+   * Unique GUID for the request
+   */
+  requestGuid: string;
+  /**
+   * Field that represents the source application that the request was received from.
+   */
+  source: DestinationElement;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  [property: string]: any;
 }
 
 /**
@@ -625,7 +747,7 @@ export interface FindIntentsForContextResponseMeta {
    * to the bridge before the timeout or because an error occurred. May be omitted if all
    * sources responded without errors.
    */
-  errorSources?: DestinationElement[];
+  errorSources?: ErrorSourceElement[];
   /**
    * Unique GUID for the response
    */
@@ -647,7 +769,7 @@ export interface FindIntentsForContextResponsePayload {
 }
 
 export interface GetAppMetadataRequest {
-  meta: BridgeRequestMeta;
+  meta: GetAppMetadataRequestMeta;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
@@ -659,15 +781,37 @@ export interface GetAppMetadataRequest {
   type: string;
 }
 
+export interface GetAppMetadataRequestMeta {
+  /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: DestinationClass;
+  /**
+   * Unique GUID for the request
+   */
+  requestGuid: string;
+  /**
+   * Field that represents the source application that the request was received from.
+   */
+  source: DestinationElement;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  [property: string]: any;
+}
+
 /**
  * The message payload typically contains the arguments to FDC3 API functions.
  */
 export interface GetAppMetadataRequestPayload {
-  app: SourceObject;
+  app: SourceElement;
 }
 
 export interface GetAppMetadataResponse {
-  meta: BridgeResponseMeta;
+  meta: GetAppMetadataResponseMeta;
   /**
    * The message payload typically contains return values for FDC3 API functions.
    */
@@ -679,6 +823,40 @@ export interface GetAppMetadataResponse {
   type: string;
 }
 
+export interface GetAppMetadataResponseMeta {
+  /**
+   * Unique GUID for the request
+   */
+  requestGuid: string;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  /**
+   * Array of error message strings for responses that were not returned to the bridge before
+   * the timeout or because an error occurred. Should be the same length as the `errorSources`
+   * array and ordered the same. May be omitted if all sources responded without errors.
+   */
+  errorDetails?: string[];
+  /**
+   * Array of AppIdentifiers or DesktopAgentIdentifiers for responses that were not returned
+   * to the bridge before the timeout or because an error occurred. May be omitted if all
+   * sources responded without errors.
+   */
+  errorSources?: ErrorSourceElement[];
+  /**
+   * Unique GUID for the response
+   */
+  responseGuid: string;
+  /**
+   * Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
+   * responses to the request. Will contain a single value for individual responses and
+   * multiple values for responses that were collated by the bridge. May be omitted if all
+   * sources errored.
+   */
+  sources?: ErrorSourceElement[];
+}
+
 /**
  * The message payload typically contains return values for FDC3 API functions.
  */
@@ -687,7 +865,7 @@ export interface GetAppMetadataResponsePayload {
 }
 
 export interface OpenRequest {
-  meta: BridgeRequestMeta;
+  meta: OpenRequestMeta;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
@@ -699,16 +877,38 @@ export interface OpenRequest {
   type: string;
 }
 
+export interface OpenRequestMeta {
+  /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: DestinationClass;
+  /**
+   * Unique GUID for the request
+   */
+  requestGuid: string;
+  /**
+   * Field that represents the source application that the request was received from.
+   */
+  source: PurpleIdentifier;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  [property: string]: any;
+}
+
 /**
  * The message payload typically contains the arguments to FDC3 API functions.
  */
 export interface OpenRequestPayload {
-  app: SourceObject;
+  app: SourceElement;
   context?: ContextObject;
 }
 
 export interface OpenResponse {
-  meta: BridgeResponseMeta;
+  meta: OpenResponseMeta;
   /**
    * The message payload typically contains return values for FDC3 API functions.
    */
@@ -720,11 +920,45 @@ export interface OpenResponse {
   type: string;
 }
 
+export interface OpenResponseMeta {
+  /**
+   * Unique GUID for the request
+   */
+  requestGuid: string;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  /**
+   * Array of error message strings for responses that were not returned to the bridge before
+   * the timeout or because an error occurred. Should be the same length as the `errorSources`
+   * array and ordered the same. May be omitted if all sources responded without errors.
+   */
+  errorDetails?: string[];
+  /**
+   * Array of AppIdentifiers or DesktopAgentIdentifiers for responses that were not returned
+   * to the bridge before the timeout or because an error occurred. May be omitted if all
+   * sources responded without errors.
+   */
+  errorSources?: ErrorSourceElement[];
+  /**
+   * Unique GUID for the response
+   */
+  responseGuid: string;
+  /**
+   * Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
+   * responses to the request. Will contain a single value for individual responses and
+   * multiple values for responses that were collated by the bridge. May be omitted if all
+   * sources errored.
+   */
+  sources?: ErrorSourceElement[];
+}
+
 /**
  * The message payload typically contains return values for FDC3 API functions.
  */
 export interface OpenResponsePayload {
-  appIdentifier: SourceObject;
+  appIdentifier: SourceElement;
 }
 
 export interface RaiseIntentRequest {
@@ -746,7 +980,7 @@ export interface RaiseIntentRequestMeta {
    * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
-  destination?: PurpleIdentifier;
+  destination?: DestinationClass;
   /**
    * Unique GUID for the request
    */
@@ -763,37 +997,15 @@ export interface RaiseIntentRequestMeta {
 }
 
 /**
- * Optional field that represents the destination that the request should be routed to. Must
- * be set by the Desktop Agent for API calls that include a target app parameter and must
- * include the name of the Desktop Agent hosting the target application.
- *
- * Field that represents the source application that the request was received from.
- *
- * Identifies an application, or instance of an application, and is used to target FDC3 API
- * calls at specific applications.
- *
- * Identifies a particular Desktop Agent. Used by Desktop Agent Bridging to indicate the
- * source or destination of a message which was produced by or should be processed by the
- * Desktop Agent itself rather than a specific application. Often added to messages by the
- * Desktop Agent Bridge.
- */
-export interface PurpleIdentifier {
-  appId: string;
-  desktopAgent?: string;
-  instanceId?: string;
-  [property: string]: any;
-}
-
-/**
  * The message payload typically contains the arguments to FDC3 API functions.
  */
 export interface RaiseIntentRequestPayload {
-  app: SourceObject;
+  app: SourceElement;
   context: ContextObject;
 }
 
 export interface RaiseIntentResponse {
-  meta: BridgeResponseMeta;
+  meta: RaiseIntentResponseMeta;
   /**
    * The message payload typically contains return values for FDC3 API functions.
    */
@@ -803,6 +1015,40 @@ export interface RaiseIntentResponse {
    * the message relates to, e.g. 'findIntent', with 'Response' appended.
    */
   type: string;
+}
+
+export interface RaiseIntentResponseMeta {
+  /**
+   * Unique GUID for the request
+   */
+  requestGuid: string;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  /**
+   * Array of error message strings for responses that were not returned to the bridge before
+   * the timeout or because an error occurred. Should be the same length as the `errorSources`
+   * array and ordered the same. May be omitted if all sources responded without errors.
+   */
+  errorDetails?: string[];
+  /**
+   * Array of AppIdentifiers or DesktopAgentIdentifiers for responses that were not returned
+   * to the bridge before the timeout or because an error occurred. May be omitted if all
+   * sources responded without errors.
+   */
+  errorSources?: DestinationElement[];
+  /**
+   * Unique GUID for the response
+   */
+  responseGuid: string;
+  /**
+   * Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
+   * responses to the request. Will contain a single value for individual responses and
+   * multiple values for responses that were collated by the bridge. May be omitted if all
+   * sources errored.
+   */
+  sources?: ErrorSourceElement[];
 }
 
 /**
@@ -817,12 +1063,12 @@ export interface RaiseIntentResponsePayload {
  */
 export interface IntentResolutionClass {
   intent: string;
-  source: SourceObject;
+  source: SourceElement;
   version?: string;
 }
 
 export interface RaiseIntentResultResponse {
-  meta: BridgeResponseMeta;
+  meta: RaiseIntentResultResponseMeta;
   /**
    * The message payload typically contains return values for FDC3 API functions.
    */
@@ -832,6 +1078,40 @@ export interface RaiseIntentResultResponse {
    * the message relates to, e.g. 'findIntent', with 'Response' appended.
    */
   type: string;
+}
+
+export interface RaiseIntentResultResponseMeta {
+  /**
+   * Unique GUID for the request
+   */
+  requestGuid: string;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  /**
+   * Array of error message strings for responses that were not returned to the bridge before
+   * the timeout or because an error occurred. Should be the same length as the `errorSources`
+   * array and ordered the same. May be omitted if all sources responded without errors.
+   */
+  errorDetails?: string[];
+  /**
+   * Array of AppIdentifiers or DesktopAgentIdentifiers for responses that were not returned
+   * to the bridge before the timeout or because an error occurred. May be omitted if all
+   * sources responded without errors.
+   */
+  errorSources?: DestinationElement[];
+  /**
+   * Unique GUID for the response
+   */
+  responseGuid: string;
+  /**
+   * Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
+   * responses to the request. Will contain a single value for individual responses and
+   * multiple values for responses that were collated by the bridge. May be omitted if all
+   * sources errored.
+   */
+  sources?: SourceElement[];
 }
 
 /**
@@ -1324,7 +1604,7 @@ const typeMap: any = {
   IntentClass: o(
     [
       { json: 'displayName', js: 'displayName', typ: '' },
-      { json: 'name', js: 'name', typ: '' },
+      { json: 'name', js: 'name', typ: u(undefined, '') },
     ],
     false
   ),
@@ -1361,8 +1641,8 @@ const typeMap: any = {
     ],
     false
   ),
-  ContextMetadata: o([{ json: 'source', js: 'source', typ: r('SourceObject') }], false),
-  SourceObject: o(
+  ContextMetadata: o([{ json: 'source', js: 'source', typ: r('SourceElement') }], false),
+  SourceElement: o(
     [
       { json: 'appId', js: 'appId', typ: '' },
       { json: 'desktopAgent', js: 'desktopAgent', typ: u(undefined, '') },
@@ -1416,14 +1696,14 @@ const typeMap: any = {
   IntentMetadata: o(
     [
       { json: 'displayName', js: 'displayName', typ: '' },
-      { json: 'name', js: 'name', typ: '' },
+      { json: 'name', js: 'name', typ: u(undefined, '') },
     ],
     false
   ),
   IntentResolution: o(
     [
       { json: 'intent', js: 'intent', typ: '' },
-      { json: 'source', js: 'source', typ: r('SourceObject') },
+      { json: 'source', js: 'source', typ: r('SourceElement') },
       { json: 'version', js: 'version', typ: u(undefined, '') },
     ],
     false
@@ -1483,11 +1763,28 @@ const typeMap: any = {
   ),
   BroadcastRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('BridgeRequestMeta') },
+      { json: 'meta', js: 'meta', typ: r('BroadcastRequestMeta') },
       { json: 'payload', js: 'payload', typ: r('BroadcastRequestPayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
+  ),
+  BroadcastRequestMeta: o(
+    [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationElement')) },
+      { json: 'requestGuid', js: 'requestGuid', typ: '' },
+      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+    ],
+    'any'
+  ),
+  PurpleIdentifier: o(
+    [
+      { json: 'appId', js: 'appId', typ: '' },
+      { json: 'desktopAgent', js: 'desktopAgent', typ: u(undefined, '') },
+      { json: 'instanceId', js: 'instanceId', typ: u(undefined, '') },
+    ],
+    'any'
   ),
   BroadcastRequestPayload: o(
     [
@@ -1530,26 +1827,47 @@ const typeMap: any = {
     'any'
   ),
   DestinationClass: o([{ json: 'desktopAgent', js: 'desktopAgent', typ: '' }], false),
-  FindInstancesRequestPayload: o([{ json: 'app', js: 'app', typ: r('SourceObject') }], false),
+  FindInstancesRequestPayload: o([{ json: 'app', js: 'app', typ: r('SourceElement') }], false),
   FindInstancesResponse: o(
     [
-      { json: 'meta', js: 'meta', typ: r('BridgeResponseMeta') },
+      { json: 'meta', js: 'meta', typ: r('FindInstancesResponseMeta') },
       { json: 'payload', js: 'payload', typ: r('FindInstancesResponsePayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
+  FindInstancesResponseMeta: o(
+    [
+      { json: 'requestGuid', js: 'requestGuid', typ: '' },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
+      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('DestinationElement'))) },
+      { json: 'responseGuid', js: 'responseGuid', typ: '' },
+      { json: 'sources', js: 'sources', typ: u(undefined, a(r('ErrorSourceElement'))) },
+    ],
+    false
+  ),
+  ErrorSourceElement: o([{ json: 'desktopAgent', js: 'desktopAgent', typ: '' }], false),
   FindInstancesResponsePayload: o(
     [{ json: 'appIdentifiers', js: 'appIdentifiers', typ: a(r('AppMetadataElement')) }],
     false
   ),
   FindIntentRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('BridgeRequestMeta') },
+      { json: 'meta', js: 'meta', typ: r('FindIntentRequestMeta') },
       { json: 'payload', js: 'payload', typ: r('FindIntentRequestPayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
+  ),
+  FindIntentRequestMeta: o(
+    [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationClass')) },
+      { json: 'requestGuid', js: 'requestGuid', typ: '' },
+      { json: 'source', js: 'source', typ: r('DestinationElement') },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+    ],
+    'any'
   ),
   FindIntentRequestPayload: o(
     [
@@ -1577,7 +1895,6 @@ const typeMap: any = {
     ],
     false
   ),
-  ErrorSourceElement: o([{ json: 'desktopAgent', js: 'desktopAgent', typ: '' }], false),
   FindIntentResponsePayload: o([{ json: 'appIntent', js: 'appIntent', typ: r('AppIntentElement') }], false),
   AppIntentElement: o(
     [
@@ -1588,11 +1905,20 @@ const typeMap: any = {
   ),
   FindIntentsForContextRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('BridgeRequestMeta') },
+      { json: 'meta', js: 'meta', typ: r('FindIntentsForContextRequestMeta') },
       { json: 'payload', js: 'payload', typ: r('FindIntentsForContextRequestPayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
+  ),
+  FindIntentsForContextRequestMeta: o(
+    [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationClass')) },
+      { json: 'requestGuid', js: 'requestGuid', typ: '' },
+      { json: 'source', js: 'source', typ: r('DestinationElement') },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+    ],
+    'any'
   ),
   FindIntentsForContextRequestPayload: o([{ json: 'context', js: 'context', typ: r('ContextObject') }], false),
   FindIntentsForContextResponse: o(
@@ -1608,7 +1934,7 @@ const typeMap: any = {
       { json: 'requestGuid', js: 'requestGuid', typ: '' },
       { json: 'timestamp', js: 'timestamp', typ: Date },
       { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
-      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('DestinationElement'))) },
+      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('ErrorSourceElement'))) },
       { json: 'responseGuid', js: 'responseGuid', typ: '' },
       { json: 'sources', js: 'sources', typ: u(undefined, a(r('ErrorSourceElement'))) },
     ],
@@ -1620,46 +1946,86 @@ const typeMap: any = {
   ),
   GetAppMetadataRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('BridgeRequestMeta') },
+      { json: 'meta', js: 'meta', typ: r('GetAppMetadataRequestMeta') },
       { json: 'payload', js: 'payload', typ: r('GetAppMetadataRequestPayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  GetAppMetadataRequestPayload: o([{ json: 'app', js: 'app', typ: r('SourceObject') }], false),
+  GetAppMetadataRequestMeta: o(
+    [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationClass')) },
+      { json: 'requestGuid', js: 'requestGuid', typ: '' },
+      { json: 'source', js: 'source', typ: r('DestinationElement') },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+    ],
+    'any'
+  ),
+  GetAppMetadataRequestPayload: o([{ json: 'app', js: 'app', typ: r('SourceElement') }], false),
   GetAppMetadataResponse: o(
     [
-      { json: 'meta', js: 'meta', typ: r('BridgeResponseMeta') },
+      { json: 'meta', js: 'meta', typ: r('GetAppMetadataResponseMeta') },
       { json: 'payload', js: 'payload', typ: r('GetAppMetadataResponsePayload') },
       { json: 'type', js: 'type', typ: '' },
+    ],
+    false
+  ),
+  GetAppMetadataResponseMeta: o(
+    [
+      { json: 'requestGuid', js: 'requestGuid', typ: '' },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
+      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('ErrorSourceElement'))) },
+      { json: 'responseGuid', js: 'responseGuid', typ: '' },
+      { json: 'sources', js: 'sources', typ: u(undefined, a(r('ErrorSourceElement'))) },
     ],
     false
   ),
   GetAppMetadataResponsePayload: o([{ json: 'appMetadata', js: 'appMetadata', typ: r('AppMetadataElement') }], false),
   OpenRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('BridgeRequestMeta') },
+      { json: 'meta', js: 'meta', typ: r('OpenRequestMeta') },
       { json: 'payload', js: 'payload', typ: r('OpenRequestPayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
+  OpenRequestMeta: o(
+    [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationClass')) },
+      { json: 'requestGuid', js: 'requestGuid', typ: '' },
+      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+    ],
+    'any'
+  ),
   OpenRequestPayload: o(
     [
-      { json: 'app', js: 'app', typ: r('SourceObject') },
+      { json: 'app', js: 'app', typ: r('SourceElement') },
       { json: 'context', js: 'context', typ: u(undefined, r('ContextObject')) },
     ],
     false
   ),
   OpenResponse: o(
     [
-      { json: 'meta', js: 'meta', typ: r('BridgeResponseMeta') },
+      { json: 'meta', js: 'meta', typ: r('OpenResponseMeta') },
       { json: 'payload', js: 'payload', typ: r('OpenResponsePayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  OpenResponsePayload: o([{ json: 'appIdentifier', js: 'appIdentifier', typ: r('SourceObject') }], false),
+  OpenResponseMeta: o(
+    [
+      { json: 'requestGuid', js: 'requestGuid', typ: '' },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
+      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('ErrorSourceElement'))) },
+      { json: 'responseGuid', js: 'responseGuid', typ: '' },
+      { json: 'sources', js: 'sources', typ: u(undefined, a(r('ErrorSourceElement'))) },
+    ],
+    false
+  ),
+  OpenResponsePayload: o([{ json: 'appIdentifier', js: 'appIdentifier', typ: r('SourceElement') }], false),
   RaiseIntentRequest: o(
     [
       { json: 'meta', js: 'meta', typ: r('RaiseIntentRequestMeta') },
@@ -1670,33 +2036,36 @@ const typeMap: any = {
   ),
   RaiseIntentRequestMeta: o(
     [
-      { json: 'destination', js: 'destination', typ: u(undefined, r('PurpleIdentifier')) },
+      { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationClass')) },
       { json: 'requestGuid', js: 'requestGuid', typ: '' },
       { json: 'source', js: 'source', typ: r('DestinationElement') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
     'any'
   ),
-  PurpleIdentifier: o(
-    [
-      { json: 'appId', js: 'appId', typ: '' },
-      { json: 'desktopAgent', js: 'desktopAgent', typ: u(undefined, '') },
-      { json: 'instanceId', js: 'instanceId', typ: u(undefined, '') },
-    ],
-    'any'
-  ),
   RaiseIntentRequestPayload: o(
     [
-      { json: 'app', js: 'app', typ: r('SourceObject') },
+      { json: 'app', js: 'app', typ: r('SourceElement') },
       { json: 'context', js: 'context', typ: r('ContextObject') },
     ],
     false
   ),
   RaiseIntentResponse: o(
     [
-      { json: 'meta', js: 'meta', typ: r('BridgeResponseMeta') },
+      { json: 'meta', js: 'meta', typ: r('RaiseIntentResponseMeta') },
       { json: 'payload', js: 'payload', typ: r('RaiseIntentResponsePayload') },
       { json: 'type', js: 'type', typ: '' },
+    ],
+    false
+  ),
+  RaiseIntentResponseMeta: o(
+    [
+      { json: 'requestGuid', js: 'requestGuid', typ: '' },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
+      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('DestinationElement'))) },
+      { json: 'responseGuid', js: 'responseGuid', typ: '' },
+      { json: 'sources', js: 'sources', typ: u(undefined, a(r('ErrorSourceElement'))) },
     ],
     false
   ),
@@ -1707,16 +2076,27 @@ const typeMap: any = {
   IntentResolutionClass: o(
     [
       { json: 'intent', js: 'intent', typ: '' },
-      { json: 'source', js: 'source', typ: r('SourceObject') },
+      { json: 'source', js: 'source', typ: r('SourceElement') },
       { json: 'version', js: 'version', typ: u(undefined, '') },
     ],
     false
   ),
   RaiseIntentResultResponse: o(
     [
-      { json: 'meta', js: 'meta', typ: r('BridgeResponseMeta') },
+      { json: 'meta', js: 'meta', typ: r('RaiseIntentResultResponseMeta') },
       { json: 'payload', js: 'payload', typ: r('RaiseIntentResultResponsePayload') },
       { json: 'type', js: 'type', typ: '' },
+    ],
+    false
+  ),
+  RaiseIntentResultResponseMeta: o(
+    [
+      { json: 'requestGuid', js: 'requestGuid', typ: '' },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
+      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('DestinationElement'))) },
+      { json: 'responseGuid', js: 'responseGuid', typ: '' },
+      { json: 'sources', js: 'sources', typ: u(undefined, a(r('SourceElement'))) },
     ],
     false
   ),

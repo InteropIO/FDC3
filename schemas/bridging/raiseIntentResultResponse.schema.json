@@ -44,7 +44,17 @@
           "required": ["intentResult"],
           "additionalProperties": false
         },
-        "meta": true
+        "meta": {
+          "type": "object",
+          "properties": {
+            "sources": {
+              "type": "array",
+              "items": {
+                "$ref": "../api/appIdentifier.schema.json"
+              }
+            }
+          }
+        }
       }
     }
   ]

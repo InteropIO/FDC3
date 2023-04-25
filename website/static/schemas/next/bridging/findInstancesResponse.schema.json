@@ -26,7 +26,23 @@
           "required": ["appIdentifiers"],
           "additionalProperties": false
         },
-        "meta": true
+        "meta": {
+          "type": "object",
+          "properties": {
+            "sources": {
+              "type": "array",
+              "items": {
+                "$ref": "../api/desktopAgentIdentifier.schema.json"
+              },
+              "errorSources": {
+                "type": "array",
+                "items": {
+                  "$ref": "../api/desktopAgentIdentifier.schema.json"
+                }
+              }
+            }
+          }
+        }
       }
     }
   ]

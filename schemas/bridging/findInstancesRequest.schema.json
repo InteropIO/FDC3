@@ -24,18 +24,11 @@
           "additionalProperties": false
         },
         "meta": {
-          "allOf": [
-            {
-              "$ref": "bridgeRequest.schema.json#/$defs/RequestMeta"
-            },
-            {
-              "properties": {
-                "destination": {
-                  "$ref": "../api/desktopAgentIdentifier.schema.json"
-                }
-              }
+          "properties": {
+            "destination": {
+              "$ref": "../api/desktopAgentIdentifier.schema.json"
             }
-          ]
+          }
         }
       }
     }

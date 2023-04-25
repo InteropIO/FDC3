@@ -6,7 +6,7 @@
     "type": "object",
     "properties": {
         "intent": {
-            "$ref": "intentMetadata.schema.json#"
+            "$ref": "intentMetadata.schema.json"
         },
         "apps": {
             "type": "array",

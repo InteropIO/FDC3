@@ -26,7 +26,13 @@
           "required": ["intent", "context"],
           "additionalProperties": false
         },
-        "meta": true
+        "meta": {
+          "properties": {
+            "destination": {
+              "$ref": "../api/desktopAgentIdentifier.schema.json"
+            }
+          }
+        }
       }
     }
   ]
