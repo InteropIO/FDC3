@@ -11,5 +11,6 @@
       "unevaluatedProperties": { "type": "string" }
     }
   },
+  "additionalItems": true,
   "required": ["type"]
 }

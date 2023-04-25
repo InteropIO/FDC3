@@ -17,15 +17,9 @@
           "properties": {
             "appIntent": {
               "$ref": "../api/appIntent.schema.json"
-            },
-            "apps": {
-              "type": "array",
-              "items": {
-                "$ref": "../api/appMetadata.schema.json"
-              }
             }
           },
-          "required": ["appIntent", "apps"],
+          "required": ["appIntent"],
           "additionalProperties": false
         },
         "meta": {

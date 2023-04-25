@@ -23,7 +23,7 @@
               "$ref": "../context/context.schema.json"
             }
           },
-          "required": ["app", "context"],
+          "required": ["app"],
           "additionalProperties": false
         },
         "meta": true

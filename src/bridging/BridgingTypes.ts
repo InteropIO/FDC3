@@ -366,12 +366,36 @@ export interface BroadcastRequest {
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
-  payload: { [key: string]: any };
+  payload: BroadcastRequestPayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Request' appended.
    */
   type: string;
+}
+
+/**
+ * The message payload typically contains the arguments to FDC3 API functions.
+ */
+export interface BroadcastRequestPayload {
+  channel: ChannelClass;
+  context: ContextObject;
+}
+
+/**
+ * Represents a context channel that applications can join to share context data.
+ */
+export interface ChannelClass {
+  displayMetadata?: DisplayMetadataClass;
+  id: string;
+  type: Type;
+}
+
+export interface ContextObject {
+  id?: { [key: string]: any };
+  name?: string;
+  type: string;
+  [property: string]: any;
 }
 
 export interface FindInstancesRequest {
@@ -476,13 +500,6 @@ export interface FindIntentRequestPayload {
   intent: string;
 }
 
-export interface ContextObject {
-  id?: { [key: string]: any };
-  name?: string;
-  type: string;
-  [property: string]: any;
-}
-
 export interface FindIntentResponse {
   meta: FindIntentResponseMeta;
   /**
@@ -545,7 +562,6 @@ export interface ErrorSourceElement {
  */
 export interface FindIntentResponsePayload {
   appIntent: AppIntentElement;
-  apps: AppMetadataElement[];
 }
 
 /**
@@ -627,8 +643,7 @@ export interface FindIntentsForContextResponseMeta {
  * The message payload typically contains return values for FDC3 API functions.
  */
 export interface FindIntentsForContextResponsePayload {
-  appIntents?: AppIntentElement[];
-  apps?: AppMetadataElement[];
+  appIntents: AppIntentElement[];
 }
 
 export interface GetAppMetadataRequest {
@@ -689,7 +704,7 @@ export interface OpenRequest {
  */
 export interface OpenRequestPayload {
   app: SourceObject;
-  context: ContextObject;
+  context?: ContextObject;
 }
 
 export interface OpenResponse {
@@ -823,7 +838,8 @@ export interface RaiseIntentResultResponse {
  * The message payload typically contains return values for FDC3 API functions.
  */
 export interface RaiseIntentResultResponsePayload {
-  intentResult: ContextObject;
+  context?: ContextObject;
+  channel?: ChannelClass;
 }
 
 export interface Context {
@@ -1464,10 +1480,33 @@ const typeMap: any = {
   BroadcastRequest: o(
     [
       { json: 'meta', js: 'meta', typ: r('BridgeRequestMeta') },
-      { json: 'payload', js: 'payload', typ: m('any') },
+      { json: 'payload', js: 'payload', typ: r('BroadcastRequestPayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
+  ),
+  BroadcastRequestPayload: o(
+    [
+      { json: 'channel', js: 'channel', typ: r('ChannelClass') },
+      { json: 'context', js: 'context', typ: r('ContextObject') },
+    ],
+    false
+  ),
+  ChannelClass: o(
+    [
+      { json: 'displayMetadata', js: 'displayMetadata', typ: u(undefined, r('DisplayMetadataClass')) },
+      { json: 'id', js: 'id', typ: '' },
+      { json: 'type', js: 'type', typ: r('Type') },
+    ],
+    false
+  ),
+  ContextObject: o(
+    [
+      { json: 'id', js: 'id', typ: u(undefined, m('any')) },
+      { json: 'name', js: 'name', typ: u(undefined, '') },
+      { json: 'type', js: 'type', typ: '' },
+    ],
+    'any'
   ),
   FindInstancesRequest: o(
     [
@@ -1515,14 +1554,6 @@ const typeMap: any = {
     ],
     false
   ),
-  ContextObject: o(
-    [
-      { json: 'id', js: 'id', typ: u(undefined, m('any')) },
-      { json: 'name', js: 'name', typ: u(undefined, '') },
-      { json: 'type', js: 'type', typ: '' },
-    ],
-    'any'
-  ),
   FindIntentResponse: o(
     [
       { json: 'meta', js: 'meta', typ: r('FindIntentResponseMeta') },
@@ -1543,13 +1574,7 @@ const typeMap: any = {
     false
   ),
   ErrorSourceElement: o([{ json: 'desktopAgent', js: 'desktopAgent', typ: '' }], false),
-  FindIntentResponsePayload: o(
-    [
-      { json: 'appIntent', js: 'appIntent', typ: r('AppIntentElement') },
-      { json: 'apps', js: 'apps', typ: a(r('AppMetadataElement')) },
-    ],
-    false
-  ),
+  FindIntentResponsePayload: o([{ json: 'appIntent', js: 'appIntent', typ: r('AppIntentElement') }], false),
   AppIntentElement: o(
     [
       { json: 'apps', js: 'apps', typ: a(r('AppMetadataElement')) },
@@ -1586,10 +1611,7 @@ const typeMap: any = {
     false
   ),
   FindIntentsForContextResponsePayload: o(
-    [
-      { json: 'appIntents', js: 'appIntents', typ: u(undefined, a(r('AppIntentElement'))) },
-      { json: 'apps', js: 'apps', typ: u(undefined, a(r('AppMetadataElement'))) },
-    ],
+    [{ json: 'appIntents', js: 'appIntents', typ: a(r('AppIntentElement')) }],
     false
   ),
   GetAppMetadataRequest: o(
@@ -1621,7 +1643,7 @@ const typeMap: any = {
   OpenRequestPayload: o(
     [
       { json: 'app', js: 'app', typ: r('SourceObject') },
-      { json: 'context', js: 'context', typ: r('ContextObject') },
+      { json: 'context', js: 'context', typ: u(undefined, r('ContextObject')) },
     ],
     false
   ),
@@ -1694,7 +1716,13 @@ const typeMap: any = {
     ],
     false
   ),
-  RaiseIntentResultResponsePayload: o([{ json: 'intentResult', js: 'intentResult', typ: r('ContextObject') }], false),
+  RaiseIntentResultResponsePayload: o(
+    [
+      { json: 'context', js: 'context', typ: u(undefined, r('ContextObject')) },
+      { json: 'channel', js: 'channel', typ: u(undefined, r('ChannelClass')) },
+    ],
+    false
+  ),
   Context: o(
     [
       { json: 'id', js: 'id', typ: u(undefined, m('any')) },

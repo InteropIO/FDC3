@@ -20,15 +20,10 @@
                 "$ref": "../api/appIntent.schema.json"
               },
               "additionalProperties": false
-            },
-            "apps": {
-              "type": "array",
-              "items": {
-                "$ref": "../api/appMetadata.schema.json"
-              }
             }
           },
-          "additionalProperties": false
+          "additionalProperties": false,
+          "required": ["appIntents"]
         },
         "meta": {
           "type": "object",

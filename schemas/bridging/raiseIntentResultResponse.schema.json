@@ -14,14 +14,28 @@
           "const": "raiseIntentResultResponse"
         },
         "payload": {
-          "type": "object",
-          "properties": {
-            "intentResult": {
-              "$ref": "../context/context.schema.json"
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "context": {
+                  "$ref": "../context/context.schema.json"
+                }
+              },
+              "required": ["context"],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "channel": {
+                  "$ref": "../api/channel.schema.json"
+                }
+              },
+              "required": ["channel"],
+              "additionalProperties": false
             }
-          },
-          "required": ["intentResult"],
-          "additionalProperties": false
+          ]
         },
         "meta": true
       }

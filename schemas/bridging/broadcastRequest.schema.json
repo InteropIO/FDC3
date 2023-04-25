@@ -14,12 +14,17 @@
           "const": "broadcastRequest"
         },
         "payload": {
-          "channel": {
-            "$ref": "../api/channel.schema.json"
+          "type": "object",
+          "properties": {
+            "channel": {
+              "$ref": "../api/channel.schema.json"
+            },
+            "context": {
+              "$ref": "../context/context.schema.json"
+            }
           },
-          "context": {
-            "$ref": "../context/context.schema.json"
-          }
+          "additionalProperties": false,
+          "required": ["channel", "context"]
         },
         "meta": true
       }
