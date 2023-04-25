@@ -37,12 +37,6 @@
                   },
                   "required": ["channel"],
                   "additionalProperties": false
-                },
-                {
-                  "type": "object",
-                  "properties": { }
-                  },
-                  "additionalProperties": false
                 }
               ]
             }
