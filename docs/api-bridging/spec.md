@@ -4,18 +4,24 @@ sidebar_label: Overview
 title: API Bridging Overview (next)
 ---
 
-The FDC3 Desktop Agent API addresses interoperability between apps running within the context of a single Desktop Agent (DA), facilitating cross-application workflows. Desktop Agent API Bridging addresses the interconnection of Desktop Agents (DAs) such that apps running under different Desktop Agents can also interoperate, allowing workflows to span multiple Desktop Agents.
+:::info _[Experimental](../fdc3-compliance#experimental-features)_
 
-In any Desktop Agent bridging scenario, it is expected that each DA is being operated by the same user (as the scope of FDC3 contemplates cross-application workflows for a single user, rather than cross-user workflows), although DAs may be run on different machines operated by the same user.
+Desktop Agent Bridging in an experimental feature added to FDC3 in 2.1, hence, it's design may change in future and it is exempted from the FDC3 Standards's normal versioning and deprecation polices in order to facilitate any necessary change.
+
+:::
+
+The FDC3 Desktop Agent API addresses interoperability between apps running within the context of a single Desktop Agent (DA), facilitating cross-application workflows. Desktop Agent Bridging addresses the interconnection of Desktop Agents (DAs) such that apps running under different Desktop Agents can also interoperate, allowing workflows to span multiple Desktop Agents.
+
+In any Desktop Agent Bridging scenario, it is expected that each DA is being operated by the same user (as the scope of FDC3 contemplates cross-application workflows for a single user, rather than cross-user workflows), although DAs may be run on different machines operated by the same user.
 
 ## TODO list
 
 * Expand on how the DAB should create the JWT token (and its claims, which must change to avoid replay attacks) which it sends out in the `hello` message for DAs to validate.
 * To create final PR:
-  * Create schema files defining messages
-  * Add new terms and acronyms to FDC3 glossary and ensure they are defined in this spec's introduction
-  * Add new errors to Error enumerations specified in this proposal
-  * Add RFC 4122 - https://datatracker.ietf.org/doc/html/rfc4122 to FDC3 references page
+  * Link to BackPlane project
+  * Refactor spec to separate channel (websocket) and protocol.
+  * Add schema links to each message exchange
+  * Add detail about Typescript generated from the schemas
 
 ## Implementing a Desktop Agent Bridge
 
@@ -79,9 +85,9 @@ Whilst some FDC3 requests are 'fire and forget' (e.g. broadcast) the main reques
 A set of classifications for message exchange types are provided in the [Individual message exchanges](#individual-message-exchanges) section.
 :::
 
-The DAB is the responsible entity for collating responses together from all DAs. Whilst this approach may add some complexity to bridge implementations, it will simplify DA implementations since they only need to handle one response.
+The Desktop Agent Bridge is the responsible entity for collating responses together from all DAs. Whilst this approach may add some complexity to bridge implementations, it will simplify DA implementations since they only need to handle one response.
 
-The DAB MUST allow for timeout configuration.
+The Desktop Agent Bridge MUST allow for timeout configuration.
 
 The Bridge SHOULD also implement timeout for waiting on DA responses. Assuming the message exchange will be all intra-machine, a recommended timeout of 1500ms SHOULD be used. Similarly, Desktop Agents SHOULD apply a timeout to requests made to the bridge that require a response (collated or otherwise), to handle situations where the bridge is not responding as expected. A recommended timeout of 3000ms SHOULD be used in this case.
 
@@ -91,7 +97,7 @@ It is assumed that Desktop Agents SHOULD adopt the recommended 8 channel set (an
 
 The Desktop Agent Bridge MAY support channel mapping ability, to deal with issues caused by differing channel sets.
 
-A key responsibility of the DAB is ensuring that the channel state of the connected agents is kept in-sync, which requires an initial synchronization step as part of the connection protocol.
+A key responsibility of the Desktop Agent Bridge is ensuring that the channel state of the connected agents is kept in-sync, which requires an initial synchronization step as part of the connection protocol.
 
 #### Bridging Desktop Agent on Multiple Machines
 
@@ -104,7 +110,7 @@ However, cross-machine routing is an internal concern of the Desktop Agent Bridg
 On connection to the bridge's websocket, a handshake must be completed that may include an authentication step before a name is assigned  to the Desktop Agent for use in routing messages. The purpose of the handshake is to allow:
 
 * The Desktop Agent to confirm that it is connecting to Desktop Agent Bridge, rather than another service exposed via a websocket.
-* The DAB to require that the Desktop Agent authenticate itself, allowing it to control access to the network of bridged Desktop Agents.
+* The Desktop Agent Bridge to require that the Desktop Agent authenticate itself, allowing it to control access to the network of bridged Desktop Agents.
 * The Desktop Agent to request a particular name by which it will be addressed by other agents and for the bridge to assign the requested name, after confirming that no other agent is connected with that name, or a derivative of that name if it is already in use.
 
 The bridge is ultimately responsible for assigning each Desktop Agent a name and for routing messages using those names. Desktop Agents MUST accept the name they are assigned by the bridge.
@@ -143,7 +149,7 @@ Note, if the Desktop Agent is configured to run at startup (of the user's machin
 
 ### Step 2. Hello
 
-When a new connection is made to the DAB websocket, it sends a `hello` message, including its metadata.
+When a new connection is made to the Desktop Agent Bridge websocket, it sends a `hello` message, including its metadata.
 
 ```typescript
 {
@@ -195,13 +201,13 @@ The DA must then respond to the `hello` message with a `handshake` request to th
 }
 ```
 
-Note that the `meta` element of of the handshake message contains both a `timestamp` field (for logging purposes) and a `requestGuid` field that should be populated with a Globally Unique Identifier (GUID), generated by the Desktop Agent. This `responseGuid` will be used to link the handshake message to a response from the DAB that assigns it a name. For more details on GUID generation see [Globally Unique Identifier](#globally-unique-identifier) section.
+Note that the `meta` element of of the handshake message contains both a `timestamp` field (for logging purposes) and a `requestGuid` field that should be populated with a Globally Unique Identifier (GUID), generated by the Desktop Agent. This `responseGuid` will be used to link the handshake message to a response from the Desktop Agent Bridge that assigns it a name. For more details on GUID generation see [Globally Unique Identifier](#globally-unique-identifier) section.
 
 If requested by the server, the JWT auth token payload should take the form:
 
 ```typescript
 {
-    "sub": string, // GUID for the keypair used to sign the token
+    "sub": string, // GUID for the key pair used to sign the token
     "iat": date    // timestamp at which the the token was generated as specified in ISO 8601
 }
 ```
@@ -215,11 +221,11 @@ e.g.
 }
 ```
 
-Note that the `sub` SHOULD be a GUID that does NOT need to match the name requested by the Desktop Agent. It will be used to identify the keypair that should be used to validate the JWT token. Further, multiple Desktop Agent's MAY share the same keys for authentication and hence the same `sub`, but they will be assigned different names for routing purposes by the DAB. If an agent disconnects from the bridge and later re-connects it MAY request and be assigned the same name it connected with before.
+Note that the `sub` SHOULD be a GUID that does NOT need to match the name requested by the Desktop Agent. It will be used to identify the key pair that should be used to validate the JWT token. Further, multiple Desktop Agent's MAY share the same keys for authentication and hence the same `sub`, but they will be assigned different names for routing purposes by the Desktop Agent Bridge. If an agent disconnects from the bridge and later re-connects it MAY request and be assigned the same name it connected with before.
 
 ### Step 4. Auth Confirmation and Name Assignment
 
-The DAB will extract the authentication token `sub` from the JWT token's claims and then verify the token's signature against any public key it has been configured with. If the signature can't be verified, the bridge should respond with the below authentication failed message and the socket should be disconnected by the bridge.
+The Desktop Agent Bridge will extract the authentication token `sub` from the JWT token's claims and then verify the token's signature against any public key it has been configured with. If the signature can't be verified, the bridge should respond with the below authentication failed message and the socket should be disconnected by the bridge.
 
 ```typescript
 {
@@ -235,11 +241,11 @@ The DAB will extract the authentication token `sub` from the JWT token's claims 
 }
 ```
 
-If authentication succeeds (or is not required), then the DAB should assign the Desktop Agent the name requested in the `handshake` message, unless another agent is already connected with that name in which case it should generate a new name which MAY be derived from the requested name. Note that the assigned name is not communicated to the connecting agent until step 5.
+If authentication succeeds (or is not required), then the Desktop Agent Bridge should assign the Desktop Agent the name requested in the `handshake` message, unless another agent is already connected with that name in which case it should generate a new name which MAY be derived from the requested name. Note that the assigned name is not communicated to the connecting agent until step 5.
 
 ### Step 5. Synchronize the Bridge's Channel State
 
-Channels are the main stateful mechanism in the FDC3 that we have to consider. A key responsibility of the DAB is ensuring that the channel state of the connected agents is kept in-sync. To do so, the states must be synchronized whenever a new agent connects. Hence, the Bridge MUST process the `channelState` provided by the new agent in the `handshake` request, which MUST contain details of each known User Channel or App Channel and its state. The bridge MUST compare the received channel names and states to its own representation of the current state of channels in connected agents, merge that state with that of the new agent and communicate the updated state to all connected agents to ensure that they are synchronized with it.
+Channels are the main stateful mechanism in the FDC3 that we have to consider. A key responsibility of the Desktop Agent Bridge is ensuring that the channel state of the connected agents is kept in-sync. To do so, the states must be synchronized whenever a new agent connects. Hence, the Bridge MUST process the `channelState` provided by the new agent in the `handshake` request, which MUST contain details of each known User Channel or App Channel and its state. The bridge MUST compare the received channel names and states to its own representation of the current state of channels in connected agents, merge that state with that of the new agent and communicate the updated state to all connected agents to ensure that they are synchronized with it.
 
 Hence, if we assume that the state of each channel can be represented by an ordered array of context objects (most recent first - noting that only the first position, that of the most recent context broadcast, matters), the Desktop Agent Bridge MUST merge the incoming `channelsState` with the `existingChannelsState` as follows:
 
@@ -264,7 +270,7 @@ Object.keys(channelsState).forEach((channelId) => {
 });
 ```
 
-When multiple agents attempt to connect to the Desktop Agent Bridge at the same time, steps 3-6 of the connection protocol MUST be handled by the DAB serially to ensure correct channel state synchronization.
+When multiple agents attempt to connect to the Desktop Agent Bridge at the same time, steps 3-6 of the connection protocol MUST be handled by the Desktop Agent Bridge serially to ensure correct channel state synchronization.
 
 ### Step 6. Connected Agents Update
 
@@ -277,14 +283,18 @@ The `connectedAgentsUpdate` message will take the form:
     type:  "connectedAgentsUpdate",
     /** Request body, containing the arguments to the function called.*/
     payload: {
-        /** Should be set when an agent first connects to the bridge and provide its assigned name. */
+        /** Should be set when an agent first connects to the bridge and provide 
+         * its assigned name. */
         addAgent?: string,
-        /** Should be set when an agent disconnects from the bridge and provide the name that no longer is assigned. */
+        /** Should be set when an agent disconnects from the bridge and provide 
+         * the name that no longer is assigned. */
         removeAgent?: string,
         /** Desktop Agent Bridge implementation metadata of all connected agents. 
-         *  Note that this object is extended to include a `desktopAgent` field with the name assigned by the DAB. */
+         *  Note that this object is extended to include a `desktopAgent` field 
+         *  with the name assigned by the DAB. */
         allAgents: ImplementationMetadata[],
-        /** The updated state of channels that should be adopted by the agents. SHOULD only be set when an agent is connecting to the bridge. */
+        /** The updated state of channels that should be adopted by the agents. 
+         *  SHOULD only be set when an agent is connecting to the bridge. */
         channelsState?: ChannelState[] // see step4
     },
     meta: {
@@ -313,13 +323,13 @@ In summary, updating listeners for a known channel should be performed as follow
 3. If there is a current context of that type, and it does not match the incoming object exactly, broadcast it to listeners of that specific type only.
 4. If the most recent (first in the incoming array) type OR value of that type doesn't match the most recent context broadcast on the channel, broadcast it to un-typed listeners only.
 
-This procedure is the same for both previously connected and connecting agents, however, the merging procedure used by the DAB in step 5 will result in apps managed by previously connected agents only rarely receiving context broadcasts (and only for types they have not yet seen on a channel).
+This procedure is the same for both previously connected and connecting agents, however, the merging procedure used by the Desktop Agent Bridge in step 5 will result in apps managed by previously connected agents only rarely receiving context broadcasts (and only for types they have not yet seen on a channel).
 
 After applying the `connectedAgentsUpdate` message, the newly connected Desktop Agent and other already connected agents are able to begin communicating through the bridge.
 
 #### Atomicity and handling concurrent operations
 
-Handling by the Desktop Agent of the synchronization message from the DAB in step 6 of the connection protocol should be atomic to prevent message overlap with `fdc3.broadcast`, `channel.broadcast`, `fdc3.addContextListener` or `channel.getCurrentContext`. I.e. the `connectedAgentsUpdate` message must be processed immediately on receipt by Desktop Agents and updates applied before any other messages are sent or responses processed.
+Handling by the Desktop Agent of the synchronization message from the Desktop Agent Bridge in step 6 of the connection protocol should be atomic to prevent message overlap with `fdc3.broadcast`, `channel.broadcast`, `fdc3.addContextListener` or `channel.getCurrentContext`. I.e. the `connectedAgentsUpdate` message must be processed immediately on receipt by Desktop Agents and updates applied before any other messages are sent or responses processed.
 
 Similarly, the Desktop Agent Bridge must process steps 3-6 of the connection protocol (receiving a `handshake` messages up to issuing the `connectedAgentsUpdate` messages to all participants) as a single atomic unit, allowing no overlap with the processing of other messages from connected agents (as they might modify the state information it is processing during those steps).
 
@@ -363,17 +373,20 @@ Request messages use the following format:
 
 ```typescript
 {
-    /** Typically set to the FDC3 function name that the message relates to, e.g. "findIntent" */
+    /** Typically set to the FDC3 function name that the message relates to, e.g.
+     * "findIntent" */
     type:  string,
     /** Request body, typically containing the arguments to the function called.*/
     payload: {
-        /** Used to indicate which channel `broadcast` functions were called on. */
+        /** Used to indicate which channel `broadcast` functions were called on.*/
         channel?: string,
         /** Used as an argument to `findIntent` and `raiseIntent` functions.`*/
         intent?: string,
-        /** Used as an argument to `broadcast`, `findIntent` and `raiseIntent` functions. */
+        /** Used as an argument to `broadcast`, `findIntent` and `raiseIntent` 
+         * functions.*/
         context?: Context,
-        /** Used as an argument to `open`, `raiseIntent`, `getAppMetadata`, and `findInstances` functions */
+        /** Used as an argument to `open`, `raiseIntent`, `getAppMetadata`, and 
+         * `findInstances` functions.*/
         app?: AppIdentifier,
         /** Used as an argument to `findIntent` functions. */
         resultType?: string,
@@ -386,14 +399,15 @@ Request messages use the following format:
         requestGuid: string,
         /** Timestamp at which request was generated */
         timestamp:  date,
-         /** AppIdentifier OR DesktopAgentIdentifier for the source application that the request was 
-          *  received from and will be augmented with the assigned name of the 
-          *  Desktop Agent by the Desktop Agent Bridge, rather than the sender. */
+         /** AppIdentifier OR DesktopAgentIdentifier for the source application
+          *  that the request was received from and will be augmented with the
+          *  assigned name of the Desktop Agent by the Desktop Agent Bridge, 
+          *  rather than the sender. */
         source: AppIdentifier | DesktopAgentIdentifier,
-        /** Optional AppIdentifier or DesktopAgentIdentifier for the destination that the request should be 
-         *  routed to, which MUST be set by the Desktop Agent for API calls that 
-         *  include a target (`app`) parameter. MUST include the name of the 
-         *  Desktop Agent hosting the target application. */
+        /** Optional AppIdentifier or DesktopAgentIdentifier for the destination
+         *  that the request should be routed to, which MUST be set by the Desktop
+         *  Agent for API calls that include a target (`app`) parameter. MUST 
+         *  include the name of the Desktop Agent hosting the target application. */
         destination?: AppIdentifier | DesktopAgentIdentifier
     }
 }
@@ -409,11 +423,12 @@ Response messages will be differentiated from requests by the presence of a `met
 
 ```typescript
 {
-    /** FDC3 function name the original request related to, e.g. "findIntent" */
+    /** FDC3 function name the original request related to, e.g. "findIntent"*/
     type:  string,
     /** Response body, containing the actual response data. */
     payload: {
-        /** Standardized error strings from an appropriate FDC3 API Error enumeration. */
+        /** Standardized error strings from an appropriate FDC3 API Error 
+         *  enumeration. */
         error?: string,
         /** Response to `open` */
         appIdentifier?: AppIdentifier,
@@ -425,13 +440,20 @@ Response messages will be differentiated from requests by the presence of a `met
         appIntent?:  AppIntent,
         /** Response to `findIntentsByContext`*/
         appIntents?:  AppIntent[],
-        /** Response to `raiseIntent` functions, returned on delivery of the intent and context to the target app.
+        /** Response to `raiseIntent` functions, returned on delivery of the
+         * intent and context to the target app.
          *  Note `getResult()` function should not / can not be included in JSON. */
         intentResolution?: IntentResolution,
-        /** Secondary response to `raiseIntent`, sent when the `IntentHandler` has returned.
-         *  Note return an empty object if the `IntentHandler` returned void. 
-         *  Note `Channel` functions (`broadcast`, `getCurrentContext`, `addContextListener` should not / can not be included in JSON)*/
-        intentResult?: {context?: Context, channel?: Channel},
+        /** Secondary response to `raiseIntent`, sent when the `IntentHandler` 
+         *  has returned.
+         *  Note:
+         *  - return an empty payload object if the `IntentHandler` returned void. 
+         *  - `Channel` functions (`broadcast`, `getCurrentContext`, 
+         *    `addContextListener` do not need to be included in JSON).*/
+        intentResult?: {
+            context?: Context, 
+            channel?: Channel
+        }
     },
     meta: {
         /** requestGuid from the original request being responded to*/
@@ -440,19 +462,21 @@ Response messages will be differentiated from requests by the presence of a `met
         responseGuid:  string,
         /** Timestamp at which request was generated */
         timestamp:  Date,
-        /** Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
-         *  responses to the request. Will contain a single value for individual responses and
-         *  multiple values for responses that were collated by the bridge.
-         * May be omitted if all sources errored. */
+        /** Array of AppIdentifiers or DesktopAgentIdentifiers for the sources
+         *  that generated responses to the request. Will contain a single value 
+         *  for individual responses and multiple values for responses that were 
+         *  collated by the bridge. May be ommitted if all sources returned an 
+         *  error. */
         sources?: (AppIdentifier | DesktopAgentIdentifier)[],
-        /** Array of AppIdentifiers or DesktopAgentIdentifiers for responses that were not returned
-         * to the bridge before the timeout or because an error occurred. 
-         * May be omitted if all sources responded. */
+        /** Array of AppIdentifiers or DesktopAgentIdentifiers for responses that 
+         * were not returned to the bridge before the timeout or because an error 
+         * occurred. May be omitted if all sources responded. */
         errorSources?: (AppIdentifier | DesktopAgentIdentifier)[],
         /** Array of error message strings for responses that were not returned
          * to the bridge before the timeout or because an error occurred. 
-         * Should be the same length as the `errorSources array and ordered the same.
-         * May be omitted if all sources responded. */
+         * Should be the same length as the `errorSources` array and ordered the
+         * same. May be omitted if all sources responded. */
+
         errorDetails?: string[]
     }
 }
@@ -476,27 +500,32 @@ There are several types of GUIDs, which vary how they are generated. As Desktop 
 
 ### Identifying Desktop Agents Identity and Message Sources
 
-Desktop Agents will prepare messages in the above format and transmit them to the bridge. However, to target intents and perform other actions that require specific routing between DAs, DAs need to have an identity. Identities should be assigned to clients when they connect to the bridge. This allows for multiple copies of the same underlying Desktop Agent implementation to be bridged and ensures that id clashes can be avoided.
+Desktop Agents will prepare messages in the above format and transmit them to the bridge. However, to target intents and perform other actions that require specific routing between DAs, DAs need to have an identity. Identities should be assigned to Desktop Agents when they connect to the bridge. This allows for multiple copies of the same underlying Desktop Agent implementation to be bridged and ensures that identity clashes can be avoided.
 
-To facilitate routing of messages between agents, a new `DesktopAgentIdentifier` type is introduced to handle cases where a response message is returned by a Desktop Agent (or more specifically its resolver) rather than a specific app. This is particularly relevant for `findIntent` responses:
-
-```typescript
-interface DesktopAgentIdentifier {
-  /** A string filled in by the Desktop Agent Bridge on receipt of a message, that represents 
-   * the Desktop Agent Identifier that is the source of the message. 
-   **/
-  readonly desktopAgent: string;
-}
-```
-
-Further, the `AppIdentifier` is expanded to contain an optional `desktopAgent` field allowing it to indicate which Desktop Agent is managing the app that a message has been received from:
+To facilitate routing of messages between agents, the `AppIdentifier` is expanded to contain an optional `desktopAgent` field:
 
 ```typescript
 interface AppIdentifier {
   readonly appId: string;
   readonly instanceId?: string;
-  /** Field that represents the Desktop Agent that the app is available on.**/
+  /** The Desktop Agent that the app is available on. Used in Desktop Agent 
+   *  Bridging to identify the Desktop Agent to target.
+   *  @experimental Introduced in FDC3 2.1 and may be refined by further changes
+   *  outside the normal FDC3 versioning policy.
+   **/
   readonly desktopAgent?: string;
+}
+```
+
+Further, a new `DesktopAgentIdentifier` type is introduced to handle cases where a request needs to be directed to a Desktop Agent rather than a specific app, or a response message is returned by the Desktop Agent (or more specifically its resolver) rather than a specific app. This is particularly relevant for `findIntent` message exchanges:
+
+```typescript
+/** @experimental Introduced in FDC3 2.1 and may be refined by further changes
+ *  outside the normal FDC3 versioning policy.
+interface DesktopAgentIdentifier {
+  /** Used in Desktop Agent Bridging to attribute or target a message to a 
+   *  particular Desktop Agent. */ 
+  readonly desktopAgent: string;
 }
 ```
 
@@ -556,7 +585,12 @@ enum BridgingError {
   ResponseTimedOut = 'ResponseToBridgeTimedOut',
   /** Returned if a Desktop Agent that has been targeted by a particular request has
    * been disconnected from the Bridge before a response has been received from it. */
-  AgentDisconnected = 'AgentDisconnected' 
+  AgentDisconnected = 'AgentDisconnected',
+  /** Returned for FDC3 API calls that are specified with arguments indicating that
+   *  a remote Desktop agent should be targeted (e.g. raiseIntent with an app on a
+   *  remote DesktopAgent targeted), when the local Desktop Agent is not connected to
+   *  a bridge. */
+  NotConnectedToBridge = 'NotConnectedToBridge'
 }
 ```
 
@@ -581,34 +615,39 @@ Collated response messages generated by the bridge use the same format as indivi
 
 The following pseudo-code defines how messages should be forwarded or collated by the bridge:
 
-* if the message is a request (`meta.requestGuid` is set, but `meta.responseGuid` is not),
-  * and the message does not include a `meta.destination` field,
-    * forward it to all other Desktop Agents (not including the source),
-    * annotate the request as requiring responses from all other connected agents,
-    * await responses or the specified timeout.
-  * else if a `meta.destination` was included,
+* **if** the message is a request (`meta.requestGuid` is set, but `meta.responseGuid` is not),
+  * **if** the message includes a `meta.destination` field,
     * forward it to the specified destination agent,
     * annotate the request as requiring only a response from the specified agent,
     * await the response or the specified timeout.
-* else if the message is a response (both `meta.requestGuid` and `meta.responseGuid` are set)
-  * if the `meta.requestGuid` is known,
+  * **else**
+    * forward it to all other Desktop Agents (not including the source),
+    * annotate the request as requiring responses from all other connected agents,
+    * await responses or the specified timeout.
+* **else if** the message is a response (both `meta.requestGuid` and `meta.responseGuid` are set)
+  * **if** the `meta.requestGuid` is known,
     * augment any `AppIdentifier` types in the response message with a `desktopAgent` field matching that of the responding Desktop Agent,
-    * if `payload.error` is set in the response add the DesktopAgentIdentifier to the `meta.errorSources` element.
-    * else add the DesktopAgentIdentifier to the `meta.sources` element.
-    * if the message exchange requires collation,
+    * **if** `payload.error` is set in the response add the DesktopAgentIdentifier to the `meta.errorSources` element.
+    * **else**
+      * add the DesktopAgentIdentifier to the `meta.sources` element.
+    * **if** the message exchange requires collation,
       * add the message to the collated responses for the request,
-      * if all expected responses have been received (i.e. all connected agents or the specified agent has responded, as appropriate),
+      * **if** all expected responses have been received (i.e. all connected agents or the specified agent has responded, as appropriate),
         * produce the collated response message and return to the requesting Desktop Agent.
-      * else await the configured response timeout or further responses,
-        * if the timeout is reached without any responses being received
+      * **else**
+        * await the configured response timeout or further responses,
+        * **if** the timeout is reached without any responses being received
           * produce and return an appropriate [error response](../api/ref/Errors), including details of all Desktop Agents in `errorSources` and the `BridgingError.ResponseTimeOut` message for each in the `errorDetails` array.
           * log the timeout for each Desktop Agent that did not respond and check disconnection criteria.
-        * else if the timeout is reached with a partial set of responses,
+        * **else if** the timeout is reached with a partial set of responses,
           * produce and return, to requesting Desktop Agent, a collated response and include details of Desktop Agents that timed out in `errorSources` and the `BridgingError.ResponseTimeOut` message for each in the `errorDetails` array.
           * log the timeout for each Desktop Agent that did not respond and check disconnection criteria.
-    * else forward the response message on to requesting Desktop Agent.
-  * else discard the response message (as it is a delayed to a request that has timed out or is otherwise invalid).
-* else the message is invalid and should be discarded.
+    * **else**
+      * forward the response message on to requesting Desktop Agent.
+  * **else**
+    * discard the response message (as it is a delayed to a request that has timed out or is otherwise invalid).
+* **else**
+  * the message is invalid and should be discarded.
 
 ### Workflows Broken By Disconnects
 
@@ -625,7 +664,7 @@ The latter two types embody workflows that may be broken by an agent disconnecti
 When processing the disconnection of an agent from the bridge, the bridge MUST examine requests currently 'in-flight' and:
 
 * For requests that require the bridge to collate multiple responses:
-  * add the disconnected Desktop Agent's details to the `errorSources` array in teh response and the `BridgingError.AgentDisconnected` message to the `errorDetails` array.
+  * add the disconnected Desktop Agent's details to the `errorSources` array in the response and the `BridgingError.AgentDisconnected` message to the `errorDetails` array.
   * complete requests that no longer require further responses (all other agents have responded), or
   * continue to await the timeout (if other agents are yet to respond), or
   * return an 'empty' response in the expected format (if no other agents are connected and no data will be received).
@@ -663,12 +702,11 @@ However, `PrivateChannel` instances allow the registration of additional event h
 
 Individual message exchanges are defined for each of the Desktop Agent methods that require bridging in the reference section of this Part.
 
-Each section assumes that we have 3 agents connected by a bridge:
+Each section assumes that we have 3 agents connected by a bridge (itself denoted by `DAB` in diagrams):
 
-* agent-A
-* agent-B
-* agent-C
-* DAB
+* agent-A (denoted by `DA A` in diagrams)
+* agent-B (denoted by `DA A` in diagrams)
+* agent-C (denoted by `DA A` in diagrams)
 
 Message exchanges come in a number of formats, which are known as:
 
@@ -680,7 +718,7 @@ Message exchanges come in a number of formats, which are known as:
 The message exchanges defined are:
 
 * [`broadcast`](ref/broadcast)
-* [`findInstances](ref/findInstances)
+* [`findInstances`](ref/findInstances)
 * [`findIntent`](ref/findIntent)
 * [`findIntentsByContext`](ref/findIntentsByContext)
 * [`getAppMetadata`](ref/getAppMetadata)

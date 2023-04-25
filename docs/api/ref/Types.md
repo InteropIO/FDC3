@@ -21,10 +21,16 @@ interface AppIdentifier {
    *  specific instance of the application described.
    */
   readonly instanceId?: string;
+
+  /** The Desktop Agent that the app is available on. Used in Desktop Agent 
+   *  Bridging to identify the Desktop Agent to target.
+   *  @experimental
+   **/
+  readonly desktopAgent?: string;
 }
 ```
 
-#### See also
+**See also:**
 
 * [`AppMetadata`](Metadata#appmetadata)
 * [`DesktopAgent.open`](DesktopAgent#open)
@@ -46,7 +52,7 @@ The base interface that all contexts should extend: a context data object adheri
 
 This means that it must at least have a `type` property that indicates what type of data it represents, e.g. `'fdc3.contact'`. The `type` property of context objects is important for certain FDC3 operations, like [`Channel.getCurrentContext`](Channel#getCurrentContext) and [`DesktopAgent.addContextListener`](DesktopAgent#addContextListener), which allows you to filter contexts by their type.
 
-#### See also
+**See also:**
 
 * [`ContextHandler`](#contexthandler)
 * [`DesktopAgent.open`](DesktopAgent#open)
@@ -73,12 +79,29 @@ Used when attaching listeners for context broadcasts.
 
 Optional metadata about the context message, including the app that originated the message, SHOULD be provided by the desktop agent implementation.
 
-#### See also
+**See also:**
 
 * [`Context`](#context)
 * [`ContextMetadata`](Metadata#contextmetadata)
 * [`DesktopAgent.addContextListener`](DesktopAgent#addcontextlistener)
 * [`Channel.addContextListener`](Channel#addcontextlistener)
+
+## `DesktopAgentIdentifier`
+
+```typescript
+/** @experimental */
+interface DesktopAgentIdentifier {
+  /** Used in Desktop Agent Bridging to attribute or target a message to a 
+   *  particular Desktop Agent.**/
+  readonly desktopAgent: string;
+}
+```
+
+(Experimental) Identifies a particular Desktop Agent in Desktop Agent Bridging scenarios where a request needs to be directed to a Desktop Agent rather than a specific app, or a response message is returned by the Desktop Agent (or more specifically its resolver) rather than a specific app. Used as a substitute for `AppIdentifier` in cases where no app details are available or are appropriate.
+
+**See also:**
+
+* [API Bridging - Identifying Desktop Agents Identity and Message Sources](../../api-bridging/spec#identifying-desktop-agents-identity-and-message-sources)
 
 ## `IntentHandler`
 
@@ -92,7 +115,7 @@ Used when attaching listeners for raised intents.
 
 Optional metadata about the intent & context message, including the app that originated the message, SHOULD be provided by the desktop agent implementation.
 
-#### See also
+**See also:**
 
 * [`Context`](#context)
 * [`ContextMetadata`](Metadata#contextmetadata)
@@ -110,7 +133,7 @@ Describes results that an Intent handler may optionally return that should be co
 
 Represented as a union type in TypeScript, however, this type may be rendered as an interface in other languages that both the `Context` and `Channel` types implement, allowing either to be returned by an `IntentHandler`.
 
-#### See also
+**See also:**
 
 * [`Context`](#context)
 * [`Channel`](Channel)
@@ -121,7 +144,7 @@ Represented as a union type in TypeScript, however, this type may be rendered as
 
 ## `Listener`
 
-A Listener object is returned when an application subscribes to intents or context broadcasts via the [`addIntentListener`](#addintentlistener) or [`addContextListener`](#addcontextlistener) methods on the [DesktopAgent](DesktopAgent) object.
+A Listener object is returned when an application subscribes to intents or context broadcasts via the [`addIntentListener`](DesktopAgent#addintentlistener) or [`addContextListener`](DesktopAgent#addcontextlistener) methods on the [DesktopAgent](DesktopAgent) object.
 
 ```typescript
 interface Listener {
@@ -137,7 +160,7 @@ unsubscribe(): void;
 
 Allows an application to unsubscribe from listening to intents or context broadcasts.
 
-#### See also
+**See also:**
 
 * [`DesktopAgent.addIntentListener`](DesktopAgent#addintentlistener)
 * [`DesktopAgent.addContextListener`](DesktopAgent#addcontextlistener)

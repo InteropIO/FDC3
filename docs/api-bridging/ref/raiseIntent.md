@@ -185,22 +185,20 @@ The bridge will fill in the `intentResolution.source.DesktopAgent` & `source.des
 }
 ```
 
-When `Slack` produces an `IntentResult` from its `IntentHandler`, or the intent handler finishes running without returning a result, it should send a further `raiseIntentResultResponse` message to indicate that its finished running and to pass any `IntentResult` onto the raising application.
+When `Slack` produces an `IntentResult` from its `IntentHandler`, or the intent handler finishes running without returning a result, it should send a further `raiseIntentResultResponse` message to indicate that its finished running and to pass any `IntentResult` onto the raising application (setting either `payload.context` or `payload.channel` to indicate the type of the `IntentResult`).
 
 ```json
 // agent-B -> DAB
 {
     "type": "raiseIntentResultResponse",
     "payload": {
-        "intentResult": {
-            "context": {/*contextObj*/}
-            /* for a channel IntentResult use:
-            "channel": {
-                "id": "app-channel xyz",
-                "type": "user"
-            }
-            */
+        "context": {/*contextObj*/}
+        /* for a channel IntentResult use:
+        "channel": {
+            "id": "app-channel xyz",
+            "type": "user"
         }
+        */
     },
     "meta": {
         "requestGuid": "<requestGuid>",
@@ -227,9 +225,7 @@ Finally, the bridge augments the response with `sources[0].desktopAgent` and pas
 {
     "type": "raiseIntentResultResponse",
     "payload": {
-        "intentResult": {
-            "context": {/*contextObj*/}
-        }
+        "context": {/*contextObj*/}
     },
     "meta": {
         "requestGuid": "<requestGuid>",
@@ -244,15 +240,13 @@ Finally, the bridge augments the response with `sources[0].desktopAgent` and pas
 }
 ```
 
-If the `IntentHandler` returned `void` rather than an intent result `payload.intentResult` should be empty, e.g.:
+If the `IntentHandler` returned `void` rather than an intent result `payload` should be empty, e.g.:
 
 ```json
 // DAB -> agent-A
 {
     "type": "raiseIntentResultResponse",
-    "payload": {
-        "intentResult": {}
-    },
+    "payload": {},
     "meta": {
         "requestGuid": "<requestGuid>",
         "responseGuid": "<responseGuid 2>",
@@ -265,3 +259,9 @@ If the `IntentHandler` returned `void` rather than an intent result `payload.int
     }
 }
 ```
+
+:::note
+
+In the event that an agent referred to in the API call is not connected to the bridge, it is connected but times out or returns an error, its `DesktopAgentIdentifier` should be added to the `meta.errorSources` element instead of `meta.sources` in the `raiseIntentResponse` and the appropriate error (which might include any error from the [`ResolveError`](../../api/ref/Errors#resolveerror) enumeration, [`BridgingError.ResponseTimedOut`](../../api/ref/Errors#bridgingerror) or [`BridgingError.AgentDisconnected`](../../api/ref/Errors#bridgingerror)) should be added to `meta.errorDetails`.
+
+:::
