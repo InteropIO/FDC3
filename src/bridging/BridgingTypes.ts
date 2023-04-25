@@ -358,7 +358,7 @@ export interface BridgeResponseMeta {
    * multiple values for responses that were collated by the bridge. May be omitted if all
    * sources errored.
    */
-  sources: DestinationElement[];
+  sources?: DestinationElement[];
 }
 
 export interface BroadcastRequest {
@@ -527,7 +527,7 @@ export interface FindIntentResponseMeta {
    * multiple values for responses that were collated by the bridge. May be omitted if all
    * sources errored.
    */
-  sources: ErrorSourceElement[];
+  sources?: ErrorSourceElement[];
 }
 
 /**
@@ -620,7 +620,7 @@ export interface FindIntentsForContextResponseMeta {
    * multiple values for responses that were collated by the bridge. May be omitted if all
    * sources errored.
    */
-  sources: ErrorSourceElement[];
+  sources?: ErrorSourceElement[];
 }
 
 /**
@@ -1457,7 +1457,7 @@ const typeMap: any = {
       { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
       { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('DestinationElement'))) },
       { json: 'responseGuid', js: 'responseGuid', typ: '' },
-      { json: 'sources', js: 'sources', typ: a(r('DestinationElement')) },
+      { json: 'sources', js: 'sources', typ: u(undefined, a(r('DestinationElement'))) },
     ],
     false
   ),
@@ -1538,7 +1538,7 @@ const typeMap: any = {
       { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
       { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('ErrorSourceElement'))) },
       { json: 'responseGuid', js: 'responseGuid', typ: '' },
-      { json: 'sources', js: 'sources', typ: a(r('ErrorSourceElement')) },
+      { json: 'sources', js: 'sources', typ: u(undefined, a(r('ErrorSourceElement'))) },
     ],
     false
   ),
@@ -1581,7 +1581,7 @@ const typeMap: any = {
       { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
       { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('DestinationElement'))) },
       { json: 'responseGuid', js: 'responseGuid', typ: '' },
-      { json: 'sources', js: 'sources', typ: a(r('ErrorSourceElement')) },
+      { json: 'sources', js: 'sources', typ: u(undefined, a(r('ErrorSourceElement'))) },
     ],
     false
   ),
