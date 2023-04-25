@@ -28,15 +28,19 @@
         },
         "meta":  {
           "properties": {
+            "requestGuid": true,
+            "timestamp": true,
             "destination": {
               "$ref": "../api/desktopAgentIdentifier.schema.json"
             },
             "source": {
               "$ref": "../api/appIdentifier.schema.json"
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     }
   ]
 }

@@ -258,7 +258,7 @@ export interface IntentResult {
 }
 
 export interface BridgeRequest {
-  meta: BridgeRequestMeta;
+  meta: MetaObject;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
@@ -270,7 +270,7 @@ export interface BridgeRequest {
   type: string;
 }
 
-export interface BridgeRequestMeta {
+export interface MetaObject {
   /**
    * Optional field that represents the destination that the request should be routed to. Must
    * be set by the Desktop Agent for API calls that include a target app parameter and must
@@ -393,7 +393,6 @@ export interface BroadcastRequestMeta {
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
-  [property: string]: any;
 }
 
 /**
@@ -461,7 +460,7 @@ export interface FindInstancesRequestMeta {
    * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
-  destination?: DestinationClass;
+  destination?: DestinationElement;
   /**
    * Unique GUID for the request
    */
@@ -469,31 +468,11 @@ export interface FindInstancesRequestMeta {
   /**
    * Field that represents the source application that the request was received from.
    */
-  source: DestinationElement;
+  source: PurpleIdentifier;
   /**
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
-  [property: string]: any;
-}
-
-/**
- * Optional field that represents the destination that the request should be routed to. Must
- * be set by the Desktop Agent for API calls that include a target app parameter and must
- * include the name of the Desktop Agent hosting the target application.
- *
- * Field that represents the source application that the request was received from.
- *
- * Identifies an application, or instance of an application, and is used to target FDC3 API
- * calls at specific applications.
- *
- * Identifies a particular Desktop Agent. Used by Desktop Agent Bridging to indicate the
- * source or destination of a message which was produced by or should be processed by the
- * Desktop Agent itself rather than a specific application. Often added to messages by the
- * Desktop Agent Bridge.
- */
-export interface DestinationClass {
-  desktopAgent: string;
 }
 
 /**
@@ -586,7 +565,7 @@ export interface FindIntentRequestMeta {
    * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
-  destination?: DestinationClass;
+  destination?: DestinationElement;
   /**
    * Unique GUID for the request
    */
@@ -594,12 +573,11 @@ export interface FindIntentRequestMeta {
   /**
    * Field that represents the source application that the request was received from.
    */
-  source: DestinationElement;
+  source: PurpleIdentifier;
   /**
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
-  [property: string]: any;
 }
 
 /**
@@ -691,7 +669,7 @@ export interface FindIntentsForContextRequestMeta {
    * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
-  destination?: DestinationClass;
+  destination?: DestinationElement;
   /**
    * Unique GUID for the request
    */
@@ -699,12 +677,11 @@ export interface FindIntentsForContextRequestMeta {
   /**
    * Field that represents the source application that the request was received from.
    */
-  source: DestinationElement;
+  source: PurpleIdentifier;
   /**
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
-  [property: string]: any;
 }
 
 /**
@@ -787,7 +764,7 @@ export interface GetAppMetadataRequestMeta {
    * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
-  destination?: DestinationClass;
+  destination?: DestinationElement;
   /**
    * Unique GUID for the request
    */
@@ -795,12 +772,11 @@ export interface GetAppMetadataRequestMeta {
   /**
    * Field that represents the source application that the request was received from.
    */
-  source: DestinationElement;
+  source: PurpleIdentifier;
   /**
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
-  [property: string]: any;
 }
 
 /**
@@ -896,7 +872,25 @@ export interface OpenRequestMeta {
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
-  [property: string]: any;
+}
+
+/**
+ * Optional field that represents the destination that the request should be routed to. Must
+ * be set by the Desktop Agent for API calls that include a target app parameter and must
+ * include the name of the Desktop Agent hosting the target application.
+ *
+ * Field that represents the source application that the request was received from.
+ *
+ * Identifies an application, or instance of an application, and is used to target FDC3 API
+ * calls at specific applications.
+ *
+ * Identifies a particular Desktop Agent. Used by Desktop Agent Bridging to indicate the
+ * source or destination of a message which was produced by or should be processed by the
+ * Desktop Agent itself rather than a specific application. Often added to messages by the
+ * Desktop Agent Bridge.
+ */
+export interface DestinationClass {
+  desktopAgent: string;
 }
 
 /**
@@ -980,7 +974,7 @@ export interface RaiseIntentRequestMeta {
    * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
-  destination?: DestinationClass;
+  destination?: DestinationElement;
   /**
    * Unique GUID for the request
    */
@@ -988,12 +982,11 @@ export interface RaiseIntentRequestMeta {
   /**
    * Field that represents the source application that the request was received from.
    */
-  source: DestinationElement;
+  source: PurpleIdentifier;
   /**
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
-  [property: string]: any;
 }
 
 /**
@@ -1719,13 +1712,13 @@ const typeMap: any = {
   ),
   BridgeRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('BridgeRequestMeta') },
+      { json: 'meta', js: 'meta', typ: r('MetaObject') },
       { json: 'payload', js: 'payload', typ: m('any') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  BridgeRequestMeta: o(
+  MetaObject: o(
     [
       { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationElement')) },
       { json: 'requestGuid', js: 'requestGuid', typ: '' },
@@ -1776,7 +1769,7 @@ const typeMap: any = {
       { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
-    'any'
+    false
   ),
   PurpleIdentifier: o(
     [
@@ -1819,14 +1812,13 @@ const typeMap: any = {
   ),
   FindInstancesRequestMeta: o(
     [
-      { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationClass')) },
+      { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationElement')) },
       { json: 'requestGuid', js: 'requestGuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('DestinationElement') },
+      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
-    'any'
+    false
   ),
-  DestinationClass: o([{ json: 'desktopAgent', js: 'desktopAgent', typ: '' }], false),
   FindInstancesRequestPayload: o([{ json: 'app', js: 'app', typ: r('SourceElement') }], false),
   FindInstancesResponse: o(
     [
@@ -1862,12 +1854,12 @@ const typeMap: any = {
   ),
   FindIntentRequestMeta: o(
     [
-      { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationClass')) },
+      { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationElement')) },
       { json: 'requestGuid', js: 'requestGuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('DestinationElement') },
+      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
-    'any'
+    false
   ),
   FindIntentRequestPayload: o(
     [
@@ -1913,12 +1905,12 @@ const typeMap: any = {
   ),
   FindIntentsForContextRequestMeta: o(
     [
-      { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationClass')) },
+      { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationElement')) },
       { json: 'requestGuid', js: 'requestGuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('DestinationElement') },
+      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
-    'any'
+    false
   ),
   FindIntentsForContextRequestPayload: o([{ json: 'context', js: 'context', typ: r('ContextObject') }], false),
   FindIntentsForContextResponse: o(
@@ -1954,12 +1946,12 @@ const typeMap: any = {
   ),
   GetAppMetadataRequestMeta: o(
     [
-      { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationClass')) },
+      { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationElement')) },
       { json: 'requestGuid', js: 'requestGuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('DestinationElement') },
+      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
-    'any'
+    false
   ),
   GetAppMetadataRequestPayload: o([{ json: 'app', js: 'app', typ: r('SourceElement') }], false),
   GetAppMetadataResponse: o(
@@ -1997,8 +1989,9 @@ const typeMap: any = {
       { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
-    'any'
+    false
   ),
+  DestinationClass: o([{ json: 'desktopAgent', js: 'desktopAgent', typ: '' }], false),
   OpenRequestPayload: o(
     [
       { json: 'app', js: 'app', typ: r('SourceElement') },
@@ -2036,12 +2029,12 @@ const typeMap: any = {
   ),
   RaiseIntentRequestMeta: o(
     [
-      { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationClass')) },
+      { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationElement')) },
       { json: 'requestGuid', js: 'requestGuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('DestinationElement') },
+      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
-    'any'
+    false
   ),
   RaiseIntentRequestPayload: o(
     [
