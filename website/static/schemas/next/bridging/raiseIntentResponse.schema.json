@@ -6,24 +6,25 @@
   "allOf": [
     {
       "$ref": "bridgeResponse.schema.json"
-    }
-  ],
-  "properties": {
-    "type": {
-      "const": "raiseIntentResponse"
     },
-    "payload": {
+    {
       "type": "object",
       "properties": {
-        "intentResolution": {
-          "$ref": "../api/intentResolution.schema.json"
-        }
-      },
-      "required": ["intentResolution"],
-      "additionalProperties": false
-    },
-    "meta": true
-  },
-  "required": ["type", "payload", "meta"],
-  "additionalProperties": false
+        "type": {
+          "const": "raiseIntentResponse"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "intentResolution": {
+              "$ref": "../api/intentResolution.schema.json"
+            }
+          },
+          "required": ["intentResolution"],
+          "additionalProperties": false
+        },
+        "meta": true
+      }
+    }
+  ]
 }

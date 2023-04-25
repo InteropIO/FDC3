@@ -16,72 +16,64 @@
       "$ref": "#/$defs/ResponseMeta"
     }
   },
+  "additionalProperties": false,
+  "required": ["type", "payload", "meta"],
   "$defs": {
     "ResponseMeta": {
       "type": "object",
-        "properties": {
-          "requestGuid": {
-            "type": "string",
-            "description": "Unique GUID for the request"
-          },
-          "timestamp": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp at which request or response was generated"
-          },
-          "source": {
-            "description": "Field that represents the source application that the request was received from.",
-            "oneOf": [
-              {
-                "$ref": "../api/appIdentifier.schema.json"
-              },
-              {
-                "$ref": "../api/desktopAgentIdentifier.schema.json"
-              }
-            ]
-          },
-          "responseGuid": {
-            "type": "string",
-            "description": "Unique GUID for the response"
-          },
-          "sources": {
-            "type": "array",
-            "items": {
-              "oneOf": [
-                {
-                  "$ref": "../api/appIdentifier.schema.json"
-                },
-                {
-                  "$ref": "../api/desktopAgentIdentifier.schema.json"
-                }
-              ]
-            },
-            "description": "Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated responses to the request. Will contain a single value for individual responses and multiple values for responses that were collated by the bridge. May be omitted if all sources errored."
-          },
-          "errorSources": {
-            "type": "array",
-            "items": {
-              "oneOf": [
-                {
-                  "$ref": "../api/appIdentifier.schema.json"
-                },
-                {
-                  "$ref": "../api/desktopAgentIdentifier.schema.json"
-                }
-              ]
-            },
-            "description": "Array of AppIdentifiers or DesktopAgentIdentifiers for responses that were not returned to the bridge before the timeout or because an error occurred. May be omitted if all sources responded without errors."
-          },
-          "errorDetails": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Array of error message strings for responses that were not returned to the bridge before the timeout or because an error occurred. Should be the same length as the `errorSources` array and ordered the same. May be omitted if all sources responded without errors."
-          }
+      "allOf": [
+        {
+          "$ref": "bridgeRequest.schema.json#/$defs/RequestMeta"
         },
-        "required": ["requestGuid", "responseGuid", "timestamp", "sources"],
-        "additionalProperties": false
-      }
+        {
+          "type": "object",
+          "properties": {
+            "requestGuid": true,
+            "timestamp": true,
+            "responseGuid": {
+              "type": "string",
+              "description": "Unique GUID for the response"
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "../api/appIdentifier.schema.json"
+                  },
+                  {
+                    "$ref": "../api/desktopAgentIdentifier.schema.json"
+                  }
+                ]
+              },
+              "description": "Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated responses to the request. Will contain a single value for individual responses and multiple values for responses that were collated by the bridge. May be omitted if all sources errored."
+            },
+            "errorSources": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "../api/appIdentifier.schema.json"
+                  },
+                  {
+                    "$ref": "../api/desktopAgentIdentifier.schema.json"
+                  }
+                ]
+              },
+              "description": "Array of AppIdentifiers or DesktopAgentIdentifiers for responses that were not returned to the bridge before the timeout or because an error occurred. May be omitted if all sources responded without errors."
+            },
+            "errorDetails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Array of error message strings for responses that were not returned to the bridge before the timeout or because an error occurred. Should be the same length as the `errorSources` array and ordered the same. May be omitted if all sources responded without errors."
+            }
+          },
+          "required": ["requestGuid", "responseGuid", "timestamp", "sources"],
+          "additionalProperties": false
+        }
+      ]
     }
+  }
 }

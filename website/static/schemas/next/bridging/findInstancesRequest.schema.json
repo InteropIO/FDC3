@@ -6,37 +6,38 @@
   "allOf": [
     {
       "$ref": "bridgeRequest.schema.json"
-    }
-  ],
-  "properties": {
-    "type": {
-      "const": "findInstancesRequest"
     },
-    "payload": {
+    {
       "type": "object",
       "properties": {
-        "app": {
-          "$ref": "../api/appIdentifier.schema.json"
-        }
-      },
-      "required": ["app"],
-      "additionalProperties": false
-    },
-    "meta": {
-      "allOf": [
-        {
-          "$ref": "bridgeRequest.schema.json#/$defs/RequestMeta"
+        "type": {
+          "const": "findInstancesRequest"
         },
-        {
+        "payload": {
+          "type": "object",
           "properties": {
-            "destination": {
-              "$ref": "../api/desktopAgentIdentifier.schema.json"
+            "app": {
+              "$ref": "../api/appIdentifier.schema.json"
             }
-          }
+          },
+          "required": ["app"],
+          "additionalProperties": false
+        },
+        "meta": {
+          "allOf": [
+            {
+              "$ref": "bridgeRequest.schema.json#/$defs/RequestMeta"
+            },
+            {
+              "properties": {
+                "destination": {
+                  "$ref": "../api/desktopAgentIdentifier.schema.json"
+                }
+              }
+            }
+          ]
         }
-      ]
+      }
     }
-  },
-  "required": ["type", "payload", "meta"],
-  "additionalProperties": false
+  ]
 }

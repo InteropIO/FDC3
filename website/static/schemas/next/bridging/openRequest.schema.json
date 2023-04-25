@@ -6,27 +6,28 @@
   "allOf": [
     {
       "$ref": "bridgeRequest.schema.json"
-    }
-  ],
-  "properties": {
-    "type": {
-      "const": "openRequest"
     },
-    "payload": {
+    {
       "type": "object",
       "properties": {
-        "app": {
-          "$ref": "../api/appIdentifier.schema.json"
+        "type": {
+          "const": "openRequest"
         },
-        "context": {
-          "$ref": "../context/context.schema.json"
-        }
-      },
-      "required": ["app", "context"],
-      "additionalProperties": false
-    },
-    "meta": true
-  },
-  "required": ["type", "payload", "meta"],
-  "additionalProperties": false
+        "payload": {
+          "type": "object",
+          "properties": {
+            "app": {
+              "$ref": "../api/appIdentifier.schema.json"
+            },
+            "context": {
+              "$ref": "../context/context.schema.json"
+            }
+          },
+          "required": ["app", "context"],
+          "additionalProperties": false
+        },
+        "meta": true
+      }
+    }
+  ]
 }

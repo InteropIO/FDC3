@@ -6,24 +6,25 @@
   "allOf": [
     {
       "$ref": "bridgeResponse.schema.json"
-    }
-  ],
-  "properties": {
-    "type": {
-      "const": "raiseIntentResultResponse"
     },
-    "payload": {
+    {
       "type": "object",
       "properties": {
-        "intentResult": {
-          "$ref": "../context/context.schema.json"
-        }
-      },
-      "required": ["intentResult"],
-      "additionalProperties": false
-    },
-    "meta": true
-  },
-  "required": ["type", "payload", "meta"],
-  "additionalProperties": false
+        "type": {
+          "const": "raiseIntentResultResponse"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "intentResult": {
+              "$ref": "../context/context.schema.json"
+            }
+          },
+          "required": ["intentResult"],
+          "additionalProperties": false
+        },
+        "meta": true
+      }
+    }
+  ]
 }

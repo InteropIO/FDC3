@@ -6,24 +6,25 @@
   "allOf": [
     {
       "$ref": "bridgeResponse.schema.json"
-    }
-  ],
-  "properties": {
-    "type": {
-      "const": "getAppMetadataResponse"
     },
-    "payload": {
+    {
       "type": "object",
       "properties": {
-        "appMetadata": {
-          "$ref": "../api/appMetadata.schema.json"
-        }
-      },
-      "required": ["appMetadata"],
-      "additionalProperties": false
-    },
-    "meta": true
-  },
-  "required": ["type", "payload", "meta"],
-  "additionalProperties": false
+        "type": {
+          "const": "getAppMetadataResponse"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "appMetadata": {
+              "$ref": "../api/appMetadata.schema.json"
+            }
+          },
+          "required": ["appMetadata"],
+          "additionalProperties": false
+        },
+        "meta": true
+      }
+    }
+  ]
 }
