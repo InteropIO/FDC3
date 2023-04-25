@@ -6,22 +6,23 @@
   "allOf": [
     {
       "$ref": "bridgeRequest.schema.json"
-    }
-  ],
-  "properties": {
-    "type": {
-      "const": "broadcastRequest"
     },
-    "payload": {
-      "channel": {
-        "$ref": "../api/channel.schema.json"
-      },
-      "context": {
-        "$ref": "../context/context.schema.json"
+    {
+      "type":"object",
+      "properties": {
+        "type": {
+          "const": "broadcastRequest"
+        },
+        "payload": {
+          "channel": {
+            "$ref": "../api/channel.schema.json"
+          },
+          "context": {
+            "$ref": "../context/context.schema.json"
+          }
+        },
+        "meta": true
       }
-    },
-    "meta": true
-  },
-  "additionalProperties": false,
-  "required": ["type", "payload", "meta"]
+    }
+  ]
 }

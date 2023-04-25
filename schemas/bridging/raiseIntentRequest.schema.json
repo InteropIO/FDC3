@@ -6,40 +6,41 @@
   "allOf": [
     {
       "$ref": "bridgeRequest.schema.json"
-    }
-  ],
-  "properties": {
-    "type": {
-      "const": "raiseIntentRequest"
     },
-    "payload": {
+    {
       "type": "object",
       "properties": {
-        "app": {
-          "$ref": "../api/appIdentifier.schema.json"
+        "type": {
+          "const": "raiseIntentRequest"
         },
-        "context": {
-          "$ref": "../context/context.schema.json"
-        }
-      },
-      "required": ["app", "context"],
-      "additionalProperties": false
-    },
-    "meta": {
-      "allOf": [
-        {
-          "$ref": "bridgeRequest.schema.json#/$defs/RequestMeta"
-        },
-        {
+        "payload": {
+          "type": "object",
           "properties": {
-            "destination": {
+            "app": {
               "$ref": "../api/appIdentifier.schema.json"
+            },
+            "context": {
+              "$ref": "../context/context.schema.json"
             }
-          }
+          },
+          "required": ["app", "context"],
+          "additionalProperties": false
+        },
+        "meta": {
+          "allOf": [
+            {
+              "$ref": "bridgeRequest.schema.json#/$defs/RequestMeta"
+            },
+            {
+              "properties": {
+                "destination": {
+                  "$ref": "../api/appIdentifier.schema.json"
+                }
+              }
+            }
+          ]
         }
-      ]
+      }
     }
-  },
-  "required": ["type", "payload", "meta"],
-  "additionalProperties": false
+  ]
 }

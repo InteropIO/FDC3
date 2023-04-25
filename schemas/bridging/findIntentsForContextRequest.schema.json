@@ -6,24 +6,25 @@
   "allOf": [
     {
       "$ref": "bridgeRequest.schema.json"
-    }
-  ],
-  "properties": {
-    "type": {
-      "const": "findIntentsForContextRequest"
     },
-    "payload": {
+    {
       "type": "object",
       "properties": {
-        "context": {
-          "$ref": "../context/context.schema.json"
-        }
-      },
-      "required": ["context"],
-      "additionalProperties": false
-    },
-    "meta": true
-  },
-  "required": ["type", "payload", "meta"],
-  "additionalProperties": false
+        "type": {
+          "const": "findIntentsForContextRequest"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "context": {
+              "$ref": "../context/context.schema.json"
+            }
+          },
+          "required": ["context"],
+          "additionalProperties": false
+        },
+        "meta": true
+      }
+    }
+  ]
 }
