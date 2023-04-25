@@ -11,6 +11,5 @@
         {
             "$ref": "channel.schema.json"
         }
-    ],
-    "additionalProperties": false
+    ]
 }

@@ -222,6 +222,7 @@ export interface ImplementationMetadata {
 }
 
 export interface OptionalFeatures {
+  DesktopAgentBridging?: boolean;
   OriginatingAppMetadata: boolean;
   UserChannelMembershipAPIs: boolean;
 }
@@ -1688,6 +1689,7 @@ const typeMap: any = {
   ),
   OptionalFeatures: o(
     [
+      { json: 'DesktopAgentBridging', js: 'DesktopAgentBridging', typ: u(undefined, true) },
       { json: 'OriginatingAppMetadata', js: 'OriginatingAppMetadata', typ: true },
       { json: 'UserChannelMembershipAPIs', js: 'UserChannelMembershipAPIs', typ: true },
     ],
