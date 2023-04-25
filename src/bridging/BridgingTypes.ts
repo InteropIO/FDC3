@@ -838,6 +838,10 @@ export interface RaiseIntentResultResponse {
  * The message payload typically contains return values for FDC3 API functions.
  */
 export interface RaiseIntentResultResponsePayload {
+  intentResult: IntentResultClass;
+}
+
+export interface IntentResultClass {
   context?: ContextObject;
   channel?: ChannelClass;
 }
@@ -1717,6 +1721,10 @@ const typeMap: any = {
     false
   ),
   RaiseIntentResultResponsePayload: o(
+    [{ json: 'intentResult', js: 'intentResult', typ: r('IntentResultClass') }],
+    false
+  ),
+  IntentResultClass: o(
     [
       { json: 'context', js: 'context', typ: u(undefined, r('ContextObject')) },
       { json: 'channel', js: 'channel', typ: u(undefined, r('ChannelClass')) },
