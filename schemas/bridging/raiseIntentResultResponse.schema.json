@@ -14,28 +14,41 @@
           "const": "raiseIntentResultResponse"
         },
         "payload": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "context": {
-                  "$ref": "../context/context.schema.json"
+          "type": "object",
+          "properties": {
+            "intentResult": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "context": {
+                      "$ref": "../context/context.schema.json"
+                    }
+                  },
+                  "required": ["context"],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "channel": {
+                      "$ref": "../api/channel.schema.json"
+                    }
+                  },
+                  "required": ["channel"],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": { }
+                  },
+                  "additionalProperties": false
                 }
-              },
-              "required": ["context"],
-              "additionalProperties": false
-            },
-            {
-              "type": "object",
-              "properties": {
-                "channel": {
-                  "$ref": "../api/channel.schema.json"
-                }
-              },
-              "required": ["channel"],
-              "additionalProperties": false
+              ]
             }
-          ]
+          },
+          "required": ["intentResult"],
+          "additionalProperties": false
         },
         "meta": true
       }
