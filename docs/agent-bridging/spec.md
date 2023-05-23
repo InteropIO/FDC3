@@ -237,7 +237,7 @@ The DA must then respond to the `hello` message with a `handshake` request to th
         /** Metadata indicating whether the Desktop Agent implements optional features of
          *  the Desktop Agent API. */
         readonly optionalFeatures: {
-          /** Used to indicate whether the exposure of 'origninating app metadata' for
+          /** Used to indicate whether the exposure of 'originating app metadata' for
            *  context and intent messages is supported by the Desktop Agent.*/
           "OriginatingAppMetadata": boolean;
           /** Used to indicate whether the optional `fdc3.joinUserChannel`,
