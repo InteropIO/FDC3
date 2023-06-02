@@ -26,7 +26,7 @@ It is clear, however, that user desktops are substantially more complicated in r
 
 ![A single desktop and Desktop Agent, with external apps](/assets/dab-overview-2.png)
 
-Firms that make extensive use of FDC3 have also identified use cases where interoperability workflows span different physical desktops, and have built proprietary bridging solutions (e.g. [BackPlane](https://backplane.finos.org/) was originally developed as an in-house solution to this problem).
+Firms that make extensive use of FDC3 have also identified use cases where interoperability workflows span different physical desktops, and have built proprietary bridging solutions (e.g. [Backplane](https://backplane.finos.org/) was originally developed as an in-house solution to this problem).
 
 ![Two physical desktops with a desktop agent each](/assets/dab-overview-3.png)
 
