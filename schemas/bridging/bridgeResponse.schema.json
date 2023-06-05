@@ -3,37 +3,36 @@
   "$id": "https://fdc3.finos.org/schemas/next/bridging/bridgeResponse.schema.json",
   "title": "bridgeResponse",
   "type": "object",
-  "properties": {
-    "type": {
-      "type": "string",
-      "description": "Identifies the type of the message and it is typically set to the FDC3 function name that the message relates to, e.g. 'findIntent', with 'Response' appended."
+  "allOf": [
+    {
+      "$ref": "agentResponse.schema.json"
     },
-    "payload": {
+    {
       "type": "object",
-      "description": "The message payload typically contains return values for FDC3 API functions."
-    },
-    "meta": {
-      "$ref": "#/$defs/ResponseMeta"
+      "properties": {
+        "type": true,
+        "payload": true,
+        "meta": {
+          "$ref": "#/$defs/BridgeResponseMeta"
+        }
+      },
+      "required": ["type", "payload", "meta"],
+      "additionalProperties": false
     }
-  },
-  "additionalProperties": false,
-  "required": ["type", "payload", "meta"],
+  ],
   "$defs": {
-    "ResponseMeta": {
+    "BridgeResponseMeta": {
       "type": "object",
       "allOf": [
         {
-          "$ref": "bridgeRequest.schema.json#/$defs/RequestMeta"
+          "$ref": "agentResponse.schema.json#/$defs/AgentResponseMeta"
         },
         {
           "type": "object",
           "properties": {
             "requestUuid": true,
             "timestamp": true,
-            "responseUuid": {
-              "type": "string",
-              "description": "Unique UUID for the response"
-            },
+            "responseUuid": true,
             "sources": {
               "type": "array",
               "items": {

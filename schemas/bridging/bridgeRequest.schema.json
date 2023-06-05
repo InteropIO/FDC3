@@ -3,58 +3,40 @@
   "$id": "https://fdc3.finos.org/schemas/next/bridging/bridgeRequest.schema.json",
   "title": "bridgeRequest",
   "type": "object",
-  "properties": {
-    "type": {
-      "type": "string",
-      "description": "Identifies the type of the message and it is typically set to the FDC3 function name that the message relates to, e.g. 'findIntent', with 'Request' appended."
+  "allOf": [
+    {
+      "$ref": "agentRequest.schema.json"
     },
-    "payload": {
-      "type": "object",
-      "description": "The message payload typically contains the arguments to FDC3 API functions."
-    },
-    "meta": {
-      "$ref": "#/$defs/RequestMeta"
-    }
-  },
-  "required": ["type", "payload", "meta"],
-  "additionalProperties": false,
-  "$defs": {
-    "RequestMeta": {
+    {
       "type": "object",
       "properties": {
-        "requestUuid": {
-          "type": "string",
-          "description": "Unique UUID for the request"
-        },
-        "timestamp": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Timestamp at which request or response was generated"
-        },
-        "source": {
-          "description": "Field that represents the source application that the request was received from.",
-          "oneOf": [
-            {
-              "$ref": "../api/appIdentifier.schema.json"
-            },
-            {
-              "$ref": "../api/desktopAgentIdentifier.schema.json"
-            }
-          ]
-        },
-        "destination": {
-          "description": "Optional field that represents the destination that the request should be routed to. Must be set by the Desktop Agent for API calls that include a target app parameter and must include the name of the Desktop Agent hosting the target application.",
-          "oneOf": [
-            {
-              "$ref": "../api/appIdentifier.schema.json"
-            },
-            {
-              "$ref": "../api/desktopAgentIdentifier.schema.json"
-            }
-          ]
+        "type": true,
+        "payload": true,
+        "meta": {
+          "$ref": "#/$defs/BridgeRequestMeta"
         }
       },
-      "required": ["requestUuid", "timestamp", "source"]
+      "required": ["type", "payload", "meta"],
+      "additionalProperties": false
+    }
+  ],
+  "$defs": {
+    "BridgeRequestMeta": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "agentRequest.schema.json#/$defs/AgentResponseMeta"
+        },
+        {
+          "type": "object",
+          "requestUuid": true,
+          "timestamp": true,
+          "source": true,
+          "destination": true,
+          "required": ["requestUuid", "timestamp", "source"],
+          "unevaluatedProperties": false
+        }
+      ]
     }
   }
 }
