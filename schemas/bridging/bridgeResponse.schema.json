@@ -3,6 +3,7 @@
   "$id": "https://fdc3.finos.org/schemas/next/bridging/bridgeResponse.schema.json",
   "title": "bridgeResponse",
   "type": "object",
+  "description": "Schema defining the format of all response messages from a the Bridge to the original Desktop Agent that raised a request. Individual message schemas further refine this format for each response type.",
   "allOf": [
     {
       "$ref": "agentResponse.schema.json"
@@ -22,6 +23,7 @@
   ],
   "$defs": {
     "BridgeResponseMeta": {
+      "title": "Bridge request metadata",
       "type": "object",
       "allOf": [
         {

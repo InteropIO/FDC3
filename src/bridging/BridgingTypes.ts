@@ -1,6 +1,6 @@
 // To parse this data:
 //
-//   import { Convert, AppIdentifier, AppIntent, AppMetadata, BaseImplementationMetadata, Channel, ContextMetadata, DesktopAgentIdentifier, DisplayMetadata, Icon, Image, ImplementationMetadata, IntentMetadata, IntentResolution, IntentResult, BridgeRequest, BridgeResponse, BroadcastRequest, ConnectionStep2Hello, ConnectionStep3Handshake, ConnectionStep4AuthenticationFailed, ConnectionStep6ConnectedAgentsUpdate, FindInstancesRequest, FindInstancesResponse, FindIntentRequest, FindIntentResponse, FindIntentsByContextRequest, FindIntentsByContextResponse, GetAppMetadataRequest, GetAppMetadataResponse, OpenRequest, OpenResponse, PrivateChannelBroadcast, PrivateChannelEventListenerAdded, PrivateChannelEventListenerRemoved, PrivateChannelOnAddContextListener, PrivateChannelOnDisconnect, PrivateChannelOnUnsubscribe, RaiseIntentRequest, RaiseIntentResponse, RaiseIntentResultResponse, Context } from "./file";
+//   import { Convert, AppIdentifier, AppIntent, AppMetadata, BaseImplementationMetadata, Channel, ContextMetadata, DesktopAgentIdentifier, DisplayMetadata, Icon, Image, ImplementationMetadata, IntentMetadata, IntentResolution, IntentResult, AgentRequest, AgentResponse, BridgeRequest, BridgeResponse, BroadcastAgentRequest, BroadcastBridgeRequest, ConnectionStep2Hello, ConnectionStep3Handshake, ConnectionStep4AuthenticationFailed, ConnectionStep6ConnectedAgentsUpdate, FindInstancesAgentRequest, FindInstancesAgentResponse, FindInstancesBridgeRequest, FindInstancesBridgeResponse, FindIntentRequest, FindIntentResponse, FindIntentsByContextRequest, FindIntentsByContextResponse, GetAppMetadataRequest, GetAppMetadataResponse, OpenRequest, OpenResponse, PrivateChannelBroadcast, PrivateChannelEventListenerAdded, PrivateChannelEventListenerRemoved, PrivateChannelOnAddContextListener, PrivateChannelOnDisconnect, PrivateChannelOnUnsubscribe, RaiseIntentRequest, RaiseIntentResponse, RaiseIntentResultResponse, Context } from "./file";
 //
 //   const appIdentifier = Convert.toAppIdentifier(json);
 //   const appIntent = Convert.toAppIntent(json);
@@ -17,15 +17,20 @@
 //   const intentMetadata = Convert.toIntentMetadata(json);
 //   const intentResolution = Convert.toIntentResolution(json);
 //   const intentResult = Convert.toIntentResult(json);
+//   const agentRequest = Convert.toAgentRequest(json);
+//   const agentResponse = Convert.toAgentResponse(json);
 //   const bridgeRequest = Convert.toBridgeRequest(json);
 //   const bridgeResponse = Convert.toBridgeResponse(json);
-//   const broadcastRequest = Convert.toBroadcastRequest(json);
+//   const broadcastAgentRequest = Convert.toBroadcastAgentRequest(json);
+//   const broadcastBridgeRequest = Convert.toBroadcastBridgeRequest(json);
 //   const connectionStep2Hello = Convert.toConnectionStep2Hello(json);
 //   const connectionStep3Handshake = Convert.toConnectionStep3Handshake(json);
 //   const connectionStep4AuthenticationFailed = Convert.toConnectionStep4AuthenticationFailed(json);
 //   const connectionStep6ConnectedAgentsUpdate = Convert.toConnectionStep6ConnectedAgentsUpdate(json);
-//   const findInstancesRequest = Convert.toFindInstancesRequest(json);
-//   const findInstancesResponse = Convert.toFindInstancesResponse(json);
+//   const findInstancesAgentRequest = Convert.toFindInstancesAgentRequest(json);
+//   const findInstancesAgentResponse = Convert.toFindInstancesAgentResponse(json);
+//   const findInstancesBridgeRequest = Convert.toFindInstancesBridgeRequest(json);
+//   const findInstancesBridgeResponse = Convert.toFindInstancesBridgeResponse(json);
 //   const findIntentRequest = Convert.toFindIntentRequest(json);
 //   const findIntentResponse = Convert.toFindIntentResponse(json);
 //   const findIntentsByContextRequest = Convert.toFindIntentsByContextRequest(json);
@@ -292,8 +297,12 @@ export interface IntentResult {
   [property: string]: any;
 }
 
-export interface BridgeRequest {
-  meta: MetaObject;
+/**
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
+export interface AgentRequest {
+  meta: AgentRequestMeta;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
@@ -305,21 +314,22 @@ export interface BridgeRequest {
   type: string;
 }
 
-export interface MetaObject {
+export interface AgentRequestMeta {
   /**
    * Optional field that represents the destination that the request should be routed to. Must
    * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
-  destination?: DestinationElement;
+  destination?: Identifier;
   /**
    * Unique UUID for the request
    */
   requestUuid: string;
   /**
-   * Field that represents the source application that the request was received from.
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
    */
-  source: DestinationElement;
+  source?: Identifier;
   /**
    * Timestamp at which request or response was generated
    */
@@ -332,7 +342,8 @@ export interface MetaObject {
  * be set by the Desktop Agent for API calls that include a target app parameter and must
  * include the name of the Desktop Agent hosting the target application.
  *
- * Field that represents the source application that the request was received from.
+ * Field that represents the source application that the request was received from, or the
+ * source Desktop Agent if it issued the request itself.
  *
  * Identifies an application, or instance of an application, and is used to target FDC3 API
  * calls at specific applications.
@@ -342,15 +353,19 @@ export interface MetaObject {
  * Desktop Agent itself rather than a specific application. Often added to messages by the
  * Desktop Agent Bridge.
  */
-export interface DestinationElement {
+export interface Identifier {
   appId?: string;
   desktopAgent?: string;
   instanceId?: string;
   [property: string]: any;
 }
 
-export interface BridgeResponse {
-  meta: BridgeResponseMeta;
+/**
+ * Schema defining the format of all response messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each response type.
+ */
+export interface AgentResponse {
+  meta: AgentResponseMetadata;
   /**
    * The message payload typically contains return values for FDC3 API functions.
    */
@@ -362,7 +377,99 @@ export interface BridgeResponse {
   type: string;
 }
 
-export interface BridgeResponseMeta {
+export interface AgentResponseMetadata {
+  /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: Identifier;
+  /**
+   * Unique UUID for the request
+   */
+  requestUuid: string;
+  /**
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
+   */
+  source?: Identifier;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  /**
+   * UUID for the response
+   */
+  responseUuid: string;
+  [property: string]: any;
+}
+
+/**
+ * Schema defining the format of all forwarded request messages from the Bridge onto a
+ * Desktop Agent connected to it. Individual message schemas further refine this format for
+ * each request type.
+ *
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
+export interface BridgeRequest {
+  meta: PurpleBridgeRequestMetadata;
+  /**
+   * The message payload typically contains the arguments to FDC3 API functions.
+   */
+  payload: { [key: string]: any };
+  /**
+   * Identifies the type of the message and it is typically set to the FDC3 function name that
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
+   */
+  type: string;
+}
+
+export interface PurpleBridgeRequestMetadata {
+  /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: Identifier;
+  /**
+   * Unique UUID for the request
+   */
+  requestUuid: string;
+  /**
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
+   */
+  source: Identifier;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  [property: string]: any;
+}
+
+/**
+ * Schema defining the format of all response messages from a the Bridge to the original
+ * Desktop Agent that raised a request. Individual message schemas further refine this
+ * format for each response type.
+ *
+ * Schema defining the format of all response messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each response type.
+ */
+export interface BridgeResponse {
+  meta: PurpleMetadata;
+  /**
+   * The message payload typically contains return values for FDC3 API functions.
+   */
+  payload: { [key: string]: any };
+  /**
+   * Identifies the type of the message and it is typically set to the FDC3 function name that
+   * the message relates to, e.g. 'findIntent', with 'Response' appended.
+   */
+  type: string;
+}
+
+export interface PurpleMetadata {
   /**
    * Unique UUID for the request
    */
@@ -371,6 +478,10 @@ export interface BridgeResponseMeta {
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
+  /**
+   * UUID for the response
+   */
+  responseUuid: string;
   /**
    * Array of error message strings for responses that were not returned to the bridge before
    * the timeout or because an error occurred. Should be the same length as the `errorSources`
@@ -382,26 +493,26 @@ export interface BridgeResponseMeta {
    * to the bridge before the timeout or because an error occurred. May be omitted if all
    * sources responded without errors.
    */
-  errorSources?: DestinationElement[];
-  /**
-   * Unique UUID for the response
-   */
-  responseUuid: string;
+  errorSources?: Identifier[];
   /**
    * Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
    * responses to the request. Will contain a single value for individual responses and
    * multiple values for responses that were collated by the bridge. May be omitted if all
    * sources errored.
    */
-  sources?: DestinationElement[];
+  sources?: Identifier[];
 }
 
-export interface BroadcastRequest {
-  meta: BroadcastRequestMeta;
+/**
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
+export interface BroadcastAgentRequest {
+  meta: MetaClass;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
-  payload: BroadcastRequestPayload;
+  payload: PurpleMessagePayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Request' appended.
@@ -409,15 +520,16 @@ export interface BroadcastRequest {
   type: string;
 }
 
-export interface BroadcastRequestMeta {
+export interface MetaClass {
   /**
    * Unique UUID for the request
    */
   requestUuid: string;
   /**
-   * Field that represents the source application that the request was received from.
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
    */
-  source: PurpleIdentifier;
+  source?: SourceObject;
   /**
    * Timestamp at which request or response was generated
    */
@@ -429,7 +541,8 @@ export interface BroadcastRequestMeta {
  * be set by the Desktop Agent for API calls that include a target app parameter and must
  * include the name of the Desktop Agent hosting the target application.
  *
- * Field that represents the source application that the request was received from.
+ * Field that represents the source application that the request was received from, or the
+ * source Desktop Agent if it issued the request itself.
  *
  * Identifies an application, or instance of an application, and is used to target FDC3 API
  * calls at specific applications.
@@ -439,7 +552,7 @@ export interface BroadcastRequestMeta {
  * Desktop Agent itself rather than a specific application. Often added to messages by the
  * Desktop Agent Bridge.
  */
-export interface PurpleIdentifier {
+export interface SourceObject {
   appId: string;
   desktopAgent?: string;
   instanceId?: string;
@@ -449,7 +562,7 @@ export interface PurpleIdentifier {
 /**
  * The message payload typically contains the arguments to FDC3 API functions.
  */
-export interface BroadcastRequestPayload {
+export interface PurpleMessagePayload {
   channel: ChannelClass;
   context: ContextElement;
 }
@@ -468,6 +581,51 @@ export interface ContextElement {
   name?: string;
   type: string;
   [property: string]: any;
+}
+
+/**
+ * Schema defining the format of all forwarded request messages from the Bridge onto a
+ * Desktop Agent connected to it. Individual message schemas further refine this format for
+ * each request type.
+ *
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
+export interface BroadcastBridgeRequest {
+  meta: BroadcastBridgeRequestMeta;
+  /**
+   * The message payload typically contains the arguments to FDC3 API functions.
+   */
+  payload: BroadcastBridgeRequestPayload;
+  /**
+   * Identifies the type of the message and it is typically set to the FDC3 function name that
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
+   */
+  type: string;
+}
+
+export interface BroadcastBridgeRequestMeta {
+  /**
+   * Unique UUID for the request
+   */
+  requestUuid: string;
+  /**
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
+   */
+  source: SourceObject;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+}
+
+/**
+ * The message payload typically contains the arguments to FDC3 API functions.
+ */
+export interface BroadcastBridgeRequestPayload {
+  channel: ChannelClass;
+  context: ContextElement;
 }
 
 export interface ConnectionStep2Hello {
@@ -634,12 +792,16 @@ export interface ImplementationMetadataElement {
   providerVersion?: string;
 }
 
-export interface FindInstancesRequest {
-  meta: FindInstancesRequestMeta;
+/**
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
+export interface FindInstancesAgentRequest {
+  meta: FindInstancesAgentRequestMeta;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
-  payload: FindInstancesRequestPayload;
+  payload: FluffyMessagePayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Request' appended.
@@ -647,7 +809,7 @@ export interface FindInstancesRequest {
   type: string;
 }
 
-export interface FindInstancesRequestMeta {
+export interface FindInstancesAgentRequestMeta {
   /**
    * Optional field that represents the destination that the request should be routed to. Must
    * be set by the Desktop Agent for API calls that include a target app parameter and must
@@ -659,13 +821,15 @@ export interface FindInstancesRequestMeta {
    */
   requestUuid: string;
   /**
-   * Field that represents the source application that the request was received from.
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
    */
-  source: PurpleIdentifier;
+  source?: SourceObject;
   /**
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
+  [property: string]: any;
 }
 
 /**
@@ -673,7 +837,8 @@ export interface FindInstancesRequestMeta {
  * be set by the Desktop Agent for API calls that include a target app parameter and must
  * include the name of the Desktop Agent hosting the target application.
  *
- * Field that represents the source application that the request was received from.
+ * Field that represents the source application that the request was received from, or the
+ * source Desktop Agent if it issued the request itself.
  *
  * Identifies an application, or instance of an application, and is used to target FDC3 API
  * calls at specific applications.
@@ -690,16 +855,20 @@ export interface DestinationClass {
 /**
  * The message payload typically contains the arguments to FDC3 API functions.
  */
-export interface FindInstancesRequestPayload {
+export interface FluffyMessagePayload {
   app: SourceElement;
 }
 
-export interface FindInstancesResponse {
-  meta: FindInstancesResponseMeta;
+/**
+ * Schema defining the format of all response messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each response type.
+ */
+export interface FindInstancesAgentResponse {
+  meta: AgentResponseMetadata;
   /**
    * The message payload typically contains return values for FDC3 API functions.
    */
-  payload: FindInstancesResponsePayload;
+  payload: FindInstancesAgentResponsePayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Response' appended.
@@ -707,7 +876,86 @@ export interface FindInstancesResponse {
   type: string;
 }
 
-export interface FindInstancesResponseMeta {
+/**
+ * The message payload typically contains return values for FDC3 API functions.
+ */
+export interface FindInstancesAgentResponsePayload {
+  appIdentifiers: AppMetadataElement[];
+}
+
+/**
+ * Schema defining the format of all forwarded request messages from the Bridge onto a
+ * Desktop Agent connected to it. Individual message schemas further refine this format for
+ * each request type.
+ *
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
+export interface FindInstancesBridgeRequest {
+  meta: FindInstancesBridgeRequestMeta;
+  /**
+   * The message payload typically contains the arguments to FDC3 API functions.
+   */
+  payload: FindInstancesBridgeRequestPayload;
+  /**
+   * Identifies the type of the message and it is typically set to the FDC3 function name that
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
+   */
+  type: string;
+}
+
+export interface FindInstancesBridgeRequestMeta {
+  /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: DestinationClass;
+  /**
+   * Unique UUID for the request
+   */
+  requestUuid: string;
+  /**
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
+   */
+  source: SourceObject;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  [property: string]: any;
+}
+
+/**
+ * The message payload typically contains the arguments to FDC3 API functions.
+ */
+export interface FindInstancesBridgeRequestPayload {
+  app: SourceElement;
+}
+
+/**
+ * Schema defining the format of all response messages from a the Bridge to the original
+ * Desktop Agent that raised a request. Individual message schemas further refine this
+ * format for each response type.
+ *
+ * Schema defining the format of all response messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each response type.
+ */
+export interface FindInstancesBridgeResponse {
+  meta: FindInstancesBridgeResponseMeta;
+  /**
+   * The message payload typically contains return values for FDC3 API functions.
+   */
+  payload: { [key: string]: any };
+  /**
+   * Identifies the type of the message and it is typically set to the FDC3 function name that
+   * the message relates to, e.g. 'findIntent', with 'Response' appended.
+   */
+  type: string;
+}
+
+export interface FindInstancesBridgeResponseMeta {
   /**
    * Unique UUID for the request
    */
@@ -716,6 +964,10 @@ export interface FindInstancesResponseMeta {
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
+  /**
+   * UUID for the response
+   */
+  responseUuid: string;
   /**
    * Array of error message strings for responses that were not returned to the bridge before
    * the timeout or because an error occurred. Should be the same length as the `errorSources`
@@ -727,11 +979,7 @@ export interface FindInstancesResponseMeta {
    * to the bridge before the timeout or because an error occurred. May be omitted if all
    * sources responded without errors.
    */
-  errorSources?: DestinationElement[];
-  /**
-   * Unique UUID for the response
-   */
-  responseUuid: string;
+  errorSources?: Identifier[];
   /**
    * Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
    * responses to the request. Will contain a single value for individual responses and
@@ -752,12 +1000,13 @@ export interface ErrorSourceElement {
 }
 
 /**
- * The message payload typically contains return values for FDC3 API functions.
+ * Schema defining the format of all forwarded request messages from the Bridge onto a
+ * Desktop Agent connected to it. Individual message schemas further refine this format for
+ * each request type.
+ *
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
  */
-export interface FindInstancesResponsePayload {
-  appIdentifiers: AppMetadataElement[];
-}
-
 export interface FindIntentRequest {
   meta: FindIntentRequestMeta;
   /**
@@ -777,9 +1026,10 @@ export interface FindIntentRequestMeta {
    */
   requestUuid: string;
   /**
-   * Field that represents the source application that the request was received from.
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
    */
-  source: PurpleIdentifier;
+  source: SourceObject;
   /**
    * Timestamp at which request or response was generated
    */
@@ -794,6 +1044,14 @@ export interface FindIntentRequestPayload {
   intent: string;
 }
 
+/**
+ * Schema defining the format of all response messages from a the Bridge to the original
+ * Desktop Agent that raised a request. Individual message schemas further refine this
+ * format for each response type.
+ *
+ * Schema defining the format of all response messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each response type.
+ */
 export interface FindIntentResponse {
   meta: FindIntentResponseMeta;
   /**
@@ -817,6 +1075,10 @@ export interface FindIntentResponseMeta {
    */
   timestamp: Date;
   /**
+   * UUID for the response
+   */
+  responseUuid: string;
+  /**
    * Array of error message strings for responses that were not returned to the bridge before
    * the timeout or because an error occurred. Should be the same length as the `errorSources`
    * array and ordered the same. May be omitted if all sources responded without errors.
@@ -828,10 +1090,6 @@ export interface FindIntentResponseMeta {
    * sources responded without errors.
    */
   errorSources?: ErrorSourceElement[];
-  /**
-   * Unique UUID for the response
-   */
-  responseUuid: string;
   /**
    * Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
    * responses to the request. Will contain a single value for individual responses and
@@ -856,6 +1114,14 @@ export interface AppIntentElement {
   intent: IntentClass;
 }
 
+/**
+ * Schema defining the format of all forwarded request messages from the Bridge onto a
+ * Desktop Agent connected to it. Individual message schemas further refine this format for
+ * each request type.
+ *
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
 export interface FindIntentsByContextRequest {
   meta: FindIntentsByContextRequestMeta;
   /**
@@ -875,9 +1141,10 @@ export interface FindIntentsByContextRequestMeta {
    */
   requestUuid: string;
   /**
-   * Field that represents the source application that the request was received from.
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
    */
-  source: PurpleIdentifier;
+  source: SourceObject;
   /**
    * Timestamp at which request or response was generated
    */
@@ -891,6 +1158,14 @@ export interface FindIntentsByContextRequestPayload {
   context: ContextElement;
 }
 
+/**
+ * Schema defining the format of all response messages from a the Bridge to the original
+ * Desktop Agent that raised a request. Individual message schemas further refine this
+ * format for each response type.
+ *
+ * Schema defining the format of all response messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each response type.
+ */
 export interface FindIntentsByContextResponse {
   meta: FindIntentsByContextResponseMeta;
   /**
@@ -914,6 +1189,10 @@ export interface FindIntentsByContextResponseMeta {
    */
   timestamp: Date;
   /**
+   * UUID for the response
+   */
+  responseUuid: string;
+  /**
    * Array of error message strings for responses that were not returned to the bridge before
    * the timeout or because an error occurred. Should be the same length as the `errorSources`
    * array and ordered the same. May be omitted if all sources responded without errors.
@@ -925,10 +1204,6 @@ export interface FindIntentsByContextResponseMeta {
    * sources responded without errors.
    */
   errorSources?: ErrorSourceElement[];
-  /**
-   * Unique UUID for the response
-   */
-  responseUuid: string;
   /**
    * Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
    * responses to the request. Will contain a single value for individual responses and
@@ -945,6 +1220,14 @@ export interface FindIntentsByContextResponsePayload {
   appIntents: AppIntentElement[];
 }
 
+/**
+ * Schema defining the format of all forwarded request messages from the Bridge onto a
+ * Desktop Agent connected to it. Individual message schemas further refine this format for
+ * each request type.
+ *
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
 export interface GetAppMetadataRequest {
   meta: GetAppMetadataRequestMeta;
   /**
@@ -970,9 +1253,10 @@ export interface GetAppMetadataRequestMeta {
    */
   requestUuid: string;
   /**
-   * Field that represents the source application that the request was received from.
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
    */
-  source: PurpleIdentifier;
+  source: SourceObject;
   /**
    * Timestamp at which request or response was generated
    */
@@ -986,6 +1270,14 @@ export interface GetAppMetadataRequestPayload {
   app: SourceElement;
 }
 
+/**
+ * Schema defining the format of all response messages from a the Bridge to the original
+ * Desktop Agent that raised a request. Individual message schemas further refine this
+ * format for each response type.
+ *
+ * Schema defining the format of all response messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each response type.
+ */
 export interface GetAppMetadataResponse {
   meta: GetAppMetadataResponseMeta;
   /**
@@ -1009,6 +1301,10 @@ export interface GetAppMetadataResponseMeta {
    */
   timestamp: Date;
   /**
+   * UUID for the response
+   */
+  responseUuid: string;
+  /**
    * Array of error message strings for responses that were not returned to the bridge before
    * the timeout or because an error occurred. Should be the same length as the `errorSources`
    * array and ordered the same. May be omitted if all sources responded without errors.
@@ -1020,10 +1316,6 @@ export interface GetAppMetadataResponseMeta {
    * sources responded without errors.
    */
   errorSources?: ErrorSourceElement[];
-  /**
-   * Unique UUID for the response
-   */
-  responseUuid: string;
   /**
    * Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
    * responses to the request. Will contain a single value for individual responses and
@@ -1040,6 +1332,14 @@ export interface GetAppMetadataResponsePayload {
   appMetadata: AppMetadataElement;
 }
 
+/**
+ * Schema defining the format of all forwarded request messages from the Bridge onto a
+ * Desktop Agent connected to it. Individual message schemas further refine this format for
+ * each request type.
+ *
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
 export interface OpenRequest {
   meta: OpenRequestMeta;
   /**
@@ -1065,9 +1365,10 @@ export interface OpenRequestMeta {
    */
   requestUuid: string;
   /**
-   * Field that represents the source application that the request was received from.
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
    */
-  source: PurpleIdentifier;
+  source: SourceObject;
   /**
    * Timestamp at which request or response was generated
    */
@@ -1082,6 +1383,14 @@ export interface OpenRequestPayload {
   context?: ContextElement;
 }
 
+/**
+ * Schema defining the format of all response messages from a the Bridge to the original
+ * Desktop Agent that raised a request. Individual message schemas further refine this
+ * format for each response type.
+ *
+ * Schema defining the format of all response messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each response type.
+ */
 export interface OpenResponse {
   meta: OpenResponseMeta;
   /**
@@ -1105,6 +1414,10 @@ export interface OpenResponseMeta {
    */
   timestamp: Date;
   /**
+   * UUID for the response
+   */
+  responseUuid: string;
+  /**
    * Array of error message strings for responses that were not returned to the bridge before
    * the timeout or because an error occurred. Should be the same length as the `errorSources`
    * array and ordered the same. May be omitted if all sources responded without errors.
@@ -1116,10 +1429,6 @@ export interface OpenResponseMeta {
    * sources responded without errors.
    */
   errorSources?: ErrorSourceElement[];
-  /**
-   * Unique UUID for the response
-   */
-  responseUuid: string;
   /**
    * Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
    * responses to the request. Will contain a single value for individual responses and
@@ -1136,6 +1445,14 @@ export interface OpenResponsePayload {
   appIdentifier: SourceElement;
 }
 
+/**
+ * Schema defining the format of all forwarded request messages from the Bridge onto a
+ * Desktop Agent connected to it. Individual message schemas further refine this format for
+ * each request type.
+ *
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
 export interface PrivateChannelBroadcast {
   meta: PrivateChannelBroadcastMeta;
   /**
@@ -1155,15 +1472,16 @@ export interface PrivateChannelBroadcastMeta {
    * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
-  destination?: PurpleIdentifier;
+  destination?: SourceObject;
   /**
    * Unique UUID for the request
    */
   requestUuid: string;
   /**
-   * Field that represents the source application that the request was received from.
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
    */
-  source: PurpleIdentifier;
+  source: SourceObject;
   /**
    * Timestamp at which request or response was generated
    */
@@ -1178,6 +1496,14 @@ export interface PrivateChannelBroadcastPayload {
   context: string;
 }
 
+/**
+ * Schema defining the format of all forwarded request messages from the Bridge onto a
+ * Desktop Agent connected to it. Individual message schemas further refine this format for
+ * each request type.
+ *
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
 export interface PrivateChannelEventListenerAdded {
   meta: PrivateChannelEventListenerAddedMeta;
   /**
@@ -1197,15 +1523,16 @@ export interface PrivateChannelEventListenerAddedMeta {
    * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
-  destination?: PurpleIdentifier;
+  destination?: SourceObject;
   /**
    * Unique UUID for the request
    */
   requestUuid: string;
   /**
-   * Field that represents the source application that the request was received from.
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
    */
-  source: PurpleIdentifier;
+  source: SourceObject;
   /**
    * Timestamp at which request or response was generated
    */
@@ -1220,6 +1547,14 @@ export interface PrivateChannelEventListenerAddedPayload {
   context: string;
 }
 
+/**
+ * Schema defining the format of all forwarded request messages from the Bridge onto a
+ * Desktop Agent connected to it. Individual message schemas further refine this format for
+ * each request type.
+ *
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
 export interface PrivateChannelEventListenerRemoved {
   meta: PrivateChannelEventListenerRemovedMeta;
   /**
@@ -1239,15 +1574,16 @@ export interface PrivateChannelEventListenerRemovedMeta {
    * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
-  destination?: PurpleIdentifier;
+  destination?: SourceObject;
   /**
    * Unique UUID for the request
    */
   requestUuid: string;
   /**
-   * Field that represents the source application that the request was received from.
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
    */
-  source: PurpleIdentifier;
+  source: SourceObject;
   /**
    * Timestamp at which request or response was generated
    */
@@ -1262,6 +1598,14 @@ export interface PrivateChannelEventListenerRemovedPayload {
   listenerType: string;
 }
 
+/**
+ * Schema defining the format of all forwarded request messages from the Bridge onto a
+ * Desktop Agent connected to it. Individual message schemas further refine this format for
+ * each request type.
+ *
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
 export interface PrivateChannelOnAddContextListener {
   meta: PrivateChannelOnAddContextListenerMeta;
   /**
@@ -1281,15 +1625,16 @@ export interface PrivateChannelOnAddContextListenerMeta {
    * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
-  destination?: PurpleIdentifier;
+  destination?: SourceObject;
   /**
    * Unique UUID for the request
    */
   requestUuid: string;
   /**
-   * Field that represents the source application that the request was received from.
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
    */
-  source: PurpleIdentifier;
+  source: SourceObject;
   /**
    * Timestamp at which request or response was generated
    */
@@ -1304,6 +1649,14 @@ export interface PrivateChannelOnAddContextListenerPayload {
   contextType: string;
 }
 
+/**
+ * Schema defining the format of all forwarded request messages from the Bridge onto a
+ * Desktop Agent connected to it. Individual message schemas further refine this format for
+ * each request type.
+ *
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
 export interface PrivateChannelOnDisconnect {
   meta: PrivateChannelOnDisconnectMeta;
   /**
@@ -1323,15 +1676,16 @@ export interface PrivateChannelOnDisconnectMeta {
    * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
-  destination?: PurpleIdentifier;
+  destination?: SourceObject;
   /**
    * Unique UUID for the request
    */
   requestUuid: string;
   /**
-   * Field that represents the source application that the request was received from.
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
    */
-  source: PurpleIdentifier;
+  source: SourceObject;
   /**
    * Timestamp at which request or response was generated
    */
@@ -1345,6 +1699,14 @@ export interface PrivateChannelOnDisconnectPayload {
   channel: string;
 }
 
+/**
+ * Schema defining the format of all forwarded request messages from the Bridge onto a
+ * Desktop Agent connected to it. Individual message schemas further refine this format for
+ * each request type.
+ *
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
 export interface PrivateChannelOnUnsubscribe {
   meta: PrivateChannelOnUnsubscribeMeta;
   /**
@@ -1364,15 +1726,16 @@ export interface PrivateChannelOnUnsubscribeMeta {
    * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
-  destination?: PurpleIdentifier;
+  destination?: SourceObject;
   /**
    * Unique UUID for the request
    */
   requestUuid: string;
   /**
-   * Field that represents the source application that the request was received from.
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
    */
-  source: PurpleIdentifier;
+  source: SourceObject;
   /**
    * Timestamp at which request or response was generated
    */
@@ -1387,6 +1750,14 @@ export interface PrivateChannelOnUnsubscribePayload {
   contextType: string;
 }
 
+/**
+ * Schema defining the format of all forwarded request messages from the Bridge onto a
+ * Desktop Agent connected to it. Individual message schemas further refine this format for
+ * each request type.
+ *
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
 export interface RaiseIntentRequest {
   meta: RaiseIntentRequestMeta;
   /**
@@ -1406,15 +1777,16 @@ export interface RaiseIntentRequestMeta {
    * be set by the Desktop Agent for API calls that include a target app parameter and must
    * include the name of the Desktop Agent hosting the target application.
    */
-  destination: PurpleIdentifier;
+  destination: SourceObject;
   /**
    * Unique UUID for the request
    */
   requestUuid: string;
   /**
-   * Field that represents the source application that the request was received from.
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
    */
-  source: PurpleIdentifier;
+  source: SourceObject;
   /**
    * Timestamp at which request or response was generated
    */
@@ -1430,6 +1802,14 @@ export interface RaiseIntentRequestPayload {
   intent: string;
 }
 
+/**
+ * Schema defining the format of all response messages from a the Bridge to the original
+ * Desktop Agent that raised a request. Individual message schemas further refine this
+ * format for each response type.
+ *
+ * Schema defining the format of all response messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each response type.
+ */
 export interface RaiseIntentResponse {
   meta: RaiseIntentResponseMeta;
   /**
@@ -1453,6 +1833,10 @@ export interface RaiseIntentResponseMeta {
    */
   timestamp: Date;
   /**
+   * UUID for the response
+   */
+  responseUuid: string;
+  /**
    * Array of error message strings for responses that were not returned to the bridge before
    * the timeout or because an error occurred. Should be the same length as the `errorSources`
    * array and ordered the same. May be omitted if all sources responded without errors.
@@ -1463,11 +1847,7 @@ export interface RaiseIntentResponseMeta {
    * to the bridge before the timeout or because an error occurred. May be omitted if all
    * sources responded without errors.
    */
-  errorSources?: DestinationElement[];
-  /**
-   * Unique UUID for the response
-   */
-  responseUuid: string;
+  errorSources?: Identifier[];
   /**
    * Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
    * responses to the request. Will contain a single value for individual responses and
@@ -1493,6 +1873,14 @@ export interface IntentResolutionClass {
   version?: string;
 }
 
+/**
+ * Schema defining the format of all response messages from a the Bridge to the original
+ * Desktop Agent that raised a request. Individual message schemas further refine this
+ * format for each response type.
+ *
+ * Schema defining the format of all response messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each response type.
+ */
 export interface RaiseIntentResultResponse {
   meta: RaiseIntentResultResponseMeta;
   /**
@@ -1516,6 +1904,10 @@ export interface RaiseIntentResultResponseMeta {
    */
   timestamp: Date;
   /**
+   * UUID for the response
+   */
+  responseUuid: string;
+  /**
    * Array of error message strings for responses that were not returned to the bridge before
    * the timeout or because an error occurred. Should be the same length as the `errorSources`
    * array and ordered the same. May be omitted if all sources responded without errors.
@@ -1526,11 +1918,7 @@ export interface RaiseIntentResultResponseMeta {
    * to the bridge before the timeout or because an error occurred. May be omitted if all
    * sources responded without errors.
    */
-  errorSources?: DestinationElement[];
-  /**
-   * Unique UUID for the response
-   */
-  responseUuid: string;
+  errorSources?: Identifier[];
   /**
    * Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
    * responses to the request. Will contain a single value for individual responses and
@@ -1682,6 +2070,22 @@ export class Convert {
     return JSON.stringify(uncast(value, r('IntentResult')), null, 2);
   }
 
+  public static toAgentRequest(json: string): AgentRequest {
+    return cast(JSON.parse(json), r('AgentRequest'));
+  }
+
+  public static agentRequestToJson(value: AgentRequest): string {
+    return JSON.stringify(uncast(value, r('AgentRequest')), null, 2);
+  }
+
+  public static toAgentResponse(json: string): AgentResponse {
+    return cast(JSON.parse(json), r('AgentResponse'));
+  }
+
+  public static agentResponseToJson(value: AgentResponse): string {
+    return JSON.stringify(uncast(value, r('AgentResponse')), null, 2);
+  }
+
   public static toBridgeRequest(json: string): BridgeRequest {
     return cast(JSON.parse(json), r('BridgeRequest'));
   }
@@ -1698,12 +2102,20 @@ export class Convert {
     return JSON.stringify(uncast(value, r('BridgeResponse')), null, 2);
   }
 
-  public static toBroadcastRequest(json: string): BroadcastRequest {
-    return cast(JSON.parse(json), r('BroadcastRequest'));
+  public static toBroadcastAgentRequest(json: string): BroadcastAgentRequest {
+    return cast(JSON.parse(json), r('BroadcastAgentRequest'));
   }
 
-  public static broadcastRequestToJson(value: BroadcastRequest): string {
-    return JSON.stringify(uncast(value, r('BroadcastRequest')), null, 2);
+  public static broadcastAgentRequestToJson(value: BroadcastAgentRequest): string {
+    return JSON.stringify(uncast(value, r('BroadcastAgentRequest')), null, 2);
+  }
+
+  public static toBroadcastBridgeRequest(json: string): BroadcastBridgeRequest {
+    return cast(JSON.parse(json), r('BroadcastBridgeRequest'));
+  }
+
+  public static broadcastBridgeRequestToJson(value: BroadcastBridgeRequest): string {
+    return JSON.stringify(uncast(value, r('BroadcastBridgeRequest')), null, 2);
   }
 
   public static toConnectionStep2Hello(json: string): ConnectionStep2Hello {
@@ -1738,20 +2150,36 @@ export class Convert {
     return JSON.stringify(uncast(value, r('ConnectionStep6ConnectedAgentsUpdate')), null, 2);
   }
 
-  public static toFindInstancesRequest(json: string): FindInstancesRequest {
-    return cast(JSON.parse(json), r('FindInstancesRequest'));
+  public static toFindInstancesAgentRequest(json: string): FindInstancesAgentRequest {
+    return cast(JSON.parse(json), r('FindInstancesAgentRequest'));
   }
 
-  public static findInstancesRequestToJson(value: FindInstancesRequest): string {
-    return JSON.stringify(uncast(value, r('FindInstancesRequest')), null, 2);
+  public static findInstancesAgentRequestToJson(value: FindInstancesAgentRequest): string {
+    return JSON.stringify(uncast(value, r('FindInstancesAgentRequest')), null, 2);
   }
 
-  public static toFindInstancesResponse(json: string): FindInstancesResponse {
-    return cast(JSON.parse(json), r('FindInstancesResponse'));
+  public static toFindInstancesAgentResponse(json: string): FindInstancesAgentResponse {
+    return cast(JSON.parse(json), r('FindInstancesAgentResponse'));
   }
 
-  public static findInstancesResponseToJson(value: FindInstancesResponse): string {
-    return JSON.stringify(uncast(value, r('FindInstancesResponse')), null, 2);
+  public static findInstancesAgentResponseToJson(value: FindInstancesAgentResponse): string {
+    return JSON.stringify(uncast(value, r('FindInstancesAgentResponse')), null, 2);
+  }
+
+  public static toFindInstancesBridgeRequest(json: string): FindInstancesBridgeRequest {
+    return cast(JSON.parse(json), r('FindInstancesBridgeRequest'));
+  }
+
+  public static findInstancesBridgeRequestToJson(value: FindInstancesBridgeRequest): string {
+    return JSON.stringify(uncast(value, r('FindInstancesBridgeRequest')), null, 2);
+  }
+
+  public static toFindInstancesBridgeResponse(json: string): FindInstancesBridgeResponse {
+    return cast(JSON.parse(json), r('FindInstancesBridgeResponse'));
+  }
+
+  public static findInstancesBridgeResponseToJson(value: FindInstancesBridgeResponse): string {
+    return JSON.stringify(uncast(value, r('FindInstancesBridgeResponse')), null, 2);
   }
 
   public static toFindIntentRequest(json: string): FindIntentRequest {
@@ -2248,24 +2676,24 @@ const typeMap: any = {
     ],
     'any'
   ),
-  BridgeRequest: o(
+  AgentRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('MetaObject') },
+      { json: 'meta', js: 'meta', typ: r('AgentRequestMeta') },
       { json: 'payload', js: 'payload', typ: m('any') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  MetaObject: o(
+  AgentRequestMeta: o(
     [
-      { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationElement')) },
+      { json: 'destination', js: 'destination', typ: u(undefined, r('Identifier')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('DestinationElement') },
+      { json: 'source', js: 'source', typ: u(undefined, r('Identifier')) },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
     'any'
   ),
-  DestinationElement: o(
+  Identifier: o(
     [
       { json: 'appId', js: 'appId', typ: u(undefined, '') },
       { json: 'desktopAgent', js: 'desktopAgent', typ: u(undefined, '') },
@@ -2273,42 +2701,77 @@ const typeMap: any = {
     ],
     'any'
   ),
-  BridgeResponse: o(
+  AgentResponse: o(
     [
-      { json: 'meta', js: 'meta', typ: r('BridgeResponseMeta') },
+      { json: 'meta', js: 'meta', typ: r('AgentResponseMetadata') },
       { json: 'payload', js: 'payload', typ: m('any') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  BridgeResponseMeta: o(
+  AgentResponseMetadata: o(
     [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('Identifier')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
+      { json: 'source', js: 'source', typ: u(undefined, r('Identifier')) },
       { json: 'timestamp', js: 'timestamp', typ: Date },
-      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
-      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('DestinationElement'))) },
       { json: 'responseUuid', js: 'responseUuid', typ: '' },
-      { json: 'sources', js: 'sources', typ: u(undefined, a(r('DestinationElement'))) },
     ],
-    false
+    'any'
   ),
-  BroadcastRequest: o(
+  BridgeRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('BroadcastRequestMeta') },
-      { json: 'payload', js: 'payload', typ: r('BroadcastRequestPayload') },
+      { json: 'meta', js: 'meta', typ: r('PurpleBridgeRequestMetadata') },
+      { json: 'payload', js: 'payload', typ: m('any') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  BroadcastRequestMeta: o(
+  PurpleBridgeRequestMetadata: o(
+    [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('Identifier')) },
+      { json: 'requestUuid', js: 'requestUuid', typ: '' },
+      { json: 'source', js: 'source', typ: r('Identifier') },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+    ],
+    'any'
+  ),
+  BridgeResponse: o(
+    [
+      { json: 'meta', js: 'meta', typ: r('PurpleMetadata') },
+      { json: 'payload', js: 'payload', typ: m('any') },
+      { json: 'type', js: 'type', typ: '' },
+    ],
+    false
+  ),
+  PurpleMetadata: o(
     [
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+      { json: 'responseUuid', js: 'responseUuid', typ: '' },
+      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
+      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('Identifier'))) },
+      { json: 'sources', js: 'sources', typ: u(undefined, a(r('Identifier'))) },
+    ],
+    false
+  ),
+  BroadcastAgentRequest: o(
+    [
+      { json: 'meta', js: 'meta', typ: r('MetaClass') },
+      { json: 'payload', js: 'payload', typ: r('PurpleMessagePayload') },
+      { json: 'type', js: 'type', typ: '' },
+    ],
+    false
+  ),
+  MetaClass: o(
+    [
+      { json: 'requestUuid', js: 'requestUuid', typ: '' },
+      { json: 'source', js: 'source', typ: u(undefined, r('SourceObject')) },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
     false
   ),
-  PurpleIdentifier: o(
+  SourceObject: o(
     [
       { json: 'appId', js: 'appId', typ: '' },
       { json: 'desktopAgent', js: 'desktopAgent', typ: u(undefined, '') },
@@ -2316,7 +2779,7 @@ const typeMap: any = {
     ],
     'any'
   ),
-  BroadcastRequestPayload: o(
+  PurpleMessagePayload: o(
     [
       { json: 'channel', js: 'channel', typ: r('ChannelClass') },
       { json: 'context', js: 'context', typ: r('ContextElement') },
@@ -2338,6 +2801,29 @@ const typeMap: any = {
       { json: 'type', js: 'type', typ: '' },
     ],
     'any'
+  ),
+  BroadcastBridgeRequest: o(
+    [
+      { json: 'meta', js: 'meta', typ: r('BroadcastBridgeRequestMeta') },
+      { json: 'payload', js: 'payload', typ: r('BroadcastBridgeRequestPayload') },
+      { json: 'type', js: 'type', typ: '' },
+    ],
+    false
+  ),
+  BroadcastBridgeRequestMeta: o(
+    [
+      { json: 'requestUuid', js: 'requestUuid', typ: '' },
+      { json: 'source', js: 'source', typ: r('SourceObject') },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+    ],
+    false
+  ),
+  BroadcastBridgeRequestPayload: o(
+    [
+      { json: 'channel', js: 'channel', typ: r('ChannelClass') },
+      { json: 'context', js: 'context', typ: r('ContextElement') },
+    ],
+    false
   ),
   ConnectionStep2Hello: o(
     [
@@ -2441,49 +2927,75 @@ const typeMap: any = {
     ],
     false
   ),
-  FindInstancesRequest: o(
+  FindInstancesAgentRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('FindInstancesRequestMeta') },
-      { json: 'payload', js: 'payload', typ: r('FindInstancesRequestPayload') },
+      { json: 'meta', js: 'meta', typ: r('FindInstancesAgentRequestMeta') },
+      { json: 'payload', js: 'payload', typ: r('FluffyMessagePayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  FindInstancesRequestMeta: o(
+  FindInstancesAgentRequestMeta: o(
     [
       { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationClass')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
+      { json: 'source', js: 'source', typ: u(undefined, r('SourceObject')) },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
-    false
+    'any'
   ),
   DestinationClass: o([{ json: 'desktopAgent', js: 'desktopAgent', typ: '' }], false),
-  FindInstancesRequestPayload: o([{ json: 'app', js: 'app', typ: r('SourceElement') }], false),
-  FindInstancesResponse: o(
+  FluffyMessagePayload: o([{ json: 'app', js: 'app', typ: r('SourceElement') }], false),
+  FindInstancesAgentResponse: o(
     [
-      { json: 'meta', js: 'meta', typ: r('FindInstancesResponseMeta') },
-      { json: 'payload', js: 'payload', typ: r('FindInstancesResponsePayload') },
+      { json: 'meta', js: 'meta', typ: r('AgentResponseMetadata') },
+      { json: 'payload', js: 'payload', typ: r('FindInstancesAgentResponsePayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  FindInstancesResponseMeta: o(
+  FindInstancesAgentResponsePayload: o(
+    [{ json: 'appIdentifiers', js: 'appIdentifiers', typ: a(r('AppMetadataElement')) }],
+    false
+  ),
+  FindInstancesBridgeRequest: o(
+    [
+      { json: 'meta', js: 'meta', typ: r('FindInstancesBridgeRequestMeta') },
+      { json: 'payload', js: 'payload', typ: r('FindInstancesBridgeRequestPayload') },
+      { json: 'type', js: 'type', typ: '' },
+    ],
+    false
+  ),
+  FindInstancesBridgeRequestMeta: o(
+    [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationClass')) },
+      { json: 'requestUuid', js: 'requestUuid', typ: '' },
+      { json: 'source', js: 'source', typ: r('SourceObject') },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+    ],
+    'any'
+  ),
+  FindInstancesBridgeRequestPayload: o([{ json: 'app', js: 'app', typ: r('SourceElement') }], false),
+  FindInstancesBridgeResponse: o(
+    [
+      { json: 'meta', js: 'meta', typ: r('FindInstancesBridgeResponseMeta') },
+      { json: 'payload', js: 'payload', typ: m('any') },
+      { json: 'type', js: 'type', typ: '' },
+    ],
+    false
+  ),
+  FindInstancesBridgeResponseMeta: o(
     [
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'timestamp', js: 'timestamp', typ: Date },
-      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
-      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('DestinationElement'))) },
       { json: 'responseUuid', js: 'responseUuid', typ: '' },
+      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
+      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('Identifier'))) },
       { json: 'sources', js: 'sources', typ: u(undefined, a(r('ErrorSourceElement'))) },
     ],
     false
   ),
   ErrorSourceElement: o([{ json: 'desktopAgent', js: 'desktopAgent', typ: '' }], false),
-  FindInstancesResponsePayload: o(
-    [{ json: 'appIdentifiers', js: 'appIdentifiers', typ: a(r('AppMetadataElement')) }],
-    false
-  ),
   FindIntentRequest: o(
     [
       { json: 'meta', js: 'meta', typ: r('FindIntentRequestMeta') },
@@ -2495,7 +3007,7 @@ const typeMap: any = {
   FindIntentRequestMeta: o(
     [
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
+      { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
     false
@@ -2519,9 +3031,9 @@ const typeMap: any = {
     [
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'timestamp', js: 'timestamp', typ: Date },
+      { json: 'responseUuid', js: 'responseUuid', typ: '' },
       { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
       { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('ErrorSourceElement'))) },
-      { json: 'responseUuid', js: 'responseUuid', typ: '' },
       { json: 'sources', js: 'sources', typ: u(undefined, a(r('ErrorSourceElement'))) },
     ],
     false
@@ -2545,7 +3057,7 @@ const typeMap: any = {
   FindIntentsByContextRequestMeta: o(
     [
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
+      { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
     false
@@ -2563,9 +3075,9 @@ const typeMap: any = {
     [
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'timestamp', js: 'timestamp', typ: Date },
+      { json: 'responseUuid', js: 'responseUuid', typ: '' },
       { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
       { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('ErrorSourceElement'))) },
-      { json: 'responseUuid', js: 'responseUuid', typ: '' },
       { json: 'sources', js: 'sources', typ: u(undefined, a(r('ErrorSourceElement'))) },
     ],
     false
@@ -2586,7 +3098,7 @@ const typeMap: any = {
     [
       { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationClass')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
+      { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
     false
@@ -2604,9 +3116,9 @@ const typeMap: any = {
     [
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'timestamp', js: 'timestamp', typ: Date },
+      { json: 'responseUuid', js: 'responseUuid', typ: '' },
       { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
       { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('ErrorSourceElement'))) },
-      { json: 'responseUuid', js: 'responseUuid', typ: '' },
       { json: 'sources', js: 'sources', typ: u(undefined, a(r('ErrorSourceElement'))) },
     ],
     false
@@ -2624,7 +3136,7 @@ const typeMap: any = {
     [
       { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationClass')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
+      { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
     false
@@ -2648,9 +3160,9 @@ const typeMap: any = {
     [
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'timestamp', js: 'timestamp', typ: Date },
+      { json: 'responseUuid', js: 'responseUuid', typ: '' },
       { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
       { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('ErrorSourceElement'))) },
-      { json: 'responseUuid', js: 'responseUuid', typ: '' },
       { json: 'sources', js: 'sources', typ: u(undefined, a(r('ErrorSourceElement'))) },
     ],
     false
@@ -2666,9 +3178,9 @@ const typeMap: any = {
   ),
   PrivateChannelBroadcastMeta: o(
     [
-      { json: 'destination', js: 'destination', typ: u(undefined, r('PurpleIdentifier')) },
+      { json: 'destination', js: 'destination', typ: u(undefined, r('SourceObject')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
+      { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
     false
@@ -2690,9 +3202,9 @@ const typeMap: any = {
   ),
   PrivateChannelEventListenerAddedMeta: o(
     [
-      { json: 'destination', js: 'destination', typ: u(undefined, r('PurpleIdentifier')) },
+      { json: 'destination', js: 'destination', typ: u(undefined, r('SourceObject')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
+      { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
     false
@@ -2714,9 +3226,9 @@ const typeMap: any = {
   ),
   PrivateChannelEventListenerRemovedMeta: o(
     [
-      { json: 'destination', js: 'destination', typ: u(undefined, r('PurpleIdentifier')) },
+      { json: 'destination', js: 'destination', typ: u(undefined, r('SourceObject')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
+      { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
     false
@@ -2738,9 +3250,9 @@ const typeMap: any = {
   ),
   PrivateChannelOnAddContextListenerMeta: o(
     [
-      { json: 'destination', js: 'destination', typ: u(undefined, r('PurpleIdentifier')) },
+      { json: 'destination', js: 'destination', typ: u(undefined, r('SourceObject')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
+      { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
     false
@@ -2762,9 +3274,9 @@ const typeMap: any = {
   ),
   PrivateChannelOnDisconnectMeta: o(
     [
-      { json: 'destination', js: 'destination', typ: u(undefined, r('PurpleIdentifier')) },
+      { json: 'destination', js: 'destination', typ: u(undefined, r('SourceObject')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
+      { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
     false
@@ -2780,9 +3292,9 @@ const typeMap: any = {
   ),
   PrivateChannelOnUnsubscribeMeta: o(
     [
-      { json: 'destination', js: 'destination', typ: u(undefined, r('PurpleIdentifier')) },
+      { json: 'destination', js: 'destination', typ: u(undefined, r('SourceObject')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
+      { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
     false
@@ -2804,9 +3316,9 @@ const typeMap: any = {
   ),
   RaiseIntentRequestMeta: o(
     [
-      { json: 'destination', js: 'destination', typ: r('PurpleIdentifier') },
+      { json: 'destination', js: 'destination', typ: r('SourceObject') },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('PurpleIdentifier') },
+      { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
     false
@@ -2831,9 +3343,9 @@ const typeMap: any = {
     [
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'timestamp', js: 'timestamp', typ: Date },
-      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
-      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('DestinationElement'))) },
       { json: 'responseUuid', js: 'responseUuid', typ: '' },
+      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
+      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('Identifier'))) },
       { json: 'sources', js: 'sources', typ: u(undefined, a(r('ErrorSourceElement'))) },
     ],
     false
@@ -2862,9 +3374,9 @@ const typeMap: any = {
     [
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'timestamp', js: 'timestamp', typ: Date },
-      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
-      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('DestinationElement'))) },
       { json: 'responseUuid', js: 'responseUuid', typ: '' },
+      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
+      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('Identifier'))) },
       { json: 'sources', js: 'sources', typ: u(undefined, a(r('SourceElement'))) },
     ],
     false

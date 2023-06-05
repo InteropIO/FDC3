@@ -3,12 +3,15 @@
   "$id": "https://fdc3.finos.org/schemas/next/bridging/agentResponse.schema.json",
   "title": "agentResponse",
   "type": "object",
+  "description": "Schema defining the format of all response messages from a Desktop Agent to the Bridge. Individual message schemas further refine this format for each response type.",
   "properties": {
     "type": {
+      "title": "Message type",
       "type": "string",
       "description": "Identifies the type of the message and it is typically set to the FDC3 function name that the message relates to, e.g. 'findIntent', with 'Response' appended."
     },
     "payload": {
+      "title": "Message payload",
       "type": "object",
       "description": "The message payload typically contains return values for FDC3 API functions."
     },
@@ -20,6 +23,7 @@
   "required": ["type", "payload", "meta"],
   "$defs": {
     "AgentResponseMeta": {
+      "title": "Agent response metadata",
       "type": "object",
       "allOf": [
         {
@@ -32,7 +36,7 @@
             "timestamp": true,
             "responseUuid": {
               "type": "string",
-              "description": "Unique UUID for the response"
+              "description": "UUID for the response"
             }
           },
           "required": ["requestUuid", "responseUuid", "timestamp"],
