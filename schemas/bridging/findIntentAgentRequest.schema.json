@@ -1,11 +1,11 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://fdc3.finos.org/schemas/next/bridging/findIntentRequest.schema.json",
-  "title": "findIntentRequest",
+  "$id": "https://fdc3.finos.org/schemas/next/bridging/findIntentAgentRequest.schema.json",
+  "title": "findIntentAgentRequest",
   "type": "object",
   "allOf": [
     {
-      "$ref": "bridgeRequest.schema.json"
+      "$ref": "agentRequest.schema.json"
     },
     {
       "type": "object",
@@ -27,6 +27,8 @@
           "additionalProperties": false
         },
         "meta": {
+          "type": "object",
+          "title" : "findIntent request metadata",
           "properties": {
             "requestUuid": true,
             "timestamp": true,
@@ -34,7 +36,7 @@
               "$ref": "../api/appIdentifier.schema.json"
             }
           },
-          "additionalProperties": false
+          "unevaluatedProperties": false
         }
       },
       "additionalProperties": false

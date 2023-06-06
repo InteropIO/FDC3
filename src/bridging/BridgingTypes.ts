@@ -1,6 +1,6 @@
 // To parse this data:
 //
-//   import { Convert, AppIdentifier, AppIntent, AppMetadata, BaseImplementationMetadata, Channel, ContextMetadata, DesktopAgentIdentifier, DisplayMetadata, Icon, Image, ImplementationMetadata, IntentMetadata, IntentResolution, IntentResult, AgentRequest, AgentResponse, BridgeRequest, BridgeResponse, BroadcastAgentRequest, BroadcastBridgeRequest, ConnectionStep2Hello, ConnectionStep3Handshake, ConnectionStep4AuthenticationFailed, ConnectionStep6ConnectedAgentsUpdate, FindInstancesAgentRequest, FindInstancesAgentResponse, FindInstancesBridgeRequest, FindInstancesBridgeResponse, FindIntentRequest, FindIntentResponse, FindIntentsByContextRequest, FindIntentsByContextResponse, GetAppMetadataRequest, GetAppMetadataResponse, OpenRequest, OpenResponse, PrivateChannelBroadcast, PrivateChannelEventListenerAdded, PrivateChannelEventListenerRemoved, PrivateChannelOnAddContextListener, PrivateChannelOnDisconnect, PrivateChannelOnUnsubscribe, RaiseIntentRequest, RaiseIntentResponse, RaiseIntentResultResponse, Context } from "./file";
+//   import { Convert, AppIdentifier, AppIntent, AppMetadata, BaseImplementationMetadata, Channel, ContextMetadata, DesktopAgentIdentifier, DisplayMetadata, Icon, Image, ImplementationMetadata, IntentMetadata, IntentResolution, IntentResult, AgentRequest, AgentResponse, BridgeRequest, BridgeResponse, BroadcastAgentRequest, BroadcastBridgeRequest, ConnectionStep2Hello, ConnectionStep3Handshake, ConnectionStep4AuthenticationFailed, ConnectionStep6ConnectedAgentsUpdate, FindInstancesAgentRequest, FindInstancesAgentResponse, FindInstancesBridgeRequest, FindInstancesBridgeResponse, FindIntentAgentRequest, FindIntentAgentResponse, FindIntentBridgeRequest, FindIntentBridgeResponse, FindIntentsByContextAgentRequest, FindIntentsByContextAgentResponse, FindIntentsByContextBridgeRequest, FindIntentsByContextBridgeResponse, GetAppMetadataRequest, GetAppMetadataResponse, OpenRequest, OpenResponse, PrivateChannelBroadcast, PrivateChannelEventListenerAdded, PrivateChannelEventListenerRemoved, PrivateChannelOnAddContextListener, PrivateChannelOnDisconnect, PrivateChannelOnUnsubscribe, RaiseIntentRequest, RaiseIntentResponse, RaiseIntentResultResponse, Context } from "./file";
 //
 //   const appIdentifier = Convert.toAppIdentifier(json);
 //   const appIntent = Convert.toAppIntent(json);
@@ -31,10 +31,14 @@
 //   const findInstancesAgentResponse = Convert.toFindInstancesAgentResponse(json);
 //   const findInstancesBridgeRequest = Convert.toFindInstancesBridgeRequest(json);
 //   const findInstancesBridgeResponse = Convert.toFindInstancesBridgeResponse(json);
-//   const findIntentRequest = Convert.toFindIntentRequest(json);
-//   const findIntentResponse = Convert.toFindIntentResponse(json);
-//   const findIntentsByContextRequest = Convert.toFindIntentsByContextRequest(json);
-//   const findIntentsByContextResponse = Convert.toFindIntentsByContextResponse(json);
+//   const findIntentAgentRequest = Convert.toFindIntentAgentRequest(json);
+//   const findIntentAgentResponse = Convert.toFindIntentAgentResponse(json);
+//   const findIntentBridgeRequest = Convert.toFindIntentBridgeRequest(json);
+//   const findIntentBridgeResponse = Convert.toFindIntentBridgeResponse(json);
+//   const findIntentsByContextAgentRequest = Convert.toFindIntentsByContextAgentRequest(json);
+//   const findIntentsByContextAgentResponse = Convert.toFindIntentsByContextAgentResponse(json);
+//   const findIntentsByContextBridgeRequest = Convert.toFindIntentsByContextBridgeRequest(json);
+//   const findIntentsByContextBridgeResponse = Convert.toFindIntentsByContextBridgeResponse(json);
 //   const getAppMetadataRequest = Convert.toGetAppMetadataRequest(json);
 //   const getAppMetadataResponse = Convert.toGetAppMetadataResponse(json);
 //   const openRequest = Convert.toOpenRequest(json);
@@ -322,7 +326,7 @@ export interface AgentRequestMeta {
    */
   destination?: Identifier;
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -385,7 +389,7 @@ export interface AgentResponseMetadata {
    */
   destination?: Identifier;
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -433,7 +437,7 @@ export interface PurpleBridgeRequestMetadata {
    */
   destination?: Identifier;
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -471,7 +475,7 @@ export interface BridgeResponse {
 
 export interface PurpleMetadata {
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -522,7 +526,7 @@ export interface BroadcastAgentRequest {
 
 export interface MetaClass {
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -606,7 +610,7 @@ export interface BroadcastBridgeRequest {
 
 export interface BroadcastBridgeRequestMeta {
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -797,7 +801,7 @@ export interface ImplementationMetadataElement {
  * Individual message schemas further refine this format for each request type.
  */
 export interface FindInstancesAgentRequest {
-  meta: FindInstancesAgentRequestMeta;
+  meta: AgentRequestMetadata;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
@@ -809,7 +813,7 @@ export interface FindInstancesAgentRequest {
   type: string;
 }
 
-export interface FindInstancesAgentRequestMeta {
+export interface AgentRequestMetadata {
   /**
    * Optional field that represents the destination that the request should be routed to. Must
    * be set by the Desktop Agent for API calls that include a target app parameter and must
@@ -817,7 +821,7 @@ export interface FindInstancesAgentRequestMeta {
    */
   destination?: DestinationClass;
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -868,7 +872,7 @@ export interface FindInstancesAgentResponse {
   /**
    * The message payload typically contains return values for FDC3 API functions.
    */
-  payload: FindInstancesAgentResponsePayload;
+  payload: PurpleEPayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Response' appended.
@@ -879,7 +883,7 @@ export interface FindInstancesAgentResponse {
 /**
  * The message payload typically contains return values for FDC3 API functions.
  */
-export interface FindInstancesAgentResponsePayload {
+export interface PurpleEPayload {
   appIdentifiers: AppMetadataElement[];
 }
 
@@ -912,7 +916,7 @@ export interface FindInstancesBridgeRequestMeta {
    */
   destination?: DestinationClass;
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -947,7 +951,7 @@ export interface FindInstancesBridgeResponse {
   /**
    * The message payload typically contains return values for FDC3 API functions.
    */
-  payload: { [key: string]: any };
+  payload: FindInstancesBridgeResponsePayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Response' appended.
@@ -957,7 +961,7 @@ export interface FindInstancesBridgeResponse {
 
 export interface FindInstancesBridgeResponseMeta {
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -1000,19 +1004,22 @@ export interface ErrorSourceElement {
 }
 
 /**
- * Schema defining the format of all forwarded request messages from the Bridge onto a
- * Desktop Agent connected to it. Individual message schemas further refine this format for
- * each request type.
- *
+ * The message payload typically contains return values for FDC3 API functions.
+ */
+export interface FindInstancesBridgeResponsePayload {
+  appIdentifiers: AppMetadataElement[];
+}
+
+/**
  * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
  * Individual message schemas further refine this format for each request type.
  */
-export interface FindIntentRequest {
-  meta: FindIntentRequestMeta;
+export interface FindIntentAgentRequest {
+  meta: EntRequestMetadata;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
-  payload: FindIntentRequestPayload;
+  payload: TentacledMessagePayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Request' appended.
@@ -1020,44 +1027,47 @@ export interface FindIntentRequest {
   type: string;
 }
 
-export interface FindIntentRequestMeta {
+export interface EntRequestMetadata {
   /**
-   * Unique UUID for the request
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: Identifier;
+  /**
+   * UUID for the request
    */
   requestUuid: string;
   /**
    * Field that represents the source application that the request was received from, or the
    * source Desktop Agent if it issued the request itself.
    */
-  source: SourceObject;
+  source?: SourceObject;
   /**
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
+  [property: string]: any;
 }
 
 /**
  * The message payload typically contains the arguments to FDC3 API functions.
  */
-export interface FindIntentRequestPayload {
+export interface TentacledMessagePayload {
   context: ContextElement;
   intent: string;
 }
 
 /**
- * Schema defining the format of all response messages from a the Bridge to the original
- * Desktop Agent that raised a request. Individual message schemas further refine this
- * format for each response type.
- *
  * Schema defining the format of all response messages from a Desktop Agent to the Bridge.
  * Individual message schemas further refine this format for each response type.
  */
-export interface FindIntentResponse {
-  meta: FindIntentResponseMeta;
+export interface FindIntentAgentResponse {
+  meta: AgentResponseMetadata;
   /**
    * The message payload typically contains return values for FDC3 API functions.
    */
-  payload: FindIntentResponsePayload;
+  payload: StickyMessagePayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Response' appended.
@@ -1065,44 +1075,10 @@ export interface FindIntentResponse {
   type: string;
 }
 
-export interface FindIntentResponseMeta {
-  /**
-   * Unique UUID for the request
-   */
-  requestUuid: string;
-  /**
-   * Timestamp at which request or response was generated
-   */
-  timestamp: Date;
-  /**
-   * UUID for the response
-   */
-  responseUuid: string;
-  /**
-   * Array of error message strings for responses that were not returned to the bridge before
-   * the timeout or because an error occurred. Should be the same length as the `errorSources`
-   * array and ordered the same. May be omitted if all sources responded without errors.
-   */
-  errorDetails?: string[];
-  /**
-   * Array of AppIdentifiers or DesktopAgentIdentifiers for responses that were not returned
-   * to the bridge before the timeout or because an error occurred. May be omitted if all
-   * sources responded without errors.
-   */
-  errorSources?: ErrorSourceElement[];
-  /**
-   * Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
-   * responses to the request. Will contain a single value for individual responses and
-   * multiple values for responses that were collated by the bridge. May be omitted if all
-   * sources errored.
-   */
-  sources?: ErrorSourceElement[];
-}
-
 /**
  * The message payload typically contains return values for FDC3 API functions.
  */
-export interface FindIntentResponsePayload {
+export interface StickyMessagePayload {
   appIntent: AppIntentElement;
 }
 
@@ -1122,12 +1098,12 @@ export interface AppIntentElement {
  * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
  * Individual message schemas further refine this format for each request type.
  */
-export interface FindIntentsByContextRequest {
-  meta: FindIntentsByContextRequestMeta;
+export interface FindIntentBridgeRequest {
+  meta: FindIntentBridgeRequestMeta;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
-  payload: FindIntentsByContextRequestPayload;
+  payload: FindIntentBridgeRequestPayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Request' appended.
@@ -1135,9 +1111,15 @@ export interface FindIntentsByContextRequest {
   type: string;
 }
 
-export interface FindIntentsByContextRequestMeta {
+export interface FindIntentBridgeRequestMeta {
   /**
-   * Unique UUID for the request
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: Identifier;
+  /**
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -1149,13 +1131,15 @@ export interface FindIntentsByContextRequestMeta {
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
+  [property: string]: any;
 }
 
 /**
  * The message payload typically contains the arguments to FDC3 API functions.
  */
-export interface FindIntentsByContextRequestPayload {
+export interface FindIntentBridgeRequestPayload {
   context: ContextElement;
+  intent: string;
 }
 
 /**
@@ -1166,12 +1150,12 @@ export interface FindIntentsByContextRequestPayload {
  * Schema defining the format of all response messages from a Desktop Agent to the Bridge.
  * Individual message schemas further refine this format for each response type.
  */
-export interface FindIntentsByContextResponse {
-  meta: FindIntentsByContextResponseMeta;
+export interface FindIntentBridgeResponse {
+  meta: FindIntentBridgeResponseMeta;
   /**
    * The message payload typically contains return values for FDC3 API functions.
    */
-  payload: FindIntentsByContextResponsePayload;
+  payload: FindIntentBridgeResponsePayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Response' appended.
@@ -1179,9 +1163,9 @@ export interface FindIntentsByContextResponse {
   type: string;
 }
 
-export interface FindIntentsByContextResponseMeta {
+export interface FindIntentBridgeResponseMeta {
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -1216,7 +1200,173 @@ export interface FindIntentsByContextResponseMeta {
 /**
  * The message payload typically contains return values for FDC3 API functions.
  */
-export interface FindIntentsByContextResponsePayload {
+export interface FindIntentBridgeResponsePayload {
+  appIntent: AppIntentElement;
+}
+
+/**
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
+export interface FindIntentsByContextAgentRequest {
+  meta: FindIntentsByContextAgentRequestMeta;
+  /**
+   * The message payload typically contains the arguments to FDC3 API functions.
+   */
+  payload: IndigoMessagePayload;
+  /**
+   * Identifies the type of the message and it is typically set to the FDC3 function name that
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
+   */
+  type: string;
+}
+
+export interface FindIntentsByContextAgentRequestMeta {
+  /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: Identifier;
+  /**
+   * UUID for the request
+   */
+  requestUuid: string;
+  /**
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
+   */
+  source?: SourceObject;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  [property: string]: any;
+}
+
+/**
+ * The message payload typically contains the arguments to FDC3 API functions.
+ */
+export interface IndigoMessagePayload {
+  context: ContextElement;
+}
+
+/**
+ * Schema defining the format of all response messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each response type.
+ */
+export interface FindIntentsByContextAgentResponse {
+  meta: AgentResponseMetadata;
+  /**
+   * The message payload typically contains return values for FDC3 API functions.
+   */
+  payload: IndecentMessagePayload;
+  /**
+   * Identifies the type of the message and it is typically set to the FDC3 function name that
+   * the message relates to, e.g. 'findIntent', with 'Response' appended.
+   */
+  type: string;
+}
+
+/**
+ * The message payload typically contains return values for FDC3 API functions.
+ */
+export interface IndecentMessagePayload {
+  appIntents: AppIntentElement[];
+}
+
+/**
+ * Schema defining the format of all forwarded request messages from the Bridge onto a
+ * Desktop Agent connected to it. Individual message schemas further refine this format for
+ * each request type.
+ *
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
+export interface FindIntentsByContextBridgeRequest {
+  meta: FindIntentsByContextBridgeRequestMeta;
+  /**
+   * The message payload typically contains the arguments to FDC3 API functions.
+   */
+  payload: FindIntentsByContextBridgeRequestPayload;
+  /**
+   * Identifies the type of the message and it is typically set to the FDC3 function name that
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
+   */
+  type: string;
+}
+
+export interface FindIntentsByContextBridgeRequestMeta {
+  /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: Identifier;
+  /**
+   * UUID for the request
+   */
+  requestUuid: string;
+  /**
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
+   */
+  source: SourceObject;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  [property: string]: any;
+}
+
+/**
+ * The message payload typically contains the arguments to FDC3 API functions.
+ */
+export interface FindIntentsByContextBridgeRequestPayload {
+  context: ContextElement;
+}
+
+/**
+ * Schema defining the format of all response messages from a the Bridge to the original
+ * Desktop Agent that raised a request. Individual message schemas further refine this
+ * format for each response type.
+ *
+ * Schema defining the format of all response messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each response type.
+ */
+export interface FindIntentsByContextBridgeResponse {
+  meta: FindIntentsByContextBridgeResponseMeta;
+  /**
+   * The message payload typically contains return values for FDC3 API functions.
+   */
+  payload: FindIntentsByContextBridgeResponsePayload;
+  /**
+   * Identifies the type of the message and it is typically set to the FDC3 function name that
+   * the message relates to, e.g. 'findIntent', with 'Response' appended.
+   */
+  type: string;
+}
+
+export interface FindIntentsByContextBridgeResponseMeta {
+  /**
+   * Array of AppIdentifiers or DesktopAgentIdentifiers for responses that were not returned
+   * to the bridge before the timeout or because an error occurred. May be omitted if all
+   * sources responded without errors.
+   */
+  errorSources?: ErrorSourceElement[];
+  /**
+   * Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated
+   * responses to the request. Will contain a single value for individual responses and
+   * multiple values for responses that were collated by the bridge. May be omitted if all
+   * sources errored.
+   */
+  sources?: ErrorSourceElement[];
+}
+
+/**
+ * The message payload typically contains return values for FDC3 API functions.
+ */
+export interface FindIntentsByContextBridgeResponsePayload {
   appIntents: AppIntentElement[];
 }
 
@@ -1249,7 +1399,7 @@ export interface GetAppMetadataRequestMeta {
    */
   destination?: DestinationClass;
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -1293,7 +1443,7 @@ export interface GetAppMetadataResponse {
 
 export interface GetAppMetadataResponseMeta {
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -1361,7 +1511,7 @@ export interface OpenRequestMeta {
    */
   destination?: DestinationClass;
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -1406,7 +1556,7 @@ export interface OpenResponse {
 
 export interface OpenResponseMeta {
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -1474,7 +1624,7 @@ export interface PrivateChannelBroadcastMeta {
    */
   destination?: SourceObject;
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -1525,7 +1675,7 @@ export interface PrivateChannelEventListenerAddedMeta {
    */
   destination?: SourceObject;
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -1576,7 +1726,7 @@ export interface PrivateChannelEventListenerRemovedMeta {
    */
   destination?: SourceObject;
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -1627,7 +1777,7 @@ export interface PrivateChannelOnAddContextListenerMeta {
    */
   destination?: SourceObject;
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -1678,7 +1828,7 @@ export interface PrivateChannelOnDisconnectMeta {
    */
   destination?: SourceObject;
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -1728,7 +1878,7 @@ export interface PrivateChannelOnUnsubscribeMeta {
    */
   destination?: SourceObject;
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -1779,7 +1929,7 @@ export interface RaiseIntentRequestMeta {
    */
   destination: SourceObject;
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -1825,7 +1975,7 @@ export interface RaiseIntentResponse {
 
 export interface RaiseIntentResponseMeta {
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -1896,7 +2046,7 @@ export interface RaiseIntentResultResponse {
 
 export interface RaiseIntentResultResponseMeta {
   /**
-   * Unique UUID for the request
+   * UUID for the request
    */
   requestUuid: string;
   /**
@@ -2182,36 +2332,68 @@ export class Convert {
     return JSON.stringify(uncast(value, r('FindInstancesBridgeResponse')), null, 2);
   }
 
-  public static toFindIntentRequest(json: string): FindIntentRequest {
-    return cast(JSON.parse(json), r('FindIntentRequest'));
+  public static toFindIntentAgentRequest(json: string): FindIntentAgentRequest {
+    return cast(JSON.parse(json), r('FindIntentAgentRequest'));
   }
 
-  public static findIntentRequestToJson(value: FindIntentRequest): string {
-    return JSON.stringify(uncast(value, r('FindIntentRequest')), null, 2);
+  public static findIntentAgentRequestToJson(value: FindIntentAgentRequest): string {
+    return JSON.stringify(uncast(value, r('FindIntentAgentRequest')), null, 2);
   }
 
-  public static toFindIntentResponse(json: string): FindIntentResponse {
-    return cast(JSON.parse(json), r('FindIntentResponse'));
+  public static toFindIntentAgentResponse(json: string): FindIntentAgentResponse {
+    return cast(JSON.parse(json), r('FindIntentAgentResponse'));
   }
 
-  public static findIntentResponseToJson(value: FindIntentResponse): string {
-    return JSON.stringify(uncast(value, r('FindIntentResponse')), null, 2);
+  public static findIntentAgentResponseToJson(value: FindIntentAgentResponse): string {
+    return JSON.stringify(uncast(value, r('FindIntentAgentResponse')), null, 2);
   }
 
-  public static toFindIntentsByContextRequest(json: string): FindIntentsByContextRequest {
-    return cast(JSON.parse(json), r('FindIntentsByContextRequest'));
+  public static toFindIntentBridgeRequest(json: string): FindIntentBridgeRequest {
+    return cast(JSON.parse(json), r('FindIntentBridgeRequest'));
   }
 
-  public static findIntentsByContextRequestToJson(value: FindIntentsByContextRequest): string {
-    return JSON.stringify(uncast(value, r('FindIntentsByContextRequest')), null, 2);
+  public static findIntentBridgeRequestToJson(value: FindIntentBridgeRequest): string {
+    return JSON.stringify(uncast(value, r('FindIntentBridgeRequest')), null, 2);
   }
 
-  public static toFindIntentsByContextResponse(json: string): FindIntentsByContextResponse {
-    return cast(JSON.parse(json), r('FindIntentsByContextResponse'));
+  public static toFindIntentBridgeResponse(json: string): FindIntentBridgeResponse {
+    return cast(JSON.parse(json), r('FindIntentBridgeResponse'));
   }
 
-  public static findIntentsByContextResponseToJson(value: FindIntentsByContextResponse): string {
-    return JSON.stringify(uncast(value, r('FindIntentsByContextResponse')), null, 2);
+  public static findIntentBridgeResponseToJson(value: FindIntentBridgeResponse): string {
+    return JSON.stringify(uncast(value, r('FindIntentBridgeResponse')), null, 2);
+  }
+
+  public static toFindIntentsByContextAgentRequest(json: string): FindIntentsByContextAgentRequest {
+    return cast(JSON.parse(json), r('FindIntentsByContextAgentRequest'));
+  }
+
+  public static findIntentsByContextAgentRequestToJson(value: FindIntentsByContextAgentRequest): string {
+    return JSON.stringify(uncast(value, r('FindIntentsByContextAgentRequest')), null, 2);
+  }
+
+  public static toFindIntentsByContextAgentResponse(json: string): FindIntentsByContextAgentResponse {
+    return cast(JSON.parse(json), r('FindIntentsByContextAgentResponse'));
+  }
+
+  public static findIntentsByContextAgentResponseToJson(value: FindIntentsByContextAgentResponse): string {
+    return JSON.stringify(uncast(value, r('FindIntentsByContextAgentResponse')), null, 2);
+  }
+
+  public static toFindIntentsByContextBridgeRequest(json: string): FindIntentsByContextBridgeRequest {
+    return cast(JSON.parse(json), r('FindIntentsByContextBridgeRequest'));
+  }
+
+  public static findIntentsByContextBridgeRequestToJson(value: FindIntentsByContextBridgeRequest): string {
+    return JSON.stringify(uncast(value, r('FindIntentsByContextBridgeRequest')), null, 2);
+  }
+
+  public static toFindIntentsByContextBridgeResponse(json: string): FindIntentsByContextBridgeResponse {
+    return cast(JSON.parse(json), r('FindIntentsByContextBridgeResponse'));
+  }
+
+  public static findIntentsByContextBridgeResponseToJson(value: FindIntentsByContextBridgeResponse): string {
+    return JSON.stringify(uncast(value, r('FindIntentsByContextBridgeResponse')), null, 2);
   }
 
   public static toGetAppMetadataRequest(json: string): GetAppMetadataRequest {
@@ -2929,13 +3111,13 @@ const typeMap: any = {
   ),
   FindInstancesAgentRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('FindInstancesAgentRequestMeta') },
+      { json: 'meta', js: 'meta', typ: r('AgentRequestMetadata') },
       { json: 'payload', js: 'payload', typ: r('FluffyMessagePayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  FindInstancesAgentRequestMeta: o(
+  AgentRequestMetadata: o(
     [
       { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationClass')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
@@ -2949,15 +3131,12 @@ const typeMap: any = {
   FindInstancesAgentResponse: o(
     [
       { json: 'meta', js: 'meta', typ: r('AgentResponseMetadata') },
-      { json: 'payload', js: 'payload', typ: r('FindInstancesAgentResponsePayload') },
+      { json: 'payload', js: 'payload', typ: r('PurpleEPayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  FindInstancesAgentResponsePayload: o(
-    [{ json: 'appIdentifiers', js: 'appIdentifiers', typ: a(r('AppMetadataElement')) }],
-    false
-  ),
+  PurpleEPayload: o([{ json: 'appIdentifiers', js: 'appIdentifiers', typ: a(r('AppMetadataElement')) }], false),
   FindInstancesBridgeRequest: o(
     [
       { json: 'meta', js: 'meta', typ: r('FindInstancesBridgeRequestMeta') },
@@ -2979,7 +3158,7 @@ const typeMap: any = {
   FindInstancesBridgeResponse: o(
     [
       { json: 'meta', js: 'meta', typ: r('FindInstancesBridgeResponseMeta') },
-      { json: 'payload', js: 'payload', typ: m('any') },
+      { json: 'payload', js: 'payload', typ: r('FindInstancesBridgeResponsePayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
@@ -2996,49 +3175,43 @@ const typeMap: any = {
     false
   ),
   ErrorSourceElement: o([{ json: 'desktopAgent', js: 'desktopAgent', typ: '' }], false),
-  FindIntentRequest: o(
+  FindInstancesBridgeResponsePayload: o(
+    [{ json: 'appIdentifiers', js: 'appIdentifiers', typ: a(r('AppMetadataElement')) }],
+    false
+  ),
+  FindIntentAgentRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('FindIntentRequestMeta') },
-      { json: 'payload', js: 'payload', typ: r('FindIntentRequestPayload') },
+      { json: 'meta', js: 'meta', typ: r('EntRequestMetadata') },
+      { json: 'payload', js: 'payload', typ: r('TentacledMessagePayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  FindIntentRequestMeta: o(
+  EntRequestMetadata: o(
     [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('Identifier')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('SourceObject') },
+      { json: 'source', js: 'source', typ: u(undefined, r('SourceObject')) },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
-    false
+    'any'
   ),
-  FindIntentRequestPayload: o(
+  TentacledMessagePayload: o(
     [
       { json: 'context', js: 'context', typ: r('ContextElement') },
       { json: 'intent', js: 'intent', typ: '' },
     ],
     false
   ),
-  FindIntentResponse: o(
+  FindIntentAgentResponse: o(
     [
-      { json: 'meta', js: 'meta', typ: r('FindIntentResponseMeta') },
-      { json: 'payload', js: 'payload', typ: r('FindIntentResponsePayload') },
+      { json: 'meta', js: 'meta', typ: r('AgentResponseMetadata') },
+      { json: 'payload', js: 'payload', typ: r('StickyMessagePayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  FindIntentResponseMeta: o(
-    [
-      { json: 'requestUuid', js: 'requestUuid', typ: '' },
-      { json: 'timestamp', js: 'timestamp', typ: Date },
-      { json: 'responseUuid', js: 'responseUuid', typ: '' },
-      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
-      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('ErrorSourceElement'))) },
-      { json: 'sources', js: 'sources', typ: u(undefined, a(r('ErrorSourceElement'))) },
-    ],
-    false
-  ),
-  FindIntentResponsePayload: o([{ json: 'appIntent', js: 'appIntent', typ: r('AppIntentElement') }], false),
+  StickyMessagePayload: o([{ json: 'appIntent', js: 'appIntent', typ: r('AppIntentElement') }], false),
   AppIntentElement: o(
     [
       { json: 'apps', js: 'apps', typ: a(r('AppMetadataElement')) },
@@ -3046,32 +3219,39 @@ const typeMap: any = {
     ],
     false
   ),
-  FindIntentsByContextRequest: o(
+  FindIntentBridgeRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('FindIntentsByContextRequestMeta') },
-      { json: 'payload', js: 'payload', typ: r('FindIntentsByContextRequestPayload') },
+      { json: 'meta', js: 'meta', typ: r('FindIntentBridgeRequestMeta') },
+      { json: 'payload', js: 'payload', typ: r('FindIntentBridgeRequestPayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  FindIntentsByContextRequestMeta: o(
+  FindIntentBridgeRequestMeta: o(
     [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('Identifier')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
+    'any'
+  ),
+  FindIntentBridgeRequestPayload: o(
+    [
+      { json: 'context', js: 'context', typ: r('ContextElement') },
+      { json: 'intent', js: 'intent', typ: '' },
+    ],
     false
   ),
-  FindIntentsByContextRequestPayload: o([{ json: 'context', js: 'context', typ: r('ContextElement') }], false),
-  FindIntentsByContextResponse: o(
+  FindIntentBridgeResponse: o(
     [
-      { json: 'meta', js: 'meta', typ: r('FindIntentsByContextResponseMeta') },
-      { json: 'payload', js: 'payload', typ: r('FindIntentsByContextResponsePayload') },
+      { json: 'meta', js: 'meta', typ: r('FindIntentBridgeResponseMeta') },
+      { json: 'payload', js: 'payload', typ: r('FindIntentBridgeResponsePayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  FindIntentsByContextResponseMeta: o(
+  FindIntentBridgeResponseMeta: o(
     [
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'timestamp', js: 'timestamp', typ: Date },
@@ -3082,7 +3262,68 @@ const typeMap: any = {
     ],
     false
   ),
-  FindIntentsByContextResponsePayload: o(
+  FindIntentBridgeResponsePayload: o([{ json: 'appIntent', js: 'appIntent', typ: r('AppIntentElement') }], false),
+  FindIntentsByContextAgentRequest: o(
+    [
+      { json: 'meta', js: 'meta', typ: r('FindIntentsByContextAgentRequestMeta') },
+      { json: 'payload', js: 'payload', typ: r('IndigoMessagePayload') },
+      { json: 'type', js: 'type', typ: '' },
+    ],
+    false
+  ),
+  FindIntentsByContextAgentRequestMeta: o(
+    [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('Identifier')) },
+      { json: 'requestUuid', js: 'requestUuid', typ: '' },
+      { json: 'source', js: 'source', typ: u(undefined, r('SourceObject')) },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+    ],
+    'any'
+  ),
+  IndigoMessagePayload: o([{ json: 'context', js: 'context', typ: r('ContextElement') }], false),
+  FindIntentsByContextAgentResponse: o(
+    [
+      { json: 'meta', js: 'meta', typ: r('AgentResponseMetadata') },
+      { json: 'payload', js: 'payload', typ: r('IndecentMessagePayload') },
+      { json: 'type', js: 'type', typ: '' },
+    ],
+    false
+  ),
+  IndecentMessagePayload: o([{ json: 'appIntents', js: 'appIntents', typ: a(r('AppIntentElement')) }], false),
+  FindIntentsByContextBridgeRequest: o(
+    [
+      { json: 'meta', js: 'meta', typ: r('FindIntentsByContextBridgeRequestMeta') },
+      { json: 'payload', js: 'payload', typ: r('FindIntentsByContextBridgeRequestPayload') },
+      { json: 'type', js: 'type', typ: '' },
+    ],
+    false
+  ),
+  FindIntentsByContextBridgeRequestMeta: o(
+    [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('Identifier')) },
+      { json: 'requestUuid', js: 'requestUuid', typ: '' },
+      { json: 'source', js: 'source', typ: r('SourceObject') },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+    ],
+    'any'
+  ),
+  FindIntentsByContextBridgeRequestPayload: o([{ json: 'context', js: 'context', typ: r('ContextElement') }], false),
+  FindIntentsByContextBridgeResponse: o(
+    [
+      { json: 'meta', js: 'meta', typ: r('FindIntentsByContextBridgeResponseMeta') },
+      { json: 'payload', js: 'payload', typ: r('FindIntentsByContextBridgeResponsePayload') },
+      { json: 'type', js: 'type', typ: '' },
+    ],
+    false
+  ),
+  FindIntentsByContextBridgeResponseMeta: o(
+    [
+      { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('ErrorSourceElement'))) },
+      { json: 'sources', js: 'sources', typ: u(undefined, a(r('ErrorSourceElement'))) },
+    ],
+    false
+  ),
+  FindIntentsByContextBridgeResponsePayload: o(
     [{ json: 'appIntents', js: 'appIntents', typ: a(r('AppIntentElement')) }],
     false
   ),

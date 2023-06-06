@@ -1,27 +1,18 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://fdc3.finos.org/schemas/next/bridging/findIntentResponse.schema.json",
-  "title": "findIntentResponse",
+  "$id": "https://fdc3.finos.org/schemas/next/bridging/findIntentsByContextBridgeResponse.schema.json",
+  "title": "findIntentsByContextBridgeResponse",
   "allOf": [
     {
       "$ref": "bridgeResponse.schema.json"
     },
     {
-      "type": "object",
+      "$ref": "findIntentsByContextAgentResponse.schema.json"
+    },
+    {
       "properties": {
-        "type": {
-          "const": "findIntentResponse"
-        },
-        "payload": {
-          "type": "object",
-          "properties": {
-            "appIntent": {
-              "$ref": "../api/appIntent.schema.json"
-            }
-          },
-          "required": ["appIntent"],
-          "additionalProperties": false
-        },
+        "type": true,
+        "payload": true,
         "meta": {
           "type": "object",
           "properties": {
@@ -37,7 +28,8 @@
                 "$ref": "../api/desktopAgentIdentifier.schema.json"
               }
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     }
