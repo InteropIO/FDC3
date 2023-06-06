@@ -1,11 +1,11 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://fdc3.finos.org/schemas/next/bridging/getAppMetadataRequest.schema.json",
-  "title": "getAppMetadataRequest",
+  "$id": "https://fdc3.finos.org/schemas/next/bridging/getAppMetadataAgentRequest.schema.json",
+  "title": "getAppMetadataAgentRequest",
   "type": "object",
   "allOf": [
     {
-      "$ref": "bridgeRequest.schema.json"
+      "$ref": "agentRequest.schema.json"
     },
     {
       "type": "object",
