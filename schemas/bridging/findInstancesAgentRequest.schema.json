@@ -15,6 +15,7 @@
         },
         "payload": {
           "type": "object",
+          "title": "findInstances request payload",
           "properties": {
             "app": {
               "$ref": "../api/appIdentifier.schema.json"
@@ -25,7 +26,7 @@
         },
         "meta": {
           "type": "object",
-          "title": "findInstances request payload",
+          "title": "findInstances request metadata",
           "properties": {
             "requestUuid": true,
             "timestamp": true,

@@ -15,6 +15,7 @@
         "payload": true,
         "meta": {
           "type": "object",
+          "title": "findIntentsByContext response metadata",
           "properties": {
             "sources": {
               "type": "array",

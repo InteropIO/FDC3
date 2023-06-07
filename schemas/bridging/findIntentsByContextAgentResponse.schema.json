@@ -13,6 +13,7 @@
         },
         "payload": {
           "type": "object",
+          "title": "findIntentsByContext response payload",
           "properties": {
             "appIntents": {
               "type": "array",

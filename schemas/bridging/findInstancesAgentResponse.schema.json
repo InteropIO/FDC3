@@ -15,7 +15,7 @@
         },
         "payload": {
           "type": "object",
-          "title": "findInstancesResponsePayload",
+          "title": "findInstances Response Payload",
           "properties": {
             "appIdentifiers": {
               "type": "array",

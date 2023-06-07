@@ -16,6 +16,7 @@
         "type": true,
         "payload": true,
         "meta": {
+          "title": "findInstances bridge response metadata",
           "type": "object",
           "properties": {
             "sources": {
