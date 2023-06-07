@@ -28,7 +28,7 @@
       "properties": {
         "requestUuid": {
           "type": "string",
-          "description": "Unique UUID for the request"
+          "description": "UUID for the request"
         },
         "timestamp": {
           "type": "string",

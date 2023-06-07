@@ -25,6 +25,7 @@
         },
         "meta": {
           "type": "object",
+          "title": "findInstances request payload",
           "properties": {
             "requestUuid": true,
             "timestamp": true,
