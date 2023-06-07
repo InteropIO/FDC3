@@ -24,6 +24,8 @@
           "additionalProperties": false
         },
         "meta": {
+          "type": "object",
+          "title" : "getAppMetadata request metadata",
           "properties": {
             "requestUuid": true,
             "timestamp": true,
@@ -34,7 +36,7 @@
               "$ref": "../api/appIdentifier.schema.json"
             }
           },
-          "additionalProperties": false
+          "unevaluatedProperties": false
         }
       },
       "additionalProperties": false
