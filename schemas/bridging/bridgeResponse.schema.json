@@ -23,7 +23,7 @@
   ],
   "$defs": {
     "BridgeResponseMeta": {
-      "title": "Bridge request metadata",
+      "title": "Bridge response metadata",
       "type": "object",
       "allOf": [
         {
@@ -36,6 +36,7 @@
             "timestamp": true,
             "responseUuid": true,
             "sources": {
+              "title": "Desktop Agents that responded",
               "type": "array",
               "items": {
                 "oneOf": [
@@ -50,6 +51,7 @@
               "description": "Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated responses to the request. Will contain a single value for individual responses and multiple values for responses that were collated by the bridge. May be omitted if all sources errored."
             },
             "errorSources": {
+              "title": "Desktop Agents that returned errors",
               "type": "array",
               "items": {
                 "oneOf": [
@@ -64,6 +66,7 @@
               "description": "Array of AppIdentifiers or DesktopAgentIdentifiers for responses that were not returned to the bridge before the timeout or because an error occurred. May be omitted if all sources responded without errors."
             },
             "errorDetails": {
+              "title": "Detail of errors returned",
               "type": "array",
               "items": {
                 "type": "string"

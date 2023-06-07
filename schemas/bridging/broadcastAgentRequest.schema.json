@@ -27,6 +27,7 @@
           "required": ["channel", "context"]
         },
         "meta": {
+          "title": "Broadcast request metadata",
           "properties": {
             "requestUuid": true,
             "timestamp": true,

@@ -15,6 +15,7 @@
         },
         "payload": {
           "type": "object",
+          "title": "findIntentsByContext request payload",
           "properties": {
             "context": {
               "$ref": "../context/context.schema.json"
@@ -25,6 +26,7 @@
         },
         "meta": {
           "type": "object",
+          "title": "findIntentsByContext request metadata",
           "properties": {
             "requestUuid": true,
             "timestamp": true,

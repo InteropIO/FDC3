@@ -1,29 +1,35 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://fdc3.finos.org/schemas/next/bridging/privateChannelOnDisconnect.schema.json",
-  "title": "PrivateChannel.onDisconnect",
+  "$id": "https://fdc3.finos.org/schemas/next/bridging/privateChannelOnAddContextListenerAgentRequest.schema.json",
+  "title": "privateChannelOnAddContextListenerAgentRequest",
   "type": "object",
   "allOf": [
     {
-      "$ref": "bridgeRequest.schema.json"
+      "$ref": "agentRequest.schema.json"
     },
     {
       "type": "object",
       "properties": {
         "type": {
-          "const": "PrivateChannel.onDisconnect"
+          "const": "PrivateChannel.onAddContextListener"
         },
         "payload": {
           "type": "object",
+          "title": "privateChannel onAddContextListener request payload",
           "properties": {
             "channel": {
+              "type": "string"
+            },
+            "contextType": {
               "type": "string"
             }
           },
           "additionalProperties": false,
-          "required": ["channel"]
+          "required": ["channel", "contextType"]
         },
         "meta": {
+          "type": "object",
+          "title": "privateChannel onAddContextListener request metadata",
           "properties": {
             "requestUuid": true,
             "timestamp": true,
@@ -34,7 +40,7 @@
               "$ref": "../api/appIdentifier.schema.json"
             }
           },
-          "additionalProperties": false
+          "unevaluatedProperties": false
         }
       }
     }

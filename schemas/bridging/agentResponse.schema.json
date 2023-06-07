@@ -6,12 +6,12 @@
   "description": "Schema defining the format of all response messages from a Desktop Agent to the Bridge. Individual message schemas further refine this format for each response type.",
   "properties": {
     "type": {
-      "title": "Message type",
+      "title": "Response message type",
       "type": "string",
       "description": "Identifies the type of the message and it is typically set to the FDC3 function name that the message relates to, e.g. 'findIntent', with 'Response' appended."
     },
     "payload": {
-      "title": "Message payload",
+      "title": "Response message payload",
       "type": "object",
       "description": "The message payload typically contains return values for FDC3 API functions."
     },

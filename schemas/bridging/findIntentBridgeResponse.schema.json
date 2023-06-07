@@ -16,6 +16,7 @@
         "payload": true,
         "meta": {
           "type": "object",
+          "title": "findIntent bridge response metadata",
           "properties": {
             "sources": {
               "type": "array",

@@ -1,6 +1,6 @@
 // To parse this data:
 //
-//   import { Convert, AppIdentifier, AppIntent, AppMetadata, BaseImplementationMetadata, Channel, ContextMetadata, DesktopAgentIdentifier, DisplayMetadata, Icon, Image, ImplementationMetadata, IntentMetadata, IntentResolution, IntentResult, AgentRequest, AgentResponse, BridgeRequest, BridgeResponse, BroadcastAgentRequest, BroadcastBridgeRequest, ConnectionStep2Hello, ConnectionStep3Handshake, ConnectionStep4AuthenticationFailed, ConnectionStep6ConnectedAgentsUpdate, FindInstancesAgentRequest, FindInstancesAgentResponse, FindInstancesBridgeRequest, FindInstancesBridgeResponse, FindIntentAgentRequest, FindIntentAgentResponse, FindIntentBridgeRequest, FindIntentBridgeResponse, FindIntentsByContextAgentRequest, FindIntentsByContextAgentResponse, FindIntentsByContextBridgeRequest, FindIntentsByContextBridgeResponse, GetAppMetadataRequest, GetAppMetadataResponse, OpenRequest, OpenResponse, PrivateChannelBroadcast, PrivateChannelEventListenerAdded, PrivateChannelEventListenerRemoved, PrivateChannelOnAddContextListener, PrivateChannelOnDisconnect, PrivateChannelOnUnsubscribe, RaiseIntentRequest, RaiseIntentResponse, RaiseIntentResultResponse, Context } from "./file";
+//   import { Convert, AppIdentifier, AppIntent, AppMetadata, BaseImplementationMetadata, Channel, ContextMetadata, DesktopAgentIdentifier, DisplayMetadata, Icon, Image, ImplementationMetadata, IntentMetadata, IntentResolution, IntentResult, AgentRequest, AgentResponse, BridgeRequest, BridgeResponse, BroadcastAgentRequest, BroadcastBridgeRequest, ConnectionStep2Hello, ConnectionStep3Handshake, ConnectionStep4AuthenticationFailed, ConnectionStep6ConnectedAgentsUpdate, FindInstancesAgentRequest, FindInstancesAgentResponse, FindInstancesBridgeRequest, FindInstancesBridgeResponse, FindIntentAgentRequest, FindIntentAgentResponse, FindIntentBridgeRequest, FindIntentBridgeResponse, FindIntentsByContextAgentRequest, FindIntentsByContextAgentResponse, FindIntentsByContextBridgeRequest, FindIntentsByContextBridgeResponse, GetAppMetadataRequest, GetAppMetadataResponse, OpenRequest, OpenResponse, PrivateChannelBroadcastAgentRequest, PrivateChannelBroadcastBridgeRequest, PrivateChannelEventListenerAddedAgentRequest, PrivateChannelEventListenerAddedBridgeRequest, PrivateChannelEventListenerRemovedAgentRequest, PrivateChannelEventListenerRemovedBridgeRequest, PrivateChannelOnAddContextListenerAgentRequest, PrivateChannelOnAddContextListenerBridgeRequest, PrivateChannelOnDisconnectAgentRequest, PrivateChannelOnDisconnectBridgeRequest, PrivateChannelOnUnsubscribeAgentRequest, PrivateChannelOnUnsubscribe, RaiseIntentRequest, RaiseIntentResponse, RaiseIntentResultResponse, Context } from "./file";
 //
 //   const appIdentifier = Convert.toAppIdentifier(json);
 //   const appIntent = Convert.toAppIntent(json);
@@ -43,11 +43,17 @@
 //   const getAppMetadataResponse = Convert.toGetAppMetadataResponse(json);
 //   const openRequest = Convert.toOpenRequest(json);
 //   const openResponse = Convert.toOpenResponse(json);
-//   const privateChannelBroadcast = Convert.toPrivateChannelBroadcast(json);
-//   const privateChannelEventListenerAdded = Convert.toPrivateChannelEventListenerAdded(json);
-//   const privateChannelEventListenerRemoved = Convert.toPrivateChannelEventListenerRemoved(json);
-//   const privateChannelOnAddContextListener = Convert.toPrivateChannelOnAddContextListener(json);
-//   const privateChannelOnDisconnect = Convert.toPrivateChannelOnDisconnect(json);
+//   const privateChannelBroadcastAgentRequest = Convert.toPrivateChannelBroadcastAgentRequest(json);
+//   const privateChannelBroadcastBridgeRequest = Convert.toPrivateChannelBroadcastBridgeRequest(json);
+//   const privateChannelEventListenerAddedAgentRequest = Convert.toPrivateChannelEventListenerAddedAgentRequest(json);
+//   const privateChannelEventListenerAddedBridgeRequest = Convert.toPrivateChannelEventListenerAddedBridgeRequest(json);
+//   const privateChannelEventListenerRemovedAgentRequest = Convert.toPrivateChannelEventListenerRemovedAgentRequest(json);
+//   const privateChannelEventListenerRemovedBridgeRequest = Convert.toPrivateChannelEventListenerRemovedBridgeRequest(json);
+//   const privateChannelOnAddContextListenerAgentRequest = Convert.toPrivateChannelOnAddContextListenerAgentRequest(json);
+//   const privateChannelOnAddContextListenerBridgeRequest = Convert.toPrivateChannelOnAddContextListenerBridgeRequest(json);
+//   const privateChannelOnDisconnectAgentRequest = Convert.toPrivateChannelOnDisconnectAgentRequest(json);
+//   const privateChannelOnDisconnectBridgeRequest = Convert.toPrivateChannelOnDisconnectBridgeRequest(json);
+//   const privateChannelOnUnsubscribeAgentRequest = Convert.toPrivateChannelOnUnsubscribeAgentRequest(json);
 //   const privateChannelOnUnsubscribe = Convert.toPrivateChannelOnUnsubscribe(json);
 //   const raiseIntentRequest = Convert.toRaiseIntentRequest(json);
 //   const raiseIntentResponse = Convert.toRaiseIntentResponse(json);
@@ -306,7 +312,7 @@ export interface IntentResult {
  * Individual message schemas further refine this format for each request type.
  */
 export interface AgentRequest {
-  meta: AgentRequestMeta;
+  meta: AgentRequestMetadata;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
@@ -318,7 +324,7 @@ export interface AgentRequest {
   type: string;
 }
 
-export interface AgentRequestMeta {
+export interface AgentRequestMetadata {
   /**
    * Optional field that represents the destination that the request should be routed to. Must
    * be set by the Desktop Agent for API calls that include a target app parameter and must
@@ -461,7 +467,7 @@ export interface PurpleBridgeRequestMetadata {
  * Individual message schemas further refine this format for each response type.
  */
 export interface BridgeResponse {
-  meta: PurpleMetadata;
+  meta: PurpleResponseMetadata;
   /**
    * The message payload typically contains return values for FDC3 API functions.
    */
@@ -473,7 +479,7 @@ export interface BridgeResponse {
   type: string;
 }
 
-export interface PurpleMetadata {
+export interface PurpleResponseMetadata {
   /**
    * UUID for the request
    */
@@ -801,11 +807,11 @@ export interface ImplementationMetadataElement {
  * Individual message schemas further refine this format for each request type.
  */
 export interface FindInstancesAgentRequest {
-  meta: AgentRequestMetadata;
+  meta: FindInstancesAgentRequestMeta;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
-  payload: FluffyMessagePayload;
+  payload: PurplePayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Request' appended.
@@ -813,7 +819,7 @@ export interface FindInstancesAgentRequest {
   type: string;
 }
 
-export interface AgentRequestMetadata {
+export interface FindInstancesAgentRequestMeta {
   /**
    * Optional field that represents the destination that the request should be routed to. Must
    * be set by the Desktop Agent for API calls that include a target app parameter and must
@@ -859,7 +865,7 @@ export interface DestinationClass {
 /**
  * The message payload typically contains the arguments to FDC3 API functions.
  */
-export interface FluffyMessagePayload {
+export interface PurplePayload {
   app: SourceElement;
 }
 
@@ -1019,7 +1025,7 @@ export interface FindIntentAgentRequest {
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
-  payload: TentacledMessagePayload;
+  payload: FluffyPayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Request' appended.
@@ -1053,7 +1059,7 @@ export interface EntRequestMetadata {
 /**
  * The message payload typically contains the arguments to FDC3 API functions.
  */
-export interface TentacledMessagePayload {
+export interface FluffyPayload {
   context: ContextElement;
   intent: string;
 }
@@ -1067,7 +1073,7 @@ export interface FindIntentAgentResponse {
   /**
    * The message payload typically contains return values for FDC3 API functions.
    */
-  payload: StickyMessagePayload;
+  payload: FluffyEPayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Response' appended.
@@ -1078,7 +1084,7 @@ export interface FindIntentAgentResponse {
 /**
  * The message payload typically contains return values for FDC3 API functions.
  */
-export interface StickyMessagePayload {
+export interface FluffyEPayload {
   appIntent: AppIntentElement;
 }
 
@@ -1213,7 +1219,7 @@ export interface FindIntentsByContextAgentRequest {
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
-  payload: IndigoMessagePayload;
+  payload: TentacledPayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Request' appended.
@@ -1247,7 +1253,7 @@ export interface FindIntentsByContextAgentRequestMeta {
 /**
  * The message payload typically contains the arguments to FDC3 API functions.
  */
-export interface IndigoMessagePayload {
+export interface TentacledPayload {
   context: ContextElement;
 }
 
@@ -1260,7 +1266,7 @@ export interface FindIntentsByContextAgentResponse {
   /**
    * The message payload typically contains return values for FDC3 API functions.
    */
-  payload: IndecentMessagePayload;
+  payload: TentacledEPayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Response' appended.
@@ -1271,7 +1277,7 @@ export interface FindIntentsByContextAgentResponse {
 /**
  * The message payload typically contains return values for FDC3 API functions.
  */
-export interface IndecentMessagePayload {
+export interface TentacledEPayload {
   appIntents: AppIntentElement[];
 }
 
@@ -1596,19 +1602,15 @@ export interface OpenResponsePayload {
 }
 
 /**
- * Schema defining the format of all forwarded request messages from the Bridge onto a
- * Desktop Agent connected to it. Individual message schemas further refine this format for
- * each request type.
- *
  * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
  * Individual message schemas further refine this format for each request type.
  */
-export interface PrivateChannelBroadcast {
-  meta: PrivateChannelBroadcastMeta;
+export interface PrivateChannelBroadcastAgentRequest {
+  meta: PrivateChannelBroadcastAgentRequestMeta;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
-  payload: PrivateChannelBroadcastPayload;
+  payload: StickyPayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Request' appended.
@@ -1616,7 +1618,7 @@ export interface PrivateChannelBroadcast {
   type: string;
 }
 
-export interface PrivateChannelBroadcastMeta {
+export interface PrivateChannelBroadcastAgentRequestMeta {
   /**
    * Optional field that represents the destination that the request should be routed to. Must
    * be set by the Desktop Agent for API calls that include a target app parameter and must
@@ -1631,17 +1633,18 @@ export interface PrivateChannelBroadcastMeta {
    * Field that represents the source application that the request was received from, or the
    * source Desktop Agent if it issued the request itself.
    */
-  source: SourceObject;
+  source?: SourceObject;
   /**
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
+  [property: string]: any;
 }
 
 /**
  * The message payload typically contains the arguments to FDC3 API functions.
  */
-export interface PrivateChannelBroadcastPayload {
+export interface StickyPayload {
   channel: string;
   context: string;
 }
@@ -1654,12 +1657,12 @@ export interface PrivateChannelBroadcastPayload {
  * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
  * Individual message schemas further refine this format for each request type.
  */
-export interface PrivateChannelEventListenerAdded {
-  meta: PrivateChannelEventListenerAddedMeta;
+export interface PrivateChannelBroadcastBridgeRequest {
+  meta: PrivateChannelBroadcastBridgeRequestMeta;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
-  payload: PrivateChannelEventListenerAddedPayload;
+  payload: PrivateChannelBroadcastBridgeRequestPayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Request' appended.
@@ -1667,7 +1670,7 @@ export interface PrivateChannelEventListenerAdded {
   type: string;
 }
 
-export interface PrivateChannelEventListenerAddedMeta {
+export interface PrivateChannelBroadcastBridgeRequestMeta {
   /**
    * Optional field that represents the destination that the request should be routed to. Must
    * be set by the Desktop Agent for API calls that include a target app parameter and must
@@ -1687,12 +1690,61 @@ export interface PrivateChannelEventListenerAddedMeta {
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
+  [property: string]: any;
 }
 
 /**
  * The message payload typically contains the arguments to FDC3 API functions.
  */
-export interface PrivateChannelEventListenerAddedPayload {
+export interface PrivateChannelBroadcastBridgeRequestPayload {
+  channel: string;
+  context: string;
+}
+
+/**
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
+export interface PrivateChannelEventListenerAddedAgentRequest {
+  meta: PrivateChannelEventListenerAddedAgentRequestMeta;
+  /**
+   * The message payload typically contains the arguments to FDC3 API functions.
+   */
+  payload: IndigoPayload;
+  /**
+   * Identifies the type of the message and it is typically set to the FDC3 function name that
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
+   */
+  type: string;
+}
+
+export interface PrivateChannelEventListenerAddedAgentRequestMeta {
+  /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: SourceObject;
+  /**
+   * UUID for the request
+   */
+  requestUuid: string;
+  /**
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
+   */
+  source?: SourceObject;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  [property: string]: any;
+}
+
+/**
+ * The message payload typically contains the arguments to FDC3 API functions.
+ */
+export interface IndigoPayload {
   channel: string;
   context: string;
 }
@@ -1705,12 +1757,12 @@ export interface PrivateChannelEventListenerAddedPayload {
  * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
  * Individual message schemas further refine this format for each request type.
  */
-export interface PrivateChannelEventListenerRemoved {
-  meta: PrivateChannelEventListenerRemovedMeta;
+export interface PrivateChannelEventListenerAddedBridgeRequest {
+  meta: PrivateChannelEventListenerAddedBridgeRequestMeta;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
-  payload: PrivateChannelEventListenerRemovedPayload;
+  payload: PrivateChannelEventListenerAddedBridgeRequestPayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Request' appended.
@@ -1718,7 +1770,7 @@ export interface PrivateChannelEventListenerRemoved {
   type: string;
 }
 
-export interface PrivateChannelEventListenerRemovedMeta {
+export interface PrivateChannelEventListenerAddedBridgeRequestMeta {
   /**
    * Optional field that represents the destination that the request should be routed to. Must
    * be set by the Desktop Agent for API calls that include a target app parameter and must
@@ -1738,12 +1790,61 @@ export interface PrivateChannelEventListenerRemovedMeta {
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
+  [property: string]: any;
 }
 
 /**
  * The message payload typically contains the arguments to FDC3 API functions.
  */
-export interface PrivateChannelEventListenerRemovedPayload {
+export interface PrivateChannelEventListenerAddedBridgeRequestPayload {
+  channel: string;
+  context: string;
+}
+
+/**
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
+export interface PrivateChannelEventListenerRemovedAgentRequest {
+  meta: PrivateChannelEventListenerRemovedAgentRequestMeta;
+  /**
+   * The message payload typically contains the arguments to FDC3 API functions.
+   */
+  payload: IndecentPayload;
+  /**
+   * Identifies the type of the message and it is typically set to the FDC3 function name that
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
+   */
+  type: string;
+}
+
+export interface PrivateChannelEventListenerRemovedAgentRequestMeta {
+  /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: SourceObject;
+  /**
+   * UUID for the request
+   */
+  requestUuid: string;
+  /**
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
+   */
+  source?: SourceObject;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  [property: string]: any;
+}
+
+/**
+ * The message payload typically contains the arguments to FDC3 API functions.
+ */
+export interface IndecentPayload {
   channel: string;
   listenerType: string;
 }
@@ -1756,12 +1857,12 @@ export interface PrivateChannelEventListenerRemovedPayload {
  * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
  * Individual message schemas further refine this format for each request type.
  */
-export interface PrivateChannelOnAddContextListener {
-  meta: PrivateChannelOnAddContextListenerMeta;
+export interface PrivateChannelEventListenerRemovedBridgeRequest {
+  meta: PrivateChannelEventListenerRemovedBridgeRequestMeta;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
-  payload: PrivateChannelOnAddContextListenerPayload;
+  payload: PrivateChannelEventListenerRemovedBridgeRequestPayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Request' appended.
@@ -1769,7 +1870,7 @@ export interface PrivateChannelOnAddContextListener {
   type: string;
 }
 
-export interface PrivateChannelOnAddContextListenerMeta {
+export interface PrivateChannelEventListenerRemovedBridgeRequestMeta {
   /**
    * Optional field that represents the destination that the request should be routed to. Must
    * be set by the Desktop Agent for API calls that include a target app parameter and must
@@ -1789,12 +1890,61 @@ export interface PrivateChannelOnAddContextListenerMeta {
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
+  [property: string]: any;
 }
 
 /**
  * The message payload typically contains the arguments to FDC3 API functions.
  */
-export interface PrivateChannelOnAddContextListenerPayload {
+export interface PrivateChannelEventListenerRemovedBridgeRequestPayload {
+  channel: string;
+  listenerType: string;
+}
+
+/**
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
+export interface PrivateChannelOnAddContextListenerAgentRequest {
+  meta: PrivateChannelOnAddContextListenerAgentRequestMeta;
+  /**
+   * The message payload typically contains the arguments to FDC3 API functions.
+   */
+  payload: HilariousPayload;
+  /**
+   * Identifies the type of the message and it is typically set to the FDC3 function name that
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
+   */
+  type: string;
+}
+
+export interface PrivateChannelOnAddContextListenerAgentRequestMeta {
+  /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: SourceObject;
+  /**
+   * UUID for the request
+   */
+  requestUuid: string;
+  /**
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
+   */
+  source?: SourceObject;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  [property: string]: any;
+}
+
+/**
+ * The message payload typically contains the arguments to FDC3 API functions.
+ */
+export interface HilariousPayload {
   channel: string;
   contextType: string;
 }
@@ -1807,12 +1957,12 @@ export interface PrivateChannelOnAddContextListenerPayload {
  * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
  * Individual message schemas further refine this format for each request type.
  */
-export interface PrivateChannelOnDisconnect {
-  meta: PrivateChannelOnDisconnectMeta;
+export interface PrivateChannelOnAddContextListenerBridgeRequest {
+  meta: PrivateChannelOnAddContextListenerBridgeRequestMeta;
   /**
    * The message payload typically contains the arguments to FDC3 API functions.
    */
-  payload: PrivateChannelOnDisconnectPayload;
+  payload: PrivateChannelOnAddContextListenerBridgeRequestPayload;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Request' appended.
@@ -1820,7 +1970,7 @@ export interface PrivateChannelOnDisconnect {
   type: string;
 }
 
-export interface PrivateChannelOnDisconnectMeta {
+export interface PrivateChannelOnAddContextListenerBridgeRequestMeta {
   /**
    * Optional field that represents the destination that the request should be routed to. Must
    * be set by the Desktop Agent for API calls that include a target app parameter and must
@@ -1840,13 +1990,161 @@ export interface PrivateChannelOnDisconnectMeta {
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
+  [property: string]: any;
 }
 
 /**
  * The message payload typically contains the arguments to FDC3 API functions.
  */
-export interface PrivateChannelOnDisconnectPayload {
+export interface PrivateChannelOnAddContextListenerBridgeRequestPayload {
   channel: string;
+  contextType: string;
+}
+
+/**
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
+export interface PrivateChannelOnDisconnectAgentRequest {
+  meta: PrivateChannelOnDisconnectAgentRequestMeta;
+  /**
+   * The message payload typically contains the arguments to FDC3 API functions.
+   */
+  payload: AmbitiousPayload;
+  /**
+   * Identifies the type of the message and it is typically set to the FDC3 function name that
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
+   */
+  type: string;
+}
+
+export interface PrivateChannelOnDisconnectAgentRequestMeta {
+  /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: SourceObject;
+  /**
+   * UUID for the request
+   */
+  requestUuid: string;
+  /**
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
+   */
+  source?: SourceObject;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  [property: string]: any;
+}
+
+/**
+ * The message payload typically contains the arguments to FDC3 API functions.
+ */
+export interface AmbitiousPayload {
+  channel: string;
+}
+
+/**
+ * Schema defining the format of all forwarded request messages from the Bridge onto a
+ * Desktop Agent connected to it. Individual message schemas further refine this format for
+ * each request type.
+ *
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
+export interface PrivateChannelOnDisconnectBridgeRequest {
+  meta: PrivateChannelOnDisconnectBridgeRequestMeta;
+  /**
+   * The message payload typically contains the arguments to FDC3 API functions.
+   */
+  payload: PrivateChannelOnDisconnectBridgeRequestPayload;
+  /**
+   * Identifies the type of the message and it is typically set to the FDC3 function name that
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
+   */
+  type: string;
+}
+
+export interface PrivateChannelOnDisconnectBridgeRequestMeta {
+  /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: SourceObject;
+  /**
+   * UUID for the request
+   */
+  requestUuid: string;
+  /**
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
+   */
+  source: SourceObject;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  [property: string]: any;
+}
+
+/**
+ * The message payload typically contains the arguments to FDC3 API functions.
+ */
+export interface PrivateChannelOnDisconnectBridgeRequestPayload {
+  channel: string;
+}
+
+/**
+ * Schema defining the format of all request messages from a Desktop Agent to the Bridge.
+ * Individual message schemas further refine this format for each request type.
+ */
+export interface PrivateChannelOnUnsubscribeAgentRequest {
+  meta: PrivateChannelOnUnsubscribeAgentRequestMeta;
+  /**
+   * The message payload typically contains the arguments to FDC3 API functions.
+   */
+  payload: CunningPayload;
+  /**
+   * Identifies the type of the message and it is typically set to the FDC3 function name that
+   * the message relates to, e.g. 'findIntent', with 'Request' appended.
+   */
+  type: string;
+}
+
+export interface PrivateChannelOnUnsubscribeAgentRequestMeta {
+  /**
+   * Optional field that represents the destination that the request should be routed to. Must
+   * be set by the Desktop Agent for API calls that include a target app parameter and must
+   * include the name of the Desktop Agent hosting the target application.
+   */
+  destination?: SourceObject;
+  /**
+   * UUID for the request
+   */
+  requestUuid: string;
+  /**
+   * Field that represents the source application that the request was received from, or the
+   * source Desktop Agent if it issued the request itself.
+   */
+  source?: SourceObject;
+  /**
+   * Timestamp at which request or response was generated
+   */
+  timestamp: Date;
+  [property: string]: any;
+}
+
+/**
+ * The message payload typically contains the arguments to FDC3 API functions.
+ */
+export interface CunningPayload {
+  channel: string;
+  contextType: string;
 }
 
 /**
@@ -1890,6 +2188,7 @@ export interface PrivateChannelOnUnsubscribeMeta {
    * Timestamp at which request or response was generated
    */
   timestamp: Date;
+  [property: string]: any;
 }
 
 /**
@@ -2428,44 +2727,116 @@ export class Convert {
     return JSON.stringify(uncast(value, r('OpenResponse')), null, 2);
   }
 
-  public static toPrivateChannelBroadcast(json: string): PrivateChannelBroadcast {
-    return cast(JSON.parse(json), r('PrivateChannelBroadcast'));
+  public static toPrivateChannelBroadcastAgentRequest(json: string): PrivateChannelBroadcastAgentRequest {
+    return cast(JSON.parse(json), r('PrivateChannelBroadcastAgentRequest'));
   }
 
-  public static privateChannelBroadcastToJson(value: PrivateChannelBroadcast): string {
-    return JSON.stringify(uncast(value, r('PrivateChannelBroadcast')), null, 2);
+  public static privateChannelBroadcastAgentRequestToJson(value: PrivateChannelBroadcastAgentRequest): string {
+    return JSON.stringify(uncast(value, r('PrivateChannelBroadcastAgentRequest')), null, 2);
   }
 
-  public static toPrivateChannelEventListenerAdded(json: string): PrivateChannelEventListenerAdded {
-    return cast(JSON.parse(json), r('PrivateChannelEventListenerAdded'));
+  public static toPrivateChannelBroadcastBridgeRequest(json: string): PrivateChannelBroadcastBridgeRequest {
+    return cast(JSON.parse(json), r('PrivateChannelBroadcastBridgeRequest'));
   }
 
-  public static privateChannelEventListenerAddedToJson(value: PrivateChannelEventListenerAdded): string {
-    return JSON.stringify(uncast(value, r('PrivateChannelEventListenerAdded')), null, 2);
+  public static privateChannelBroadcastBridgeRequestToJson(value: PrivateChannelBroadcastBridgeRequest): string {
+    return JSON.stringify(uncast(value, r('PrivateChannelBroadcastBridgeRequest')), null, 2);
   }
 
-  public static toPrivateChannelEventListenerRemoved(json: string): PrivateChannelEventListenerRemoved {
-    return cast(JSON.parse(json), r('PrivateChannelEventListenerRemoved'));
+  public static toPrivateChannelEventListenerAddedAgentRequest(
+    json: string
+  ): PrivateChannelEventListenerAddedAgentRequest {
+    return cast(JSON.parse(json), r('PrivateChannelEventListenerAddedAgentRequest'));
   }
 
-  public static privateChannelEventListenerRemovedToJson(value: PrivateChannelEventListenerRemoved): string {
-    return JSON.stringify(uncast(value, r('PrivateChannelEventListenerRemoved')), null, 2);
+  public static privateChannelEventListenerAddedAgentRequestToJson(
+    value: PrivateChannelEventListenerAddedAgentRequest
+  ): string {
+    return JSON.stringify(uncast(value, r('PrivateChannelEventListenerAddedAgentRequest')), null, 2);
   }
 
-  public static toPrivateChannelOnAddContextListener(json: string): PrivateChannelOnAddContextListener {
-    return cast(JSON.parse(json), r('PrivateChannelOnAddContextListener'));
+  public static toPrivateChannelEventListenerAddedBridgeRequest(
+    json: string
+  ): PrivateChannelEventListenerAddedBridgeRequest {
+    return cast(JSON.parse(json), r('PrivateChannelEventListenerAddedBridgeRequest'));
   }
 
-  public static privateChannelOnAddContextListenerToJson(value: PrivateChannelOnAddContextListener): string {
-    return JSON.stringify(uncast(value, r('PrivateChannelOnAddContextListener')), null, 2);
+  public static privateChannelEventListenerAddedBridgeRequestToJson(
+    value: PrivateChannelEventListenerAddedBridgeRequest
+  ): string {
+    return JSON.stringify(uncast(value, r('PrivateChannelEventListenerAddedBridgeRequest')), null, 2);
   }
 
-  public static toPrivateChannelOnDisconnect(json: string): PrivateChannelOnDisconnect {
-    return cast(JSON.parse(json), r('PrivateChannelOnDisconnect'));
+  public static toPrivateChannelEventListenerRemovedAgentRequest(
+    json: string
+  ): PrivateChannelEventListenerRemovedAgentRequest {
+    return cast(JSON.parse(json), r('PrivateChannelEventListenerRemovedAgentRequest'));
   }
 
-  public static privateChannelOnDisconnectToJson(value: PrivateChannelOnDisconnect): string {
-    return JSON.stringify(uncast(value, r('PrivateChannelOnDisconnect')), null, 2);
+  public static privateChannelEventListenerRemovedAgentRequestToJson(
+    value: PrivateChannelEventListenerRemovedAgentRequest
+  ): string {
+    return JSON.stringify(uncast(value, r('PrivateChannelEventListenerRemovedAgentRequest')), null, 2);
+  }
+
+  public static toPrivateChannelEventListenerRemovedBridgeRequest(
+    json: string
+  ): PrivateChannelEventListenerRemovedBridgeRequest {
+    return cast(JSON.parse(json), r('PrivateChannelEventListenerRemovedBridgeRequest'));
+  }
+
+  public static privateChannelEventListenerRemovedBridgeRequestToJson(
+    value: PrivateChannelEventListenerRemovedBridgeRequest
+  ): string {
+    return JSON.stringify(uncast(value, r('PrivateChannelEventListenerRemovedBridgeRequest')), null, 2);
+  }
+
+  public static toPrivateChannelOnAddContextListenerAgentRequest(
+    json: string
+  ): PrivateChannelOnAddContextListenerAgentRequest {
+    return cast(JSON.parse(json), r('PrivateChannelOnAddContextListenerAgentRequest'));
+  }
+
+  public static privateChannelOnAddContextListenerAgentRequestToJson(
+    value: PrivateChannelOnAddContextListenerAgentRequest
+  ): string {
+    return JSON.stringify(uncast(value, r('PrivateChannelOnAddContextListenerAgentRequest')), null, 2);
+  }
+
+  public static toPrivateChannelOnAddContextListenerBridgeRequest(
+    json: string
+  ): PrivateChannelOnAddContextListenerBridgeRequest {
+    return cast(JSON.parse(json), r('PrivateChannelOnAddContextListenerBridgeRequest'));
+  }
+
+  public static privateChannelOnAddContextListenerBridgeRequestToJson(
+    value: PrivateChannelOnAddContextListenerBridgeRequest
+  ): string {
+    return JSON.stringify(uncast(value, r('PrivateChannelOnAddContextListenerBridgeRequest')), null, 2);
+  }
+
+  public static toPrivateChannelOnDisconnectAgentRequest(json: string): PrivateChannelOnDisconnectAgentRequest {
+    return cast(JSON.parse(json), r('PrivateChannelOnDisconnectAgentRequest'));
+  }
+
+  public static privateChannelOnDisconnectAgentRequestToJson(value: PrivateChannelOnDisconnectAgentRequest): string {
+    return JSON.stringify(uncast(value, r('PrivateChannelOnDisconnectAgentRequest')), null, 2);
+  }
+
+  public static toPrivateChannelOnDisconnectBridgeRequest(json: string): PrivateChannelOnDisconnectBridgeRequest {
+    return cast(JSON.parse(json), r('PrivateChannelOnDisconnectBridgeRequest'));
+  }
+
+  public static privateChannelOnDisconnectBridgeRequestToJson(value: PrivateChannelOnDisconnectBridgeRequest): string {
+    return JSON.stringify(uncast(value, r('PrivateChannelOnDisconnectBridgeRequest')), null, 2);
+  }
+
+  public static toPrivateChannelOnUnsubscribeAgentRequest(json: string): PrivateChannelOnUnsubscribeAgentRequest {
+    return cast(JSON.parse(json), r('PrivateChannelOnUnsubscribeAgentRequest'));
+  }
+
+  public static privateChannelOnUnsubscribeAgentRequestToJson(value: PrivateChannelOnUnsubscribeAgentRequest): string {
+    return JSON.stringify(uncast(value, r('PrivateChannelOnUnsubscribeAgentRequest')), null, 2);
   }
 
   public static toPrivateChannelOnUnsubscribe(json: string): PrivateChannelOnUnsubscribe {
@@ -2860,13 +3231,13 @@ const typeMap: any = {
   ),
   AgentRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('AgentRequestMeta') },
+      { json: 'meta', js: 'meta', typ: r('AgentRequestMetadata') },
       { json: 'payload', js: 'payload', typ: m('any') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  AgentRequestMeta: o(
+  AgentRequestMetadata: o(
     [
       { json: 'destination', js: 'destination', typ: u(undefined, r('Identifier')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
@@ -2920,13 +3291,13 @@ const typeMap: any = {
   ),
   BridgeResponse: o(
     [
-      { json: 'meta', js: 'meta', typ: r('PurpleMetadata') },
+      { json: 'meta', js: 'meta', typ: r('PurpleResponseMetadata') },
       { json: 'payload', js: 'payload', typ: m('any') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  PurpleMetadata: o(
+  PurpleResponseMetadata: o(
     [
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'timestamp', js: 'timestamp', typ: Date },
@@ -3111,13 +3482,13 @@ const typeMap: any = {
   ),
   FindInstancesAgentRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('AgentRequestMetadata') },
-      { json: 'payload', js: 'payload', typ: r('FluffyMessagePayload') },
+      { json: 'meta', js: 'meta', typ: r('FindInstancesAgentRequestMeta') },
+      { json: 'payload', js: 'payload', typ: r('PurplePayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  AgentRequestMetadata: o(
+  FindInstancesAgentRequestMeta: o(
     [
       { json: 'destination', js: 'destination', typ: u(undefined, r('DestinationClass')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
@@ -3127,7 +3498,7 @@ const typeMap: any = {
     'any'
   ),
   DestinationClass: o([{ json: 'desktopAgent', js: 'desktopAgent', typ: '' }], false),
-  FluffyMessagePayload: o([{ json: 'app', js: 'app', typ: r('SourceElement') }], false),
+  PurplePayload: o([{ json: 'app', js: 'app', typ: r('SourceElement') }], false),
   FindInstancesAgentResponse: o(
     [
       { json: 'meta', js: 'meta', typ: r('AgentResponseMetadata') },
@@ -3182,7 +3553,7 @@ const typeMap: any = {
   FindIntentAgentRequest: o(
     [
       { json: 'meta', js: 'meta', typ: r('EntRequestMetadata') },
-      { json: 'payload', js: 'payload', typ: r('TentacledMessagePayload') },
+      { json: 'payload', js: 'payload', typ: r('FluffyPayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
@@ -3196,7 +3567,7 @@ const typeMap: any = {
     ],
     'any'
   ),
-  TentacledMessagePayload: o(
+  FluffyPayload: o(
     [
       { json: 'context', js: 'context', typ: r('ContextElement') },
       { json: 'intent', js: 'intent', typ: '' },
@@ -3206,12 +3577,12 @@ const typeMap: any = {
   FindIntentAgentResponse: o(
     [
       { json: 'meta', js: 'meta', typ: r('AgentResponseMetadata') },
-      { json: 'payload', js: 'payload', typ: r('StickyMessagePayload') },
+      { json: 'payload', js: 'payload', typ: r('FluffyEPayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  StickyMessagePayload: o([{ json: 'appIntent', js: 'appIntent', typ: r('AppIntentElement') }], false),
+  FluffyEPayload: o([{ json: 'appIntent', js: 'appIntent', typ: r('AppIntentElement') }], false),
   AppIntentElement: o(
     [
       { json: 'apps', js: 'apps', typ: a(r('AppMetadataElement')) },
@@ -3266,7 +3637,7 @@ const typeMap: any = {
   FindIntentsByContextAgentRequest: o(
     [
       { json: 'meta', js: 'meta', typ: r('FindIntentsByContextAgentRequestMeta') },
-      { json: 'payload', js: 'payload', typ: r('IndigoMessagePayload') },
+      { json: 'payload', js: 'payload', typ: r('TentacledPayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
@@ -3280,16 +3651,16 @@ const typeMap: any = {
     ],
     'any'
   ),
-  IndigoMessagePayload: o([{ json: 'context', js: 'context', typ: r('ContextElement') }], false),
+  TentacledPayload: o([{ json: 'context', js: 'context', typ: r('ContextElement') }], false),
   FindIntentsByContextAgentResponse: o(
     [
       { json: 'meta', js: 'meta', typ: r('AgentResponseMetadata') },
-      { json: 'payload', js: 'payload', typ: r('IndecentMessagePayload') },
+      { json: 'payload', js: 'payload', typ: r('TentacledEPayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  IndecentMessagePayload: o([{ json: 'appIntents', js: 'appIntents', typ: a(r('AppIntentElement')) }], false),
+  TentacledEPayload: o([{ json: 'appIntents', js: 'appIntents', typ: a(r('AppIntentElement')) }], false),
   FindIntentsByContextBridgeRequest: o(
     [
       { json: 'meta', js: 'meta', typ: r('FindIntentsByContextBridgeRequestMeta') },
@@ -3409,120 +3780,258 @@ const typeMap: any = {
     false
   ),
   OpenResponsePayload: o([{ json: 'appIdentifier', js: 'appIdentifier', typ: r('SourceElement') }], false),
-  PrivateChannelBroadcast: o(
+  PrivateChannelBroadcastAgentRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('PrivateChannelBroadcastMeta') },
-      { json: 'payload', js: 'payload', typ: r('PrivateChannelBroadcastPayload') },
+      { json: 'meta', js: 'meta', typ: r('PrivateChannelBroadcastAgentRequestMeta') },
+      { json: 'payload', js: 'payload', typ: r('StickyPayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  PrivateChannelBroadcastMeta: o(
+  PrivateChannelBroadcastAgentRequestMeta: o(
     [
       { json: 'destination', js: 'destination', typ: u(undefined, r('SourceObject')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
-      { json: 'source', js: 'source', typ: r('SourceObject') },
+      { json: 'source', js: 'source', typ: u(undefined, r('SourceObject')) },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
-    false
+    'any'
   ),
-  PrivateChannelBroadcastPayload: o(
+  StickyPayload: o(
     [
       { json: 'channel', js: 'channel', typ: '' },
       { json: 'context', js: 'context', typ: '' },
     ],
     false
   ),
-  PrivateChannelEventListenerAdded: o(
+  PrivateChannelBroadcastBridgeRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('PrivateChannelEventListenerAddedMeta') },
-      { json: 'payload', js: 'payload', typ: r('PrivateChannelEventListenerAddedPayload') },
+      { json: 'meta', js: 'meta', typ: r('PrivateChannelBroadcastBridgeRequestMeta') },
+      { json: 'payload', js: 'payload', typ: r('PrivateChannelBroadcastBridgeRequestPayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  PrivateChannelEventListenerAddedMeta: o(
+  PrivateChannelBroadcastBridgeRequestMeta: o(
     [
       { json: 'destination', js: 'destination', typ: u(undefined, r('SourceObject')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
-    false
+    'any'
   ),
-  PrivateChannelEventListenerAddedPayload: o(
+  PrivateChannelBroadcastBridgeRequestPayload: o(
     [
       { json: 'channel', js: 'channel', typ: '' },
       { json: 'context', js: 'context', typ: '' },
     ],
     false
   ),
-  PrivateChannelEventListenerRemoved: o(
+  PrivateChannelEventListenerAddedAgentRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('PrivateChannelEventListenerRemovedMeta') },
-      { json: 'payload', js: 'payload', typ: r('PrivateChannelEventListenerRemovedPayload') },
+      { json: 'meta', js: 'meta', typ: r('PrivateChannelEventListenerAddedAgentRequestMeta') },
+      { json: 'payload', js: 'payload', typ: r('IndigoPayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  PrivateChannelEventListenerRemovedMeta: o(
+  PrivateChannelEventListenerAddedAgentRequestMeta: o(
+    [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('SourceObject')) },
+      { json: 'requestUuid', js: 'requestUuid', typ: '' },
+      { json: 'source', js: 'source', typ: u(undefined, r('SourceObject')) },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+    ],
+    'any'
+  ),
+  IndigoPayload: o(
+    [
+      { json: 'channel', js: 'channel', typ: '' },
+      { json: 'context', js: 'context', typ: '' },
+    ],
+    false
+  ),
+  PrivateChannelEventListenerAddedBridgeRequest: o(
+    [
+      { json: 'meta', js: 'meta', typ: r('PrivateChannelEventListenerAddedBridgeRequestMeta') },
+      { json: 'payload', js: 'payload', typ: r('PrivateChannelEventListenerAddedBridgeRequestPayload') },
+      { json: 'type', js: 'type', typ: '' },
+    ],
+    false
+  ),
+  PrivateChannelEventListenerAddedBridgeRequestMeta: o(
     [
       { json: 'destination', js: 'destination', typ: u(undefined, r('SourceObject')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
+    'any'
+  ),
+  PrivateChannelEventListenerAddedBridgeRequestPayload: o(
+    [
+      { json: 'channel', js: 'channel', typ: '' },
+      { json: 'context', js: 'context', typ: '' },
+    ],
     false
   ),
-  PrivateChannelEventListenerRemovedPayload: o(
+  PrivateChannelEventListenerRemovedAgentRequest: o(
+    [
+      { json: 'meta', js: 'meta', typ: r('PrivateChannelEventListenerRemovedAgentRequestMeta') },
+      { json: 'payload', js: 'payload', typ: r('IndecentPayload') },
+      { json: 'type', js: 'type', typ: '' },
+    ],
+    false
+  ),
+  PrivateChannelEventListenerRemovedAgentRequestMeta: o(
+    [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('SourceObject')) },
+      { json: 'requestUuid', js: 'requestUuid', typ: '' },
+      { json: 'source', js: 'source', typ: u(undefined, r('SourceObject')) },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+    ],
+    'any'
+  ),
+  IndecentPayload: o(
     [
       { json: 'channel', js: 'channel', typ: '' },
       { json: 'listenerType', js: 'listenerType', typ: '' },
     ],
     false
   ),
-  PrivateChannelOnAddContextListener: o(
+  PrivateChannelEventListenerRemovedBridgeRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('PrivateChannelOnAddContextListenerMeta') },
-      { json: 'payload', js: 'payload', typ: r('PrivateChannelOnAddContextListenerPayload') },
+      { json: 'meta', js: 'meta', typ: r('PrivateChannelEventListenerRemovedBridgeRequestMeta') },
+      { json: 'payload', js: 'payload', typ: r('PrivateChannelEventListenerRemovedBridgeRequestPayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  PrivateChannelOnAddContextListenerMeta: o(
+  PrivateChannelEventListenerRemovedBridgeRequestMeta: o(
     [
       { json: 'destination', js: 'destination', typ: u(undefined, r('SourceObject')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
+    'any'
+  ),
+  PrivateChannelEventListenerRemovedBridgeRequestPayload: o(
+    [
+      { json: 'channel', js: 'channel', typ: '' },
+      { json: 'listenerType', js: 'listenerType', typ: '' },
+    ],
     false
   ),
-  PrivateChannelOnAddContextListenerPayload: o(
+  PrivateChannelOnAddContextListenerAgentRequest: o(
+    [
+      { json: 'meta', js: 'meta', typ: r('PrivateChannelOnAddContextListenerAgentRequestMeta') },
+      { json: 'payload', js: 'payload', typ: r('HilariousPayload') },
+      { json: 'type', js: 'type', typ: '' },
+    ],
+    false
+  ),
+  PrivateChannelOnAddContextListenerAgentRequestMeta: o(
+    [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('SourceObject')) },
+      { json: 'requestUuid', js: 'requestUuid', typ: '' },
+      { json: 'source', js: 'source', typ: u(undefined, r('SourceObject')) },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+    ],
+    'any'
+  ),
+  HilariousPayload: o(
     [
       { json: 'channel', js: 'channel', typ: '' },
       { json: 'contextType', js: 'contextType', typ: '' },
     ],
     false
   ),
-  PrivateChannelOnDisconnect: o(
+  PrivateChannelOnAddContextListenerBridgeRequest: o(
     [
-      { json: 'meta', js: 'meta', typ: r('PrivateChannelOnDisconnectMeta') },
-      { json: 'payload', js: 'payload', typ: r('PrivateChannelOnDisconnectPayload') },
+      { json: 'meta', js: 'meta', typ: r('PrivateChannelOnAddContextListenerBridgeRequestMeta') },
+      { json: 'payload', js: 'payload', typ: r('PrivateChannelOnAddContextListenerBridgeRequestPayload') },
       { json: 'type', js: 'type', typ: '' },
     ],
     false
   ),
-  PrivateChannelOnDisconnectMeta: o(
+  PrivateChannelOnAddContextListenerBridgeRequestMeta: o(
     [
       { json: 'destination', js: 'destination', typ: u(undefined, r('SourceObject')) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
+    'any'
+  ),
+  PrivateChannelOnAddContextListenerBridgeRequestPayload: o(
+    [
+      { json: 'channel', js: 'channel', typ: '' },
+      { json: 'contextType', js: 'contextType', typ: '' },
+    ],
     false
   ),
-  PrivateChannelOnDisconnectPayload: o([{ json: 'channel', js: 'channel', typ: '' }], false),
+  PrivateChannelOnDisconnectAgentRequest: o(
+    [
+      { json: 'meta', js: 'meta', typ: r('PrivateChannelOnDisconnectAgentRequestMeta') },
+      { json: 'payload', js: 'payload', typ: r('AmbitiousPayload') },
+      { json: 'type', js: 'type', typ: '' },
+    ],
+    false
+  ),
+  PrivateChannelOnDisconnectAgentRequestMeta: o(
+    [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('SourceObject')) },
+      { json: 'requestUuid', js: 'requestUuid', typ: '' },
+      { json: 'source', js: 'source', typ: u(undefined, r('SourceObject')) },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+    ],
+    'any'
+  ),
+  AmbitiousPayload: o([{ json: 'channel', js: 'channel', typ: '' }], false),
+  PrivateChannelOnDisconnectBridgeRequest: o(
+    [
+      { json: 'meta', js: 'meta', typ: r('PrivateChannelOnDisconnectBridgeRequestMeta') },
+      { json: 'payload', js: 'payload', typ: r('PrivateChannelOnDisconnectBridgeRequestPayload') },
+      { json: 'type', js: 'type', typ: '' },
+    ],
+    false
+  ),
+  PrivateChannelOnDisconnectBridgeRequestMeta: o(
+    [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('SourceObject')) },
+      { json: 'requestUuid', js: 'requestUuid', typ: '' },
+      { json: 'source', js: 'source', typ: r('SourceObject') },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+    ],
+    'any'
+  ),
+  PrivateChannelOnDisconnectBridgeRequestPayload: o([{ json: 'channel', js: 'channel', typ: '' }], false),
+  PrivateChannelOnUnsubscribeAgentRequest: o(
+    [
+      { json: 'meta', js: 'meta', typ: r('PrivateChannelOnUnsubscribeAgentRequestMeta') },
+      { json: 'payload', js: 'payload', typ: r('CunningPayload') },
+      { json: 'type', js: 'type', typ: '' },
+    ],
+    false
+  ),
+  PrivateChannelOnUnsubscribeAgentRequestMeta: o(
+    [
+      { json: 'destination', js: 'destination', typ: u(undefined, r('SourceObject')) },
+      { json: 'requestUuid', js: 'requestUuid', typ: '' },
+      { json: 'source', js: 'source', typ: u(undefined, r('SourceObject')) },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+    ],
+    'any'
+  ),
+  CunningPayload: o(
+    [
+      { json: 'channel', js: 'channel', typ: '' },
+      { json: 'contextType', js: 'contextType', typ: '' },
+    ],
+    false
+  ),
   PrivateChannelOnUnsubscribe: o(
     [
       { json: 'meta', js: 'meta', typ: r('PrivateChannelOnUnsubscribeMeta') },
@@ -3538,7 +4047,7 @@ const typeMap: any = {
       { json: 'source', js: 'source', typ: r('SourceObject') },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
-    false
+    'any'
   ),
   PrivateChannelOnUnsubscribePayload: o(
     [
