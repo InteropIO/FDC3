@@ -1,47 +1,42 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://fdc3.finos.org/schemas/next/bridging/raiseIntentRequest.schema.json",
-  "title": "raiseIntentRequest",
+  "$id": "https://fdc3.finos.org/schemas/next/bridging/getAppMetadataAgentRequest.schema.json",
+  "title": "getAppMetadataAgentRequest",
   "type": "object",
   "allOf": [
     {
-      "$ref": "bridgeRequest.schema.json"
+      "$ref": "agentRequest.schema.json"
     },
     {
       "type": "object",
       "properties": {
         "type": {
-          "const": "raiseIntentRequest"
+          "const": "getAppMetadataRequest"
         },
         "payload": {
           "type": "object",
           "properties": {
-            "intent": {
-              "type": "string"
-            },
-            "context": {
-              "$ref": "../context/context.schema.json"
-            },
             "app": {
               "$ref": "../api/appIdentifier.schema.json"
             }
           },
-          "required": ["intent", "context", "app"],
+          "required": ["app"],
           "additionalProperties": false
         },
         "meta": {
+          "type": "object",
+          "title" : "getAppMetadata request metadata",
           "properties": {
             "requestUuid": true,
             "timestamp": true,
             "destination": {
-              "$ref": "../api/appIdentifier.schema.json"
+              "$ref": "../api/desktopAgentIdentifier.schema.json"
             },
             "source": {
               "$ref": "../api/appIdentifier.schema.json"
             }
           },
-          "additionalProperties": false,
-          "required": ["requestUuid","timestamp","destination","source"] 
+          "unevaluatedProperties": false
         }
       },
       "additionalProperties": false

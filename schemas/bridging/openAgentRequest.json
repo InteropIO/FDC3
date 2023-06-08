@@ -1,29 +1,32 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://fdc3.finos.org/schemas/next/bridging/getAppMetadataRequest.schema.json",
-  "title": "getAppMetadataRequest",
+  "$id": "https://fdc3.finos.org/schemas/next/bridging/openAgentRequest.schema.json",
+  "title": "openAgentRequest",
   "type": "object",
   "allOf": [
     {
-      "$ref": "bridgeRequest.schema.json"
+      "$ref": "agentRequest.schema.json"
     },
     {
       "type": "object",
       "properties": {
         "type": {
-          "const": "getAppMetadataRequest"
+          "const": "openRequest"
         },
         "payload": {
           "type": "object",
           "properties": {
             "app": {
               "$ref": "../api/appIdentifier.schema.json"
+            },
+            "context": {
+              "$ref": "../context/context.schema.json"
             }
           },
           "required": ["app"],
           "additionalProperties": false
         },
-        "meta": {
+        "meta":  {
           "properties": {
             "requestUuid": true,
             "timestamp": true,
@@ -34,7 +37,7 @@
               "$ref": "../api/appIdentifier.schema.json"
             }
           },
-          "additionalProperties": false
+          "unevaluatedProperties": false
         }
       },
       "additionalProperties": false
