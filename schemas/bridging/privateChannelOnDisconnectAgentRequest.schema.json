@@ -1,14 +1,20 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://fdc3.finos.org/schemas/next/bridging/privateChannelOnDisconnectAgentRequest.schema.json",
-  "title": "privateChannelOnDisconnectAgentRequest",
+  "title": "privateChannelOnDisconnect Agent Request",
   "type": "object",
   "allOf": [
     {
       "$ref": "agentRequest.schema.json"
     },
     {
+      "$ref": "#/$defs/PrivateChannelOnDisconnectRequestBase"
+    }
+  ],
+  "$defs": {
+    "PrivateChannelOnDisconnectRequestBase": {
       "type": "object",
+      "description": "A request to forward on a Disconnect event, relating to a PrivateChannel",
       "properties": {
         "type": {
           "const": "PrivateChannel.onDisconnect"
@@ -39,7 +45,8 @@
           },
           "unevaluatedProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     }
-  ]
+  }
 }

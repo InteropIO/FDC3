@@ -1,15 +1,21 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://fdc3.finos.org/schemas/next/bridging/findInstancesAgentRequest.schema.json",
-  "title": "findInstancesAgentRequest",
+  "title": "findInstances Agent Request",
   "type": "object",
   "allOf": [
     {
       "$ref": "agentRequest.schema.json"
     },
     {
+      "$ref": "#/$defs/FindInstancesRequestBase"
+    }
+  ],
+  "$defs": {
+    "FindInstancesRequestBase": {
       "type": "object",
-      "properties": {
+      "description": "A request for details of instances of a particular app",
+      "properties":{
         "type": {
           "const": "findInstancesRequest"
         },
@@ -42,5 +48,5 @@
       },
       "additionalProperties": false
     }
-  ]
+  }
 }

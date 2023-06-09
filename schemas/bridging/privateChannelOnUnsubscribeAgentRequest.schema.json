@@ -1,14 +1,20 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://fdc3.finos.org/schemas/next/bridging/privateChannelOnUnsubscribeAgentRequest.schema.json",
-  "title": "privateChannelOnUnsubscribeAgentRequest",
+  "title": "privateChannelOnUnsubscribe Agent Request",
   "type": "object",
   "allOf": [
     {
       "$ref": "agentRequest.schema.json"
     },
     {
+      "$ref": "#/$defs/PrivateChannelOnUnsubscribeRequestBase"
+    }
+  ],
+  "$defs": {
+    "PrivateChannelOnUnsubscribeRequestBase": {
       "type": "object",
+      "description": "A request to forward on an Unsubscribe event, relating to a PrivateChannel",
       "properties": {
         "type": {
           "const": "PrivateChannel.onUnsubscribe"
@@ -44,5 +50,5 @@
         }
       }
     }
-  ]
+  }
 }

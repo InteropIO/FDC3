@@ -1,14 +1,20 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://fdc3.finos.org/schemas/next/bridging/findIntentAgentRequest.schema.json",
-  "title": "findIntentAgentRequest",
+  "title": "findIntents Agent Request",
   "type": "object",
   "allOf": [
     {
       "$ref": "agentRequest.schema.json"
     },
     {
+      "$ref": "#/$defs/FindIntentRequestBase"
+    }
+  ],
+  "$defs": {
+    "FindIntentRequestBase": {
       "type": "object",
+      "description": "A request for details of apps available to resolve a particular intent and context pair.",
       "properties": {
         "type": {
           "const": "findIntentRequest"
@@ -42,5 +48,5 @@
       },
       "additionalProperties": false
     }
-  ]
+  }
 }

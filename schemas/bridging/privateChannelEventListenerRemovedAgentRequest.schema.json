@@ -1,14 +1,20 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://fdc3.finos.org/schemas/next/bridging/privateChannelEventListenerRemovedAgentRequest.schema.json",
-  "title": "privateChannelEventListenerRemovedAgentRequest",
+  "title": "privateChannelEventListenerRemoved Agent Request",
   "type": "object",
   "allOf": [
     {
       "$ref": "agentRequest.schema.json"
     },
     {
+      "$ref": "#/$defs/PrivateChannelEventListenerRemovedRequestBase"
+    }
+  ],
+  "$defs": {
+    "PrivateChannelEventListenerRemovedRequestBase": {
       "type": "object",
+      "description": "A request to forward on an EventListenerRemoved event, relating to a PrivateChannel",
       "properties": {
         "type": {
           "const": "PrivateChannel.eventListenerRemoved"
@@ -42,7 +48,8 @@
           },
           "unevaluatedProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     }
-  ]
+  }
 }

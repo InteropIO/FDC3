@@ -1,14 +1,20 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://fdc3.finos.org/schemas/next/bridging/openAgentResponse.schema.json",
-  "title": "openAgentResponse",
+  "title": "open Agent Response",
   "type": "object",
   "allOf": [
     {
       "$ref": "agentResponse.schema.json"
     },
     {
+      "$ref": "#/$defs/OpenResponseBase"
+    }
+  ],
+  "$defs": {
+    "OpenResponseBase": {
       "type": "object",
+      "description": "A response to an open request",
       "properties": {
         "type": {
           "const": "openResponse"
@@ -24,7 +30,8 @@
           "additionalProperties": false
         },
         "meta": true
-      }
+      },
+      "additionalProperties": false
     }
-  ]
+  }
 }

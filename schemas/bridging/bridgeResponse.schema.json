@@ -1,83 +1,76 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://fdc3.finos.org/schemas/next/bridging/bridgeResponse.schema.json",
-  "title": "bridgeResponse",
+  "title": "Bridge Response Message",
   "type": "object",
-  "description": "Schema defining the format of all response messages from a the Bridge to the original Desktop Agent that raised a request. Individual message schemas further refine this format for each response type.",
-  "allOf": [
-    {
-      "$ref": "agentResponse.schema.json"
+  "description": "A response message from the Bridge back to the original Desktop Agent that raised the request.",
+  "properties": {
+    "type": {
+      "title": "Response Message Type",
+      "type": "string",
+      "description": "Identifies the type of the message and it is typically set to the FDC3 function name that the message relates to, e.g. 'findIntent', with 'Response' appended."
     },
-    {
+    "payload": {
+      "title": "Response Message Payload",
       "type": "object",
-      "properties": {
-        "type": true,
-        "payload": true,
-        "meta": {
-          "$ref": "#/$defs/BridgeResponseMeta"
-        }
-      },
-      "required": ["type", "payload", "meta"],
-      "additionalProperties": false
+      "description": "The message payload typically contains return values for FDC3 API functions."
+    },
+    "meta": {
+      "$ref": "#/$defs/BridgeResponseMeta"
     }
-  ],
+  },
+  "required": ["type", "payload", "meta"],
+  "additionalProperties": false,
   "$defs": {
     "BridgeResponseMeta": {
-      "title": "Bridge response metadata",
+      "title": "Bridge Response Metadata",
+      "description": "Metadata required in a response message collated and/or forwarded on by the Bridge",
       "type": "object",
-      "allOf": [
-        {
-          "$ref": "agentResponse.schema.json#/$defs/AgentResponseMeta"
+      "properties": {
+        "requestUuid": {
+          "type": "string",
+          "description": "UUID for the request this message is responding to"
         },
-        {
-          "type": "object",
-          "properties": {
-            "requestUuid": true,
-            "timestamp": true,
-            "responseUuid": true,
-            "sources": {
-              "title": "Desktop Agents that responded",
-              "type": "array",
-              "items": {
-                "oneOf": [
-                  {
-                    "$ref": "../api/appIdentifier.schema.json"
-                  },
-                  {
-                    "$ref": "../api/desktopAgentIdentifier.schema.json"
-                  }
-                ]
-              },
-              "description": "Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated responses to the request. Will contain a single value for individual responses and multiple values for responses that were collated by the bridge. May be omitted if all sources errored."
-            },
-            "errorSources": {
-              "title": "Desktop Agents that returned errors",
-              "type": "array",
-              "items": {
-                "oneOf": [
-                  {
-                    "$ref": "../api/appIdentifier.schema.json"
-                  },
-                  {
-                    "$ref": "../api/desktopAgentIdentifier.schema.json"
-                  }
-                ]
-              },
-              "description": "Array of AppIdentifiers or DesktopAgentIdentifiers for responses that were not returned to the bridge before the timeout or because an error occurred. May be omitted if all sources responded without errors."
-            },
-            "errorDetails": {
-              "title": "Detail of errors returned",
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "description": "Array of error message strings for responses that were not returned to the bridge before the timeout or because an error occurred. Should be the same length as the `errorSources` array and ordered the same. May be omitted if all sources responded without errors."
+        "responseUuid": {
+          "type": "string",
+          "description": "UUID for the response"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp at which the response was generated"
+        },
+        "sources": {
+          "type": "array",
+          "items": [
+            {
+              "$ref": "bridgeParticipantIdentifier.schema.json"
             }
+          ],
+          "title": "Desktop Agents that responded",
+          "description": "Array of AppIdentifiers or DesktopAgentIdentifiers for the sources that generated responses to the request. Will contain a single value for individual responses and multiple values for responses that were collated by the bridge. May be omitted if all sources errored. MUST include the `desktopAgent` field when returned by the bridge."
+        },
+        "errorSources": {
+          "type": "array",
+          "items": [
+            {
+              "$ref": "bridgeParticipantIdentifier.schema.json"
+            }
+          ],
+          "title": "Desktop Agents that errored",
+          "description": "Array of AppIdentifiers or DesktopAgentIdentifiers for responses that were not returned to the bridge before the timeout or because an error occurred. May be omitted if all sources responded without errors."
+        },
+        "errorDetails": {
+          "title": "Detail of errors returned",
+          "type": "array",
+          "items": {
+            "type": "string"
           },
-          "required": ["requestUuid", "responseUuid", "timestamp"],
-          "additionalProperties": false
+          "description": "Array of error message strings for responses that were not returned to the bridge before the timeout or because an error occurred. Should be the same length as the `errorSources` array and ordered the same. May be omitted if all sources responded without errors."
         }
-      ]
+      },
+      "required": ["requestUuid", "responseUuid", "timestamp"],
+      "additionalProperties": false
     }
   }
 }

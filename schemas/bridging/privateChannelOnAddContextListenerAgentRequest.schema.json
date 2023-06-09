@@ -1,14 +1,20 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://fdc3.finos.org/schemas/next/bridging/privateChannelOnAddContextListenerAgentRequest.schema.json",
-  "title": "privateChannelOnAddContextListenerAgentRequest",
+  "title": "privateChannelOnAddContextListener Agent Request",
   "type": "object",
   "allOf": [
     {
       "$ref": "agentRequest.schema.json"
     },
     {
+      "$ref": "#/$defs/PrivateChannelOnAddContextListenerRequestBase"
+    }
+  ],
+  "$defs": {
+    "PrivateChannelOnAddContextListenerRequestBase": {
       "type": "object",
+      "description": "A request to forward on an AddCOntextListener event, relating to a PrivateChannel",
       "properties": {
         "type": {
           "const": "PrivateChannel.onAddContextListener"
@@ -42,7 +48,8 @@
           },
           "unevaluatedProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     }
-  ]
+  }
 }

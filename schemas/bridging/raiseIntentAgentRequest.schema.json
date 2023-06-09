@@ -1,14 +1,20 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://fdc3.finos.org/schemas/next/bridging/raiseIntentAgentRequest.schema.json",
-  "title": "raiseIntentAgentRequest",
+  "title": "raiseIntent Agent Request",
   "type": "object",
   "allOf": [
     {
       "$ref": "agentRequest.schema.json"
     },
     {
+      "$ref": "#/$defs/RaiseIntentRequestBase"
+    }
+  ],
+  "$defs": {
+    "RaiseIntentRequestBase": {
       "type": "object",
+      "description": "A request to raise an intent.",
       "properties": {
         "type": {
           "const": "raiseIntentRequest"
@@ -46,5 +52,5 @@
       },
       "additionalProperties": false
     }
-  ]
+  }
 }

@@ -1,14 +1,20 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://fdc3.finos.org/schemas/next/bridging/findInstancesAgentResponse.schema.json",
-  "title": "findInstancesAgentResponse",
+  "title": "findInstances Agent Response",
   "type": "object",
   "allOf": [
     {
       "$ref": "agentResponse.schema.json"
     },
     {
+      "$ref": "#/$defs/FindInstancesResponseBase"
+    }
+  ],
+  "$defs": {
+    "FindInstancesResponseBase": {
       "type": "object",
+      "description": "A response to a findInstances request.",
       "properties": {
         "type": {
           "const": "findInstancesResponse"
@@ -28,7 +34,8 @@
           "additionalProperties": false
         },
         "meta": true
-      }
+      },
+      "additionalProperties": false
     }
-  ]
+  }
 }

@@ -1,17 +1,17 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://fdc3.finos.org/schemas/next/bridging/agentResponse.schema.json",
-  "title": "agentResponse",
+  "title": "Agent Response Message",
   "type": "object",
-  "description": "Schema defining the format of all response messages from a Desktop Agent to the Bridge. Individual message schemas further refine this format for each response type.",
+  "description": "A response message from a Desktop Agent to the Bridge.",
   "properties": {
     "type": {
-      "title": "Response message type",
+      "title": "Response Message Type",
       "type": "string",
       "description": "Identifies the type of the message and it is typically set to the FDC3 function name that the message relates to, e.g. 'findIntent', with 'Response' appended."
     },
     "payload": {
-      "title": "Response message payload",
+      "title": "Response Message Payload",
       "type": "object",
       "description": "The message payload typically contains return values for FDC3 API functions."
     },
@@ -23,26 +23,38 @@
   "required": ["type", "payload", "meta"],
   "$defs": {
     "AgentResponseMeta": {
-      "title": "Agent response metadata",
+      "title": "Agent Response Metadata",
+      "description": "Metadata for a response messages sent by a Desktop Agent to the Bridge",
       "type": "object",
-      "allOf": [
-        {
-          "$ref": "agentRequest.schema.json#/$defs/AgentRequestMeta"
+      "properties": {
+        "requestUuid": {
+          "type": "string",
+          "description": "UUID for the request this message is responding to"
         },
-        {
-          "type": "object",
-          "properties": {
-            "requestUuid": true,
-            "timestamp": true,
-            "responseUuid": {
-              "type": "string",
-              "description": "UUID for the response"
+        "responseUuid": {
+          "type": "string",
+          "description": "UUID for the response"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp at which the response was generated"
+        },
+        "source": {
+          "title": "Response Source identifier",
+          "description": "Field that represents the source application instance that the response was produced by, or the Desktop Agent if it produced the response without an application.",
+          "oneOf": [
+            {
+              "$ref": "../api/appIdentifier.schema.json"
+            },
+            {
+              "$ref": "../api/desktopAgentIdentifier.schema.json"
             }
-          },
-          "required": ["requestUuid", "responseUuid", "timestamp"],
-          "unevaluatedProperties": false
+          ]
         }
-      ]
+      },
+      "required": ["requestUuid", "responseUuid", "timestamp", "source"],
+      "additionalProperties": false
     }
   }
 }
