@@ -29,11 +29,11 @@
       "properties": {
         "requestUuid": {
           "type": "string",
-          "description": "UUID for the request this message is responding to"
+          "description": "UUID for the request this message is responding to."
         },
         "responseUuid": {
           "type": "string",
-          "description": "UUID for the response"
+          "description": "UUID for this specific response message."
         },
         "timestamp": {
           "type": "string",
