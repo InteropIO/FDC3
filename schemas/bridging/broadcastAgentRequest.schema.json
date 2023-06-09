@@ -20,7 +20,7 @@
           "const": "broadcastRequest"
         },
         "payload": {
-          "title": "Broadcast Request Payload",
+          "title": "broadcast Request Payload",
           "type": "object",
           "properties": {
             "channel": {
@@ -35,7 +35,7 @@
         },
         "meta": {
           "type": "object",
-          "title": "Broadcast request metadata",
+          "title": "broadcast request metadata",
           "properties": {
             "requestUuid": true,
             "timestamp": true,
