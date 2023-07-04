@@ -1,24 +1,29 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://fdc3.finos.org/schemas/next/bridging/connectionStep6ConnectedAgentsUpdate.schema.json",
-  "title": "connectionStep6ConnectedAgentsUpdate",
+  "title": "ConnectionStep6ConnectedAgentsUpdate",
   "type": "object",
   "properties": {
     "type": {
+      "title": "Connection Step 6 Message Type",
       "const": "connectedAgentsUpdate"
     },
     "payload": {
+      "title": "Connection Step 6 Payload",
       "type": "object",
       "properties": {
         "addAgent": {
+          "title": "Agents To Add",
           "type": "string",
           "description": "Should be set when an agent first connects to the bridge and provide its assigned name."
         },
         "removeAgent": {
+          "title": "Agents To Remove",
           "type": "string",
           "description": "Should be set when an agent disconnects from the bridge and provide the name that no longer is assigned."
         },
         "allAgents": {
+          "title": "All Connected Agents",
           "type": "array",
           "description": "Desktop Agent Bridge implementation metadata of all connected agents.",
           "items": {
@@ -26,6 +31,7 @@
           }
         },
         "channelsState": {
+          "title": "Channel State",
           "type": "object",
           "description": "The updated state of channels that should be adopted by the agents. Should only be set when an agent is connecting to the bridge.",
           "additionalProperties": {
@@ -40,20 +46,17 @@
       "required": ["allAgents"]
     },
     "meta": {
+      "title": "Connection Step 6 Metadata",
       "type": "object",
       "properties": {
         "requestUuid": {
-          "type": "string",
-          "description": "Unique UUID for the request"
+          "$ref": "common.schema.json#/$defs/RequestUuid"
         },
         "responseUuid": {
-          "type": "string",
-          "description": "Unique UUID for the response"
+          "$ref": "common.schema.json#/$defs/ResponseUuid"
         },
         "timestamp": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Timestamp at which request or response was generated"
+          "$ref": "common.schema.json#/$defs/Timestamp"
         }
       },
       "additionalProperties": false,

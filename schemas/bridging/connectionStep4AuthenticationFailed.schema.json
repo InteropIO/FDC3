@@ -1,36 +1,36 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://fdc3.finos.org/schemas/next/bridging/connectionStep4AuthenticationFailed.schema.json",
-  "title": "connectionStep4AuthenticationFailed",
+  "title": "ConnectionStep4AuthenticationFailed",
   "type": "object",
   "properties": {
     "type": {
+      "title": "Connection Step 4 Message Type",
       "const": "authenticationFailed"
     },
     "payload": {
+      "title": "Connection Step 4 Payload",
       "type": "object",
       "properties": {
         "message": {
+          "title": "Authentication failed message",
           "type": "string"
         }
       },
       "additionalProperties": false
     },
     "meta": {
+      "title": "Connection Step 4 Metadata",
       "type": "object",
       "properties": {
         "requestUuid": {
-          "type": "string",
-          "description": "Unique UUID for the request"
+          "$ref": "common.schema.json#/$defs/RequestUuid"
         },
         "responseUuid": {
-          "type": "string",
-          "description": "Unique UUID for the response"
+          "$ref": "common.schema.json#/$defs/ResponseUuid"
         },
         "timestamp": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Timestamp at which request or response was generated"
+          "$ref": "common.schema.json#/$defs/Timestamp"
         }
       },
       "additionalProperties": false,
