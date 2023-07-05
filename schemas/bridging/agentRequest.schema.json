@@ -6,8 +6,23 @@
   "description": "A request message from a Desktop Agent to the Bridge.",
   "properties": {
     "type": {
-      "title": "Message type",
+      "title": "Request Message type",
       "type": "string",
+      "enum": [
+        "broadcastRequest",
+        "findInstancesRequest",
+        "findIntentRequest",
+        "findIntentsByContextRequest",
+        "getAppMetadataRequest",
+        "openRequest",
+        "PrivateChannel.broadcast",
+        "PrivateChannel.eventListenerAdded",
+        "PrivateChannel.onAddContextListener",
+        "PrivateChannel.onDisconnect",
+        "PrivateChannel.onUnsubscribe",
+        "raiseIntentRequest",
+        "raiseIntentResultResponse"
+      ],
       "description": "Identifies the type of the message and it is typically set to the FDC3 function name that the message relates to, e.g. 'findIntent', with 'Request' appended."
     },
     "payload": {
