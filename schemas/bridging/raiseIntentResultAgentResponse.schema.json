@@ -41,7 +41,7 @@
                   "type": "object",
                   "properties": {
                     "channel": {
-                      "$ref": "../api/channel.schema.json"
+                      "$ref": "../api/api.schema.json#/definitions/Channel"
                     }
                   },
                   "required": ["channel"],

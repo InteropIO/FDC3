@@ -28,7 +28,7 @@
             "appIdentifiers": {
               "type": "array",
               "items": {
-                "$ref": "../api/appMetadata.schema.json"
+                "$ref": "../api/api.schema.json#/definitions/AppMetadata"
               }
             }
           },

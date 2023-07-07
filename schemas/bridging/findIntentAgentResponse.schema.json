@@ -26,7 +26,7 @@
           "type": "object",
           "properties": {
             "appIntent": {
-              "$ref": "../api/appIntent.schema.json"
+              "$ref": "../api/api.schema.json#/definitions/AppIntent"
             }
           },
           "required": ["appIntent"],

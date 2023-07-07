@@ -47,17 +47,17 @@
       "description": "Field that represents the source application that a request or response was received from, or the source Desktop Agent if it issued the request or response itself.",
       "oneOf": [
         {
-          "$ref": "../api/appIdentifier.schema.json"
+          "$ref": "../api/api.schema.json#/definitions/AppIdentifier"
         },
         {
-          "$ref": "../api/desktopAgentIdentifier.schema.json"
+          "$ref": "../api/api.schema.json#/definitions/DesktopAgentIdentifier"
         }
       ]
     },
     "ResponseSource": {
       "title": "Source identifier",
       "description": "Field that represents the source Desktop Agent that a response was received from.",
-      "$ref": "../api/desktopAgentIdentifier.schema.json"
+      "$ref": "../api/api.schema.json#/definitions/DesktopAgentIdentifier"
     },
     "BridgeParticipantIdentifier": {
       "title": "Bridge Participant Identifier",
@@ -65,10 +65,10 @@
       "type": "object",
       "oneOf": [
         {
-          "$ref": "../api/appIdentifier.schema.json"
+          "$ref": "../api/api.schema.json#/definitions/AppIdentifier"
         },
         {
-          "$ref": "../api/desktopAgentIdentifier.schema.json"
+          "$ref": "../api/api.schema.json#/definitions/DesktopAgentIdentifier"
         }
       ]
     },
@@ -82,7 +82,7 @@
       "type": "array",
       "items": [
         {
-          "$ref": "../api/desktopAgentIdentifier.schema.json"
+          "$ref": "../api/api.schema.json#/definitions/DesktopAgentIdentifier"
         }
       ],
       "description": "Array of DesktopAgentIdentifiers for the sources that generated responses to the request. Will contain a single value for individual responses and multiple values for responses that were collated by the bridge. May be omitted if all sources errored. MUST include the `desktopAgent` field when returned by the bridge."
@@ -92,7 +92,7 @@
       "type": "array",
       "items": [
         {
-          "$ref": "../api/desktopAgentIdentifier.schema.json"
+          "$ref": "../api/api.schema.json#/definitions/DesktopAgentIdentifier"
         }
       ],
       "description": "Array of DesktopAgentIdentifiers for responses that were not returned to the bridge before the timeout or because an error occurred. May be omitted if all sources responded without errors. MUST include the `desktopAgent` field when returned by the bridge."

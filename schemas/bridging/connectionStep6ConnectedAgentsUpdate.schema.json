@@ -27,7 +27,7 @@
           "type": "array",
           "description": "Desktop Agent Bridge implementation metadata of all connected agents.",
           "items": {
-            "$ref": "../api/implementationMetadata.schema.json"
+            "$ref": "../api/baseImplementationMetadata.schema.json"
           }
         },
         "channelsState": {

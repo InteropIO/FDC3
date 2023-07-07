@@ -26,7 +26,7 @@
           "type": "object",
           "properties": {
             "appMetadata": {
-              "$ref": "../api/appMetadata.schema.json"
+              "$ref": "../api/api.schema.json#/definitions/AppMetadata"
             }
           },
           "required": ["appMetadata"],

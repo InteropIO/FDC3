@@ -28,7 +28,7 @@
             "appIntents": {
               "type": "array",
               "items": {
-                "$ref": "../api/appIntent.schema.json"
+                "$ref": "../api/api.schema.json#/definitions/AppIntent"
               },
               "additionalProperties": false
             }

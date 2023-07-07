@@ -26,7 +26,7 @@
           "type": "object",
           "properties": {
             "app": {
-              "$ref": "../api/appIdentifier.schema.json"
+              "$ref": "../api/api.schema.json#/definitions/AppIdentifier"
             }
           },
           "required": ["app"],
@@ -39,10 +39,10 @@
             "requestUuid": true,
             "timestamp": true,
             "destination": {
-              "$ref": "../api/desktopAgentIdentifier.schema.json"
+              "$ref": "../api/api.schema.json#/definitions/DesktopAgentIdentifier"
             },
             "source": {
-              "$ref": "../api/appIdentifier.schema.json"
+              "$ref": "../api/api.schema.json#/definitions/AppIdentifier"
             }
           },
           "unevaluatedProperties": false

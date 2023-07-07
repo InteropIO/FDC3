@@ -39,10 +39,10 @@
             "requestUuid": true,
             "timestamp": true,
             "source": {
-              "$ref": "../api/appIdentifier.schema.json"
+              "$ref": "../api/api.schema.json#/definitions/AppIdentifier"
             },
             "destination": {
-              "$ref": "../api/appIdentifier.schema.json"
+              "$ref": "../api/api.schema.json#/definitions/AppIdentifier"
             }
           },
           "unevaluatedProperties": false

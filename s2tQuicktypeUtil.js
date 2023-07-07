@@ -27,7 +27,7 @@ while (dirIndex < inputs.length) {
     fs.readdirSync(inputs[dirIndex], { withFileTypes: true }).forEach(file => {
       if (file.isDirectory()) {
         inputs.push(path.join(inputs[dirIndex], file.name));
-      } else {
+      } else if (file.name.endsWith('.schema.json')) {
         sources += `--src ${path.join(inputs[dirIndex], file.name)} `;
       }
     });

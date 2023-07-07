@@ -26,7 +26,7 @@
           }
         },
         "authRequired": {
-          "title": "Authenticaiton Required",
+          "title": "Authentication Required",
           "type": "boolean",
           "description": "A flag indicating whether the Desktop Agent Bridge requires authentication or not."
         },
