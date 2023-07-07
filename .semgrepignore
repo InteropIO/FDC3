@@ -2,4 +2,4 @@ website/**
 
 # Just used for build so ignoring
 s2tQuicktypeUtil.js
-schemas/api/t2QuicktypeUtil.js
+schemas/api/t2sQuicktypeUtil.js
