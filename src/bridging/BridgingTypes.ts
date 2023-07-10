@@ -59,19 +59,50 @@
 // match the expected interface, even if the JSON is valid.
 
 /**
- * Base of Implementation Metadata used by Bridging that leaves out the metadata of the
- * calling application (appMetadata)
+ * Metadata relating to the FDC3 Desktop Agent implementation and its provider.
  */
 export interface BaseImplementationMetadata {
+  /**
+   * The version number of the FDC3 specification that the implementation provides.
+   * The string must be a numeric semver version, e.g. 1.2 or 1.2.1.
+   */
   fdc3Version: string;
+  /**
+   * Metadata indicating whether the Desktop Agent implements optional features of
+   * the Desktop Agent API.
+   */
   optionalFeatures: BaseImplementationMetadataOptionalFeatures;
+  /**
+   * The name of the provider of the Desktop Agent implementation (e.g. Finsemble, Glue42,
+   * OpenFin etc.).
+   */
   provider: string;
+  /**
+   * The version of the provider of the Desktop Agent implementation (e.g. 5.3.0).
+   */
   providerVersion?: string;
 }
 
+/**
+ * Metadata indicating whether the Desktop Agent implements optional features of
+ * the Desktop Agent API.
+ */
 export interface BaseImplementationMetadataOptionalFeatures {
+  /**
+   * Used to indicate whether the experimental Desktop Agent Bridging
+   * feature is implemented by the Desktop Agent.
+   */
   DesktopAgentBridging: boolean;
+  /**
+   * Used to indicate whether the exposure of 'originating app metadata' for
+   * context and intent messages is supported by the Desktop Agent.
+   */
   OriginatingAppMetadata: boolean;
+  /**
+   * Used to indicate whether the optional `fdc3.joinUserChannel`,
+   * `fdc3.getCurrentChannel` and `fdc3.leaveCurrentChannel` are implemented by
+   * the Desktop Agent.
+   */
   UserChannelMembershipAPIs: boolean;
 }
 
@@ -672,19 +703,50 @@ export interface ConnectionStep3Payload {
 /**
  * Desktop Agent ImplementationMetadata trying to connect to the bridge.
  *
- * Base of Implementation Metadata used by Bridging that leaves out the metadata of the
- * calling application (appMetadata)
+ * Metadata relating to the FDC3 Desktop Agent implementation and its provider.
  */
 export interface ImplementationMetadataElement {
+  /**
+   * The version number of the FDC3 specification that the implementation provides.
+   * The string must be a numeric semver version, e.g. 1.2 or 1.2.1.
+   */
   fdc3Version: string;
+  /**
+   * Metadata indicating whether the Desktop Agent implements optional features of
+   * the Desktop Agent API.
+   */
   optionalFeatures: ImplementationMetadataOptionalFeatures;
+  /**
+   * The name of the provider of the Desktop Agent implementation (e.g. Finsemble, Glue42,
+   * OpenFin etc.).
+   */
   provider: string;
+  /**
+   * The version of the provider of the Desktop Agent implementation (e.g. 5.3.0).
+   */
   providerVersion?: string;
 }
 
+/**
+ * Metadata indicating whether the Desktop Agent implements optional features of
+ * the Desktop Agent API.
+ */
 export interface ImplementationMetadataOptionalFeatures {
+  /**
+   * Used to indicate whether the experimental Desktop Agent Bridging
+   * feature is implemented by the Desktop Agent.
+   */
   DesktopAgentBridging: boolean;
+  /**
+   * Used to indicate whether the exposure of 'originating app metadata' for
+   * context and intent messages is supported by the Desktop Agent.
+   */
   OriginatingAppMetadata: boolean;
+  /**
+   * Used to indicate whether the optional `fdc3.joinUserChannel`,
+   * `fdc3.getCurrentChannel` and `fdc3.leaveCurrentChannel` are implemented by
+   * the Desktop Agent.
+   */
   UserChannelMembershipAPIs: boolean;
 }
 
