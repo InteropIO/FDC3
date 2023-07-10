@@ -1,6 +1,6 @@
 // To parse this data:
 //
-//   import { Convert, BaseImplementationMetadata, AgentRequestMessage, AgentResponseMessage, BridgeRequestMessage, BridgeResponseMessage, BroadcastAgentRequest, BroadcastBridgeRequest, ConnectionStep2Hello, ConnectionStep3Handshake, ConnectionStep4AuthenticationFailed, ConnectionStep6ConnectedAgentsUpdate, FindInstancesAgentRequest, FindInstancesAgentResponse, FindInstancesBridgeRequest, FindInstancesBridgeResponse, FindIntentsAgentRequest, FindIntentAgentResponse, FindIntentBridgeRequest, FindIntentBridgeResponse, FindIntentsByContextAgentRequest, FindIntentsByContextAgentResponse, FindIntentsByContextBridgeRequest, FindIntentsByContextBridgeResponse, GetAppMetadataAgentRequest, GetAppMetadataAgentResponse, GetAppMetadataBridgeRequest, GetAppMetadataBridgeResponse, OpenAgentRequest, OpenAgentResponse, OpenBridgeRequest, OpenBridgeResponse, PrivateChannelBroadcastAgentRequest, PrivateChannelBroadcastBridgeRequest, PrivateChannelEventListenerAddedAgentRequest, PrivateChannelEventListenerAddedBridgeRequest, PrivateChannelEventListenerRemovedAgentRequest, PrivateChannelEventListenerRemovedBridgeRequest, PrivateChannelOnAddContextListenerAgentRequest, PrivateChannelOnAddContextListenerBridgeRequest, PrivateChannelOnDisconnectAgentRequest, PrivateChannelOnDisconnectBridgeRequest, PrivateChannelOnUnsubscribeAgentRequest, PrivateChannelOnUnsubscribeBridgeRequest, RaiseIntentAgentRequest, RaiseIntentAgentResponse, RaiseIntentBridgeRequest, RaiseIntentBridgeResponse, RaiseIntentResultAgentResponse, RaiseIntentResultBridgeResponse, Context } from "./file";
+//   import { Convert, BaseImplementationMetadata, AgentRequestMessage, AgentResponseMessage, BridgeRequestMessage, BridgeResponseMessage, BroadcastAgentRequest, BroadcastBridgeRequest, ConnectionStepMessage, ConnectionStep2Hello, ConnectionStep3Handshake, ConnectionStep4AuthenticationFailed, ConnectionStep6ConnectedAgentsUpdate, FindInstancesAgentRequest, FindInstancesAgentResponse, FindInstancesBridgeRequest, FindInstancesBridgeResponse, FindIntentsAgentRequest, FindIntentAgentResponse, FindIntentBridgeRequest, FindIntentBridgeResponse, FindIntentsByContextAgentRequest, FindIntentsByContextAgentResponse, FindIntentsByContextBridgeRequest, FindIntentsByContextBridgeResponse, GetAppMetadataAgentRequest, GetAppMetadataAgentResponse, GetAppMetadataBridgeRequest, GetAppMetadataBridgeResponse, OpenAgentRequest, OpenAgentResponse, OpenBridgeRequest, OpenBridgeResponse, PrivateChannelBroadcastAgentRequest, PrivateChannelBroadcastBridgeRequest, PrivateChannelEventListenerAddedAgentRequest, PrivateChannelEventListenerAddedBridgeRequest, PrivateChannelEventListenerRemovedAgentRequest, PrivateChannelEventListenerRemovedBridgeRequest, PrivateChannelOnAddContextListenerAgentRequest, PrivateChannelOnAddContextListenerBridgeRequest, PrivateChannelOnDisconnectAgentRequest, PrivateChannelOnDisconnectBridgeRequest, PrivateChannelOnUnsubscribeAgentRequest, PrivateChannelOnUnsubscribeBridgeRequest, RaiseIntentAgentRequest, RaiseIntentAgentResponse, RaiseIntentBridgeRequest, RaiseIntentBridgeResponse, RaiseIntentResultAgentResponse, RaiseIntentResultBridgeResponse, Context } from "./file";
 //
 //   const schemasAPIAPISchema = Convert.toSchemasAPIAPISchema(json);
 //   const baseImplementationMetadata = Convert.toBaseImplementationMetadata(json);
@@ -11,6 +11,7 @@
 //   const broadcastAgentRequest = Convert.toBroadcastAgentRequest(json);
 //   const broadcastBridgeRequest = Convert.toBroadcastBridgeRequest(json);
 //   const bridgingCommons = Convert.toBridgingCommons(json);
+//   const connectionStepMessage = Convert.toConnectionStepMessage(json);
 //   const connectionStep2Hello = Convert.toConnectionStep2Hello(json);
 //   const connectionStep3Handshake = Convert.toConnectionStep3Handshake(json);
 //   const connectionStep4AuthenticationFailed = Convert.toConnectionStep4AuthenticationFailed(json);
@@ -642,17 +643,71 @@ export interface BroadcastBridgeRequestPayload {
   context: ContextElement;
 }
 
-export interface ConnectionStep2Hello {
-  meta: ConnectionStep2Metadata;
-  payload: ConnectionStep2Payload;
-  type: any;
+/**
+ * A message used during the connection flow for a Desktop Agent to the Bridge. Used for
+ * messages sent in either direction.
+ */
+export interface ConnectionStepMessage {
+  meta: ConnectionStepMetadata;
+  /**
+   * The message payload, containing data pertaining to this connection step.
+   */
+  payload: { [key: string]: any };
+  /**
+   * Identifies the type of the connection step message.
+   */
+  type: ConnectionStepMessageType;
 }
 
-export interface ConnectionStep2Metadata {
+/**
+ * Metadata for this connection step message.
+ */
+export interface ConnectionStepMetadata {
+  requestUuid?: string;
+  responseUuid?: string;
   timestamp: Date;
 }
 
-export interface ConnectionStep2Payload {
+/**
+ * Identifies the type of the connection step message.
+ */
+export enum ConnectionStepMessageType {
+  AuthenticationFailed = 'authenticationFailed',
+  ConnectedAgentsUpdate = 'connectedAgentsUpdate',
+  Handshake = 'handshake',
+  Hello = 'hello',
+}
+
+/**
+ * Hello message sent by the Bridge to anyone connecting to the Bridge (enables
+ * identification as a bridge and confirmation of whether authentication is required)
+ *
+ * A message used during the connection flow for a Desktop Agent to the Bridge. Used for
+ * messages sent in either direction.
+ */
+export interface ConnectionStep2Hello {
+  meta: ConnectionStep2HelloMeta;
+  /**
+   * The message payload, containing data pertaining to this connection step.
+   */
+  payload: ConnectionStep2HelloPayload;
+  /**
+   * Identifies the type of the connection step message.
+   */
+  type: ConnectionStepMessageType;
+}
+
+/**
+ * Metadata for this connection step message.
+ */
+export interface ConnectionStep2HelloMeta {
+  timestamp: Date;
+}
+
+/**
+ * The message payload, containing data pertaining to this connection step.
+ */
+export interface ConnectionStep2HelloPayload {
   /**
    * A flag indicating whether the Desktop Agent Bridge requires authentication or not.
    */
@@ -672,18 +727,37 @@ export interface ConnectionStep2Payload {
   supportedFDC3Versions: string[];
 }
 
+/**
+ * Handshake message sent by the Desktop Agent to the Bridge (including requested name,
+ * channel state and authentication data)
+ *
+ * A message used during the connection flow for a Desktop Agent to the Bridge. Used for
+ * messages sent in either direction.
+ */
 export interface ConnectionStep3Handshake {
-  meta: ConnectionStep3Metadata;
-  payload: ConnectionStep3Payload;
-  type: any;
+  meta: ConnectionStep3HandshakeMeta;
+  /**
+   * The message payload, containing data pertaining to this connection step.
+   */
+  payload: ConnectionStep3HandshakePayload;
+  /**
+   * Identifies the type of the connection step message.
+   */
+  type: ConnectionStepMessageType;
 }
 
-export interface ConnectionStep3Metadata {
+/**
+ * Metadata for this connection step message.
+ */
+export interface ConnectionStep3HandshakeMeta {
   requestUuid: string;
   timestamp: Date;
 }
 
-export interface ConnectionStep3Payload {
+/**
+ * The message payload, containing data pertaining to this connection step.
+ */
+export interface ConnectionStep3HandshakePayload {
   authToken?: string;
   /**
    * The current state of the Desktop Agent's channels, excluding any private channels, as a
@@ -750,35 +824,73 @@ export interface ImplementationMetadataOptionalFeatures {
   UserChannelMembershipAPIs: boolean;
 }
 
+/**
+ * Message sent by Bridge to Desktop Agent if their authentication fails.
+ *
+ * A message used during the connection flow for a Desktop Agent to the Bridge. Used for
+ * messages sent in either direction.
+ */
 export interface ConnectionStep4AuthenticationFailed {
-  meta: ConnectionStep4Metadata;
-  payload?: ConnectionStep4Payload;
-  type: any;
+  meta: ConnectionStep4AuthenticationFailedMeta;
+  /**
+   * The message payload, containing data pertaining to this connection step.
+   */
+  payload: ConnectionStep4AuthenticationFailedPayload;
+  /**
+   * Identifies the type of the connection step message.
+   */
+  type: ConnectionStepMessageType;
 }
 
-export interface ConnectionStep4Metadata {
+/**
+ * Metadata for this connection step message.
+ */
+export interface ConnectionStep4AuthenticationFailedMeta {
   requestUuid: string;
   responseUuid: string;
   timestamp: Date;
 }
 
-export interface ConnectionStep4Payload {
+/**
+ * The message payload, containing data pertaining to this connection step.
+ */
+export interface ConnectionStep4AuthenticationFailedPayload {
   message?: string;
 }
 
+/**
+ * Message sent by Bridge to all Desktop Agent when an agent joins or leaves the bridge,
+ * includes the details of all agents, the change made and the expected channel state for
+ * all agents.
+ *
+ * A message used during the connection flow for a Desktop Agent to the Bridge. Used for
+ * messages sent in either direction.
+ */
 export interface ConnectionStep6ConnectedAgentsUpdate {
-  meta: ConnectionStep6Metadata;
-  payload: ConnectionStep6Payload;
-  type: any;
+  meta: ConnectionStep6ConnectedAgentsUpdateMeta;
+  /**
+   * The message payload, containing data pertaining to this connection step.
+   */
+  payload: ConnectionStep6ConnectedAgentsUpdatePayload;
+  /**
+   * Identifies the type of the connection step message.
+   */
+  type: ConnectionStepMessageType;
 }
 
-export interface ConnectionStep6Metadata {
+/**
+ * Metadata for this connection step message.
+ */
+export interface ConnectionStep6ConnectedAgentsUpdateMeta {
   requestUuid: string;
   responseUuid: string;
   timestamp: Date;
 }
 
-export interface ConnectionStep6Payload {
+/**
+ * The message payload, containing data pertaining to this connection step.
+ */
+export interface ConnectionStep6ConnectedAgentsUpdatePayload {
   /**
    * Should be set when an agent first connects to the bridge and provide its assigned name.
    */
@@ -2850,6 +2962,14 @@ export class Convert {
     return JSON.stringify(uncast(value, m('any')), null, 2);
   }
 
+  public static toConnectionStepMessage(json: string): ConnectionStepMessage {
+    return cast(JSON.parse(json), r('ConnectionStepMessage'));
+  }
+
+  public static connectionStepMessageToJson(value: ConnectionStepMessage): string {
+    return JSON.stringify(uncast(value, r('ConnectionStepMessage')), null, 2);
+  }
+
   public static toConnectionStep2Hello(json: string): ConnectionStep2Hello {
     return cast(JSON.parse(json), r('ConnectionStep2Hello'));
   }
@@ -3570,16 +3690,32 @@ const typeMap: any = {
     ],
     false
   ),
-  ConnectionStep2Hello: o(
+  ConnectionStepMessage: o(
     [
-      { json: 'meta', js: 'meta', typ: r('ConnectionStep2Metadata') },
-      { json: 'payload', js: 'payload', typ: r('ConnectionStep2Payload') },
-      { json: 'type', js: 'type', typ: 'any' },
+      { json: 'meta', js: 'meta', typ: r('ConnectionStepMetadata') },
+      { json: 'payload', js: 'payload', typ: m('any') },
+      { json: 'type', js: 'type', typ: r('ConnectionStepMessageType') },
     ],
     false
   ),
-  ConnectionStep2Metadata: o([{ json: 'timestamp', js: 'timestamp', typ: Date }], false),
-  ConnectionStep2Payload: o(
+  ConnectionStepMetadata: o(
+    [
+      { json: 'requestUuid', js: 'requestUuid', typ: u(undefined, '') },
+      { json: 'responseUuid', js: 'responseUuid', typ: u(undefined, '') },
+      { json: 'timestamp', js: 'timestamp', typ: Date },
+    ],
+    false
+  ),
+  ConnectionStep2Hello: o(
+    [
+      { json: 'meta', js: 'meta', typ: r('ConnectionStep2HelloMeta') },
+      { json: 'payload', js: 'payload', typ: r('ConnectionStep2HelloPayload') },
+      { json: 'type', js: 'type', typ: r('ConnectionStepMessageType') },
+    ],
+    false
+  ),
+  ConnectionStep2HelloMeta: o([{ json: 'timestamp', js: 'timestamp', typ: Date }], false),
+  ConnectionStep2HelloPayload: o(
     [
       { json: 'authRequired', js: 'authRequired', typ: true },
       { json: 'authToken', js: 'authToken', typ: u(undefined, '') },
@@ -3590,20 +3726,20 @@ const typeMap: any = {
   ),
   ConnectionStep3Handshake: o(
     [
-      { json: 'meta', js: 'meta', typ: r('ConnectionStep3Metadata') },
-      { json: 'payload', js: 'payload', typ: r('ConnectionStep3Payload') },
-      { json: 'type', js: 'type', typ: 'any' },
+      { json: 'meta', js: 'meta', typ: r('ConnectionStep3HandshakeMeta') },
+      { json: 'payload', js: 'payload', typ: r('ConnectionStep3HandshakePayload') },
+      { json: 'type', js: 'type', typ: r('ConnectionStepMessageType') },
     ],
     false
   ),
-  ConnectionStep3Metadata: o(
+  ConnectionStep3HandshakeMeta: o(
     [
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'timestamp', js: 'timestamp', typ: Date },
     ],
     false
   ),
-  ConnectionStep3Payload: o(
+  ConnectionStep3HandshakePayload: o(
     [
       { json: 'authToken', js: 'authToken', typ: u(undefined, '') },
       { json: 'channelsState', js: 'channelsState', typ: m(a(r('ContextElement'))) },
@@ -3631,13 +3767,13 @@ const typeMap: any = {
   ),
   ConnectionStep4AuthenticationFailed: o(
     [
-      { json: 'meta', js: 'meta', typ: r('ConnectionStep4Metadata') },
-      { json: 'payload', js: 'payload', typ: u(undefined, r('ConnectionStep4Payload')) },
-      { json: 'type', js: 'type', typ: 'any' },
+      { json: 'meta', js: 'meta', typ: r('ConnectionStep4AuthenticationFailedMeta') },
+      { json: 'payload', js: 'payload', typ: r('ConnectionStep4AuthenticationFailedPayload') },
+      { json: 'type', js: 'type', typ: r('ConnectionStepMessageType') },
     ],
     false
   ),
-  ConnectionStep4Metadata: o(
+  ConnectionStep4AuthenticationFailedMeta: o(
     [
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'responseUuid', js: 'responseUuid', typ: '' },
@@ -3645,16 +3781,16 @@ const typeMap: any = {
     ],
     false
   ),
-  ConnectionStep4Payload: o([{ json: 'message', js: 'message', typ: u(undefined, '') }], false),
+  ConnectionStep4AuthenticationFailedPayload: o([{ json: 'message', js: 'message', typ: u(undefined, '') }], false),
   ConnectionStep6ConnectedAgentsUpdate: o(
     [
-      { json: 'meta', js: 'meta', typ: r('ConnectionStep6Metadata') },
-      { json: 'payload', js: 'payload', typ: r('ConnectionStep6Payload') },
-      { json: 'type', js: 'type', typ: 'any' },
+      { json: 'meta', js: 'meta', typ: r('ConnectionStep6ConnectedAgentsUpdateMeta') },
+      { json: 'payload', js: 'payload', typ: r('ConnectionStep6ConnectedAgentsUpdatePayload') },
+      { json: 'type', js: 'type', typ: r('ConnectionStepMessageType') },
     ],
     false
   ),
-  ConnectionStep6Metadata: o(
+  ConnectionStep6ConnectedAgentsUpdateMeta: o(
     [
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'responseUuid', js: 'responseUuid', typ: '' },
@@ -3662,7 +3798,7 @@ const typeMap: any = {
     ],
     false
   ),
-  ConnectionStep6Payload: o(
+  ConnectionStep6ConnectedAgentsUpdatePayload: o(
     [
       { json: 'addAgent', js: 'addAgent', typ: u(undefined, '') },
       { json: 'allAgents', js: 'allAgents', typ: a(r('ImplementationMetadataElement')) },
@@ -4604,4 +4740,5 @@ const typeMap: any = {
     'raiseIntentResultResponse',
   ],
   Type: ['app', 'private', 'user'],
+  ConnectionStepMessageType: ['authenticationFailed', 'connectedAgentsUpdate', 'handshake', 'hello'],
 };
