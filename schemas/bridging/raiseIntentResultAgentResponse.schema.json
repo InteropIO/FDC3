@@ -26,9 +26,11 @@
           "type": "object",
           "properties": {
             "intentResult": {
+              "title": "IntentResult",
               "oneOf": [
                 {
                   "type": "object",
+                  "title": "IntentResult Context",
                   "properties": {
                     "context": {
                       "$ref": "../context/context.schema.json"
@@ -39,6 +41,7 @@
                 },
                 {
                   "type": "object",
+                  "title": "IntentResult Channel",
                   "properties": {
                     "channel": {
                       "$ref": "../api/api.schema.json#/definitions/Channel"
