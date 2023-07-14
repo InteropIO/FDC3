@@ -5,7 +5,10 @@
   "type": "object",
   "allOf": [
     {
-      "$ref": "#/$defs/RaiseIntentResponseBase"
+      "oneOf": [
+        { "$ref": "#/$defs/RaiseIntentResponseBase" },
+        { "$ref": "#/$defs/RaiseIntentResponseError" }
+      ]
     },
     {
       "$ref": "agentResponse.schema.json"
@@ -30,6 +33,37 @@
             }
           },
           "required": ["intentResolution"],
+          "additionalProperties": false
+        },
+        "meta": {
+          "title": "RaiseIntent Response Metadata",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "RaiseIntentResponseError": {
+      "title": "RaiseIntent Error Response",
+      "type": "object",
+      "description": "An error response to a request to raise an intent.",
+      "properties": {
+        "type": {
+          "title": "RaiseIntent Response Message type",
+          "const": "raiseIntentResponse"
+        },
+        "payload": {
+          "title": "RaiseIntent Error Payload",
+          "type": "object",
+          "properties": {
+            "error": {
+              "title": "RaiseIntent Error Message",
+              "oneOf": [
+                { "$ref": "../api/api.schema.json#/definitions/ResolveError" },
+                { "$ref": "../api/api.schema.json#/definitions/BridgingError" }
+              ]
+            }
+          },
+          "required": ["error"],
           "additionalProperties": false
         },
         "meta": {

@@ -5,7 +5,10 @@
   "type": "object",
   "allOf": [
     {
-      "$ref": "#/$defs/FindInstancesResponseBase"
+      "oneOf": [
+        { "$ref": "#/$defs/FindInstancesResponseBase" },
+        { "$ref": "#/$defs/FindInstancesResponseError" }
+      ]
     },
     {
       "$ref": "agentResponse.schema.json"
@@ -33,6 +36,37 @@
             }
           },
           "required": ["appIdentifiers"],
+          "additionalProperties": false
+        },
+        "meta": {
+          "title": "FindInstances Response Metadata",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "FindInstancesResponseError": {
+      "title": "FindInstances Error Response",
+      "type": "object",
+      "description": "An error response to a findInstances request.",
+      "properties": {
+        "type": {
+          "title": "FindInstances Response Message Type",
+          "const": "findInstancesResponse"
+        },
+        "payload": {
+          "title": "FindInstances Error Payload",
+          "type": "object",
+          "properties": {
+            "error": {
+              "title": "FindInstances Error Messages",
+              "oneOf": [
+                { "$ref": "../api/api.schema.json#/definitions/ResolveError" },
+                { "$ref": "../api/api.schema.json#/definitions/BridgingError" }
+              ]
+            }
+          },
+          "required": ["error"],
           "additionalProperties": false
         },
         "meta": {

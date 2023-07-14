@@ -22,7 +22,13 @@
     "payload": {
       "title": "Response Message Payload",
       "type": "object",
-      "description": "The message payload typically contains return values for FDC3 API functions."
+      "description": "The message payload typically contains return values for FDC3 API functions.",
+      "properties": {
+        "error": {
+          "$ref": "common.schema.json#/$defs/ErrorMessages"
+        }
+      },
+      "unevaluatedProperties": false
     },
     "meta": {
       "$ref": "#/$defs/AgentResponseMeta"

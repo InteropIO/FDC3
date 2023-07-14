@@ -5,7 +5,10 @@
   "type": "object",
   "allOf": [
     {
-      "$ref": "#/$defs/GetAppMetadataResponseBase"
+      "oneOf": [
+        { "$ref": "#/$defs/GetAppMetadataResponseBase" },
+        { "$ref": "#/$defs/GetAppMetadataResponseError" }
+      ]
     },
     {
       "$ref": "agentResponse.schema.json"
@@ -30,6 +33,37 @@
             }
           },
           "required": ["appMetadata"],
+          "additionalProperties": false
+        },
+        "meta": {
+          "title": "GetAppMetadata Response Metadata",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "GetAppMetadataResponseError": {
+      "title": "GetAppMetadata Error Response", 
+      "type": "object",
+      "description": "A error response to a getAppMetadata request.",
+      "properties": {
+        "type": {
+          "title": "GetAppMetadata Response Message Type",
+          "const": "getAppMetadataResponse"
+        },
+        "payload": {
+          "title": "GetAppMetadata Response Payload",
+          "type": "object",
+          "properties": {
+            "error": {
+              "title": "GetAppMetadata Error Message",
+              "oneOf": [
+                { "$ref": "../api/api.schema.json#/definitions/ResolveError" },
+                { "$ref": "../api/api.schema.json#/definitions/BridgingError" }
+              ]
+            }
+          },
+          "required": ["error"],
           "additionalProperties": false
         },
         "meta": {

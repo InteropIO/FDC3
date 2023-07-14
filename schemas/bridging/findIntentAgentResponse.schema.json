@@ -5,7 +5,10 @@
   "type": "object",
   "allOf": [
     {
-      "$ref": "#/$defs/FindIntentResponseBase"
+      "oneOf": [
+        { "$ref": "#/$defs/FindIntentResponseBase" },
+        { "$ref": "#/$defs/FindIntentResponseError" }
+      ]
     },
     {
       "$ref": "agentResponse.schema.json"
@@ -30,6 +33,37 @@
             }
           },
           "required": ["appIntent"],
+          "additionalProperties": false
+        },
+        "meta": {
+          "title": "FindIntent Response Metadata",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "FindIntentResponseError": {
+      "title": "FindIntent Error Response",
+      "type": "object",
+      "description": "An error response to a findIntent request.",
+      "properties": {
+        "type": {
+          "title": "FindIntent Response Message Type",
+          "const": "findIntentResponse"
+        },
+        "payload": {
+          "title": "FindIntent Error Payload",
+          "type": "object",
+          "properties": {
+            "error": {
+              "title": "FindIntent Error Message",
+              "oneOf": [
+                { "$ref": "../api/api.schema.json#/definitions/ResolveError" },
+                { "$ref": "../api/api.schema.json#/definitions/BridgingError" }
+              ]
+            }
+          },
+          "required": ["error"],
           "additionalProperties": false
         },
         "meta": {

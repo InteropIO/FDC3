@@ -295,11 +295,11 @@ export enum RequestMessageType {
  * A response message from a Desktop Agent to the Bridge.
  */
 export interface AgentResponseMessage {
-  meta: AgentResponseMetadata;
+  meta: AgentResponseMessageMeta;
   /**
    * The message payload typically contains return values for FDC3 API functions.
    */
-  payload: { [key: string]: any };
+  payload: PayloadObject;
   /**
    * Identifies the type of the message and it is typically set to the FDC3 function name that
    * the message relates to, e.g. 'findIntent', with 'Response' appended.
@@ -310,7 +310,7 @@ export interface AgentResponseMessage {
 /**
  * Metadata for a response messages sent by a Desktop Agent to the Bridge
  */
-export interface AgentResponseMetadata {
+export interface AgentResponseMessageMeta {
   requestUuid: string;
   responseUuid: string;
   /**
@@ -348,6 +348,53 @@ export interface DesktopAgentIdentifier {
    * particular Desktop Agent.
    */
   desktopAgent: string;
+}
+
+/**
+ * The message payload typically contains return values for FDC3 API functions.
+ */
+export interface PayloadObject {
+  error?: ResponseErrorDetail;
+  [property: string]: any;
+}
+
+/**
+ * Array of error message strings for responses that were not returned to the bridge before
+ * the timeout or because an error occurred. Should be the same length as the `errorSources`
+ * array and ordered the same. May be omitted if all sources responded without errors.
+ *
+ * UUID for the request
+ *
+ * UUID for this specific response message.
+ *
+ * Constants representing the errors that can be encountered when calling the `open` method
+ * on the DesktopAgent object (`fdc3`).
+ *
+ * Constants representing the errors that can be encountered when calling the `findIntent`,
+ * `findIntentsByContext`, `raiseIntent` or `raiseIntentForContext` methods on the
+ * DesktopAgent (`fdc3`).
+ */
+export enum ResponseErrorDetail {
+  AccessDenied = 'AccessDenied',
+  AgentDisconnected = 'AgentDisconnected',
+  AppNotFound = 'AppNotFound',
+  AppTimeout = 'AppTimeout',
+  CreationFailed = 'CreationFailed',
+  DesktopAgentNotFound = 'DesktopAgentNotFound',
+  ErrorOnLaunch = 'ErrorOnLaunch',
+  IntentDeliveryFailed = 'IntentDeliveryFailed',
+  IntentHandlerRejected = 'IntentHandlerRejected',
+  MalformedContext = 'MalformedContext',
+  NoAppsFound = 'NoAppsFound',
+  NoChannelFound = 'NoChannelFound',
+  NoResultReturned = 'NoResultReturned',
+  NotConnectedToBridge = 'NotConnectedToBridge',
+  ResolverTimeout = 'ResolverTimeout',
+  ResolverUnavailable = 'ResolverUnavailable',
+  ResponseToBridgeTimedOut = 'ResponseToBridgeTimedOut',
+  TargetAppUnavailable = 'TargetAppUnavailable',
+  TargetInstanceUnavailable = 'TargetInstanceUnavailable',
+  UserCancelledResolution = 'UserCancelledResolution',
 }
 
 /**
@@ -420,7 +467,7 @@ export interface BridgeResponseMessage {
  * Metadata required in a response message collated and/or forwarded on by the Bridge
  */
 export interface BridgeResponseMetadata {
-  errorDetails?: string[];
+  errorDetails?: ResponseErrorDetail[];
   errorSources?: DesktopAgentIdentifier[];
   requestUuid: string;
   responseUuid: string;
@@ -1048,6 +1095,8 @@ export interface AppIdentifier {
 /**
  * A response to a findInstances request.
  *
+ * An error response to a findInstances request.
+ *
  * A response message from a Desktop Agent to the Bridge.
  */
 export interface FindInstancesAgentResponse {
@@ -1081,7 +1130,8 @@ export interface FindInstancesAgentResponseMeta {
  * The message payload typically contains return values for FDC3 API functions.
  */
 export interface FindInstancesAgentResponsePayload {
-  appIdentifiers: AppMetadata[];
+  appIdentifiers?: AppMetadata[];
+  error?: FindInstancesErrorMessages;
 }
 
 /**
@@ -1202,6 +1252,37 @@ export interface Image {
 }
 
 /**
+ * Constants representing the errors that can be encountered when calling the `findIntent`,
+ * `findIntentsByContext`, `raiseIntent` or `raiseIntentForContext` methods on the
+ * DesktopAgent (`fdc3`).
+ *
+ * Array of error message strings for responses that were not returned to the bridge before
+ * the timeout or because an error occurred. Should be the same length as the `errorSources`
+ * array and ordered the same. May be omitted if all sources responded without errors.
+ *
+ * UUID for the request
+ *
+ * UUID for this specific response message.
+ *
+ * Constants representing the errors that can be encountered when calling the `open` method
+ * on the DesktopAgent object (`fdc3`).
+ */
+export enum FindInstancesErrorMessages {
+  AgentDisconnected = 'AgentDisconnected',
+  DesktopAgentNotFound = 'DesktopAgentNotFound',
+  IntentDeliveryFailed = 'IntentDeliveryFailed',
+  MalformedContext = 'MalformedContext',
+  NoAppsFound = 'NoAppsFound',
+  NotConnectedToBridge = 'NotConnectedToBridge',
+  ResolverTimeout = 'ResolverTimeout',
+  ResolverUnavailable = 'ResolverUnavailable',
+  ResponseToBridgeTimedOut = 'ResponseToBridgeTimedOut',
+  TargetAppUnavailable = 'TargetAppUnavailable',
+  TargetInstanceUnavailable = 'TargetInstanceUnavailable',
+  UserCancelledResolution = 'UserCancelledResolution',
+}
+
+/**
  * A request for details of instances of a particular app
  *
  * A request message forwarded from the Bridge onto a Desktop Agent connected to it.
@@ -1268,7 +1349,7 @@ export interface FindInstancesBridgeResponse {
  * Metadata required in a response message collated and/or forwarded on by the Bridge
  */
 export interface FindInstancesBridgeResponseMeta {
-  errorDetails?: string[];
+  errorDetails?: ResponseErrorDetail[];
   errorSources?: DesktopAgentIdentifier[];
   requestUuid: string;
   responseUuid: string;
@@ -1331,6 +1412,8 @@ export interface FindIntentsAgentRequestPayload {
 /**
  * A response to a findIntent request.
  *
+ * An error response to a findIntent request.
+ *
  * A response message from a Desktop Agent to the Bridge.
  */
 export interface FindIntentAgentResponse {
@@ -1364,7 +1447,8 @@ export interface FindIntentAgentResponseMeta {
  * The message payload typically contains return values for FDC3 API functions.
  */
 export interface FindIntentAgentResponsePayload {
-  appIntent: AppIntent;
+  appIntent?: AppIntent;
+  error?: FindInstancesErrorMessages;
 }
 
 /**
@@ -1465,7 +1549,7 @@ export interface FindIntentBridgeResponse {
  * Metadata required in a response message collated and/or forwarded on by the Bridge
  */
 export interface FindIntentBridgeResponseMeta {
-  errorDetails?: string[];
+  errorDetails?: ResponseErrorDetail[];
   errorSources?: DesktopAgentIdentifier[];
   requestUuid: string;
   responseUuid: string;
@@ -1528,6 +1612,8 @@ export interface FindIntentsByContextAgentRequestPayload {
 /**
  * A response to a findIntentsByContext request.
  *
+ * An error response to a findIntentsByContext request.
+ *
  * A response message from a Desktop Agent to the Bridge.
  */
 export interface FindIntentsByContextAgentResponse {
@@ -1561,7 +1647,8 @@ export interface FindIntentsByContextAgentResponseMeta {
  * The message payload typically contains return values for FDC3 API functions.
  */
 export interface FindIntentsByContextAgentResponsePayload {
-  appIntents: AppIntent[];
+  appIntents?: AppIntent[];
+  error?: FindInstancesErrorMessages;
 }
 
 /**
@@ -1632,7 +1719,7 @@ export interface FindIntentsByContextBridgeResponse {
  * Metadata required in a response message collated and/or forwarded on by the Bridge
  */
 export interface FindIntentsByContextBridgeResponseMeta {
-  errorDetails?: string[];
+  errorDetails?: ResponseErrorDetail[];
   errorSources?: DesktopAgentIdentifier[];
   requestUuid: string;
   responseUuid: string;
@@ -1694,6 +1781,8 @@ export interface GetAppMetadataAgentRequestPayload {
 /**
  * A response to a getAppMetadata request.
  *
+ * A error response to a getAppMetadata request.
+ *
  * A response message from a Desktop Agent to the Bridge.
  */
 export interface GetAppMetadataAgentResponse {
@@ -1727,7 +1816,8 @@ export interface GetAppMetadataAgentResponseMeta {
  * The message payload typically contains return values for FDC3 API functions.
  */
 export interface GetAppMetadataAgentResponsePayload {
-  appMetadata: AppMetadata;
+  appMetadata?: AppMetadata;
+  error?: FindInstancesErrorMessages;
 }
 
 /**
@@ -1797,7 +1887,7 @@ export interface GetAppMetadataBridgeResponse {
  * Metadata required in a response message collated and/or forwarded on by the Bridge
  */
 export interface GetAppMetadataBridgeResponseMeta {
-  errorDetails?: string[];
+  errorDetails?: ResponseErrorDetail[];
   errorSources?: DesktopAgentIdentifier[];
   requestUuid: string;
   responseUuid: string;
@@ -1860,6 +1950,8 @@ export interface OpenAgentRequestPayload {
 /**
  * A response to an open request
  *
+ * An error response to an open request
+ *
  * A response message from a Desktop Agent to the Bridge.
  */
 export interface OpenAgentResponse {
@@ -1893,7 +1985,36 @@ export interface OpenAgentResponseMeta {
  * The message payload typically contains return values for FDC3 API functions.
  */
 export interface OpenAgentResponsePayload {
-  appIdentifier: AppIdentifier;
+  appIdentifier?: AppIdentifier;
+  error?: OpenErrorMessage;
+}
+
+/**
+ * Constants representing the errors that can be encountered when calling the `open` method
+ * on the DesktopAgent object (`fdc3`).
+ *
+ * Array of error message strings for responses that were not returned to the bridge before
+ * the timeout or because an error occurred. Should be the same length as the `errorSources`
+ * array and ordered the same. May be omitted if all sources responded without errors.
+ *
+ * UUID for the request
+ *
+ * UUID for this specific response message.
+ *
+ * Constants representing the errors that can be encountered when calling the `findIntent`,
+ * `findIntentsByContext`, `raiseIntent` or `raiseIntentForContext` methods on the
+ * DesktopAgent (`fdc3`).
+ */
+export enum OpenErrorMessage {
+  AgentDisconnected = 'AgentDisconnected',
+  AppNotFound = 'AppNotFound',
+  AppTimeout = 'AppTimeout',
+  DesktopAgentNotFound = 'DesktopAgentNotFound',
+  ErrorOnLaunch = 'ErrorOnLaunch',
+  MalformedContext = 'MalformedContext',
+  NotConnectedToBridge = 'NotConnectedToBridge',
+  ResolverUnavailable = 'ResolverUnavailable',
+  ResponseToBridgeTimedOut = 'ResponseToBridgeTimedOut',
 }
 
 /**
@@ -1964,7 +2085,7 @@ export interface OpenBridgeResponse {
  * Metadata required in a response message collated and/or forwarded on by the Bridge
  */
 export interface OpenBridgeResponseMeta {
-  errorDetails?: string[];
+  errorDetails?: ResponseErrorDetail[];
   errorSources?: DesktopAgentIdentifier[];
   requestUuid: string;
   responseUuid: string;
@@ -2634,6 +2755,8 @@ export interface RaiseIntentAgentRequestPayload {
 /**
  * A response to a request to raise an intent.
  *
+ * An error response to a request to raise an intent.
+ *
  * A response message from a Desktop Agent to the Bridge.
  */
 export interface RaiseIntentAgentResponse {
@@ -2667,7 +2790,8 @@ export interface RaiseIntentAgentResponseMeta {
  * The message payload typically contains return values for FDC3 API functions.
  */
 export interface RaiseIntentAgentResponsePayload {
-  intentResolution: IntentResolution;
+  intentResolution?: IntentResolution;
+  error?: FindInstancesErrorMessages;
 }
 
 /**
@@ -2783,7 +2907,7 @@ export interface RaiseIntentBridgeResponse {
  * Metadata required in a response message collated and/or forwarded on by the Bridge
  */
 export interface RaiseIntentBridgeResponseMeta {
-  errorDetails?: string[];
+  errorDetails?: ResponseErrorDetail[];
   errorSources?: DesktopAgentIdentifier[];
   requestUuid: string;
   responseUuid: string;
@@ -2800,6 +2924,9 @@ export interface RaiseIntentBridgeResponsePayload {
 
 /**
  * A secondary response to a request to raise an intent used to deliver the intent result
+ *
+ * A secondary (error) response to a request to raise an intent used to deliver the intent
+ * result
  *
  * A response message from a Desktop Agent to the Bridge.
  */
@@ -2834,7 +2961,32 @@ export interface RaiseIntentResultAgentResponseMeta {
  * The message payload typically contains return values for FDC3 API functions.
  */
 export interface RaiseIntentResultAgentResponsePayload {
-  intentResult: IntentResult;
+  intentResult?: IntentResult;
+  error?: RaiseIntentResultErrorMessage;
+}
+
+/**
+ * Array of error message strings for responses that were not returned to the bridge before
+ * the timeout or because an error occurred. Should be the same length as the `errorSources`
+ * array and ordered the same. May be omitted if all sources responded without errors.
+ *
+ * UUID for the request
+ *
+ * UUID for this specific response message.
+ *
+ * Constants representing the errors that can be encountered when calling the `open` method
+ * on the DesktopAgent object (`fdc3`).
+ *
+ * Constants representing the errors that can be encountered when calling the `findIntent`,
+ * `findIntentsByContext`, `raiseIntent` or `raiseIntentForContext` methods on the
+ * DesktopAgent (`fdc3`).
+ */
+export enum RaiseIntentResultErrorMessage {
+  AgentDisconnected = 'AgentDisconnected',
+  IntentHandlerRejected = 'IntentHandlerRejected',
+  NoResultReturned = 'NoResultReturned',
+  NotConnectedToBridge = 'NotConnectedToBridge',
+  ResponseToBridgeTimedOut = 'ResponseToBridgeTimedOut',
 }
 
 export interface IntentResult {
@@ -2865,7 +3017,7 @@ export interface RaiseIntentResultBridgeResponse {
  * Metadata required in a response message collated and/or forwarded on by the Bridge
  */
 export interface RaiseIntentResultBridgeResponseMeta {
-  errorDetails?: string[];
+  errorDetails?: ResponseErrorDetail[];
   errorSources?: DesktopAgentIdentifier[];
   requestUuid: string;
   responseUuid: string;
@@ -3560,13 +3712,13 @@ const typeMap: any = {
   ),
   AgentResponseMessage: o(
     [
-      { json: 'meta', js: 'meta', typ: r('AgentResponseMetadata') },
-      { json: 'payload', js: 'payload', typ: m('any') },
+      { json: 'meta', js: 'meta', typ: r('AgentResponseMessageMeta') },
+      { json: 'payload', js: 'payload', typ: r('PayloadObject') },
       { json: 'type', js: 'type', typ: r('ResponseMessageType') },
     ],
     false
   ),
-  AgentResponseMetadata: o(
+  AgentResponseMessageMeta: o(
     [
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'responseUuid', js: 'responseUuid', typ: '' },
@@ -3576,6 +3728,7 @@ const typeMap: any = {
     false
   ),
   DesktopAgentIdentifier: o([{ json: 'desktopAgent', js: 'desktopAgent', typ: '' }], false),
+  PayloadObject: o([{ json: 'error', js: 'error', typ: u(undefined, r('ResponseErrorDetail')) }], 'any'),
   BridgeRequestMessage: o(
     [
       { json: 'meta', js: 'meta', typ: r('BridgeRequestMetadata') },
@@ -3603,7 +3756,7 @@ const typeMap: any = {
   ),
   BridgeResponseMetadata: o(
     [
-      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
+      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a(r('ResponseErrorDetail'))) },
       { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('DesktopAgentIdentifier'))) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'responseUuid', js: 'responseUuid', typ: '' },
@@ -3852,7 +4005,10 @@ const typeMap: any = {
     false
   ),
   FindInstancesAgentResponsePayload: o(
-    [{ json: 'appIdentifiers', js: 'appIdentifiers', typ: a(r('AppMetadata')) }],
+    [
+      { json: 'appIdentifiers', js: 'appIdentifiers', typ: u(undefined, a(r('AppMetadata'))) },
+      { json: 'error', js: 'error', typ: u(undefined, r('FindInstancesErrorMessages')) },
+    ],
     false
   ),
   AppMetadata: o(
@@ -3917,7 +4073,7 @@ const typeMap: any = {
   ),
   FindInstancesBridgeResponseMeta: o(
     [
-      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
+      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a(r('ResponseErrorDetail'))) },
       { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('DesktopAgentIdentifier'))) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'responseUuid', js: 'responseUuid', typ: '' },
@@ -3971,7 +4127,13 @@ const typeMap: any = {
     ],
     false
   ),
-  FindIntentAgentResponsePayload: o([{ json: 'appIntent', js: 'appIntent', typ: r('AppIntent') }], false),
+  FindIntentAgentResponsePayload: o(
+    [
+      { json: 'appIntent', js: 'appIntent', typ: u(undefined, r('AppIntent')) },
+      { json: 'error', js: 'error', typ: u(undefined, r('FindInstancesErrorMessages')) },
+    ],
+    false
+  ),
   AppIntent: o(
     [
       { json: 'apps', js: 'apps', typ: a(r('AppMetadata')) },
@@ -4020,7 +4182,7 @@ const typeMap: any = {
   ),
   FindIntentBridgeResponseMeta: o(
     [
-      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
+      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a(r('ResponseErrorDetail'))) },
       { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('DesktopAgentIdentifier'))) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'responseUuid', js: 'responseUuid', typ: '' },
@@ -4066,7 +4228,10 @@ const typeMap: any = {
     false
   ),
   FindIntentsByContextAgentResponsePayload: o(
-    [{ json: 'appIntents', js: 'appIntents', typ: a(r('AppIntent')) }],
+    [
+      { json: 'appIntents', js: 'appIntents', typ: u(undefined, a(r('AppIntent'))) },
+      { json: 'error', js: 'error', typ: u(undefined, r('FindInstancesErrorMessages')) },
+    ],
     false
   ),
   FindIntentsByContextBridgeRequest: o(
@@ -4097,7 +4262,7 @@ const typeMap: any = {
   ),
   FindIntentsByContextBridgeResponseMeta: o(
     [
-      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
+      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a(r('ResponseErrorDetail'))) },
       { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('DesktopAgentIdentifier'))) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'responseUuid', js: 'responseUuid', typ: '' },
@@ -4145,7 +4310,13 @@ const typeMap: any = {
     ],
     false
   ),
-  GetAppMetadataAgentResponsePayload: o([{ json: 'appMetadata', js: 'appMetadata', typ: r('AppMetadata') }], false),
+  GetAppMetadataAgentResponsePayload: o(
+    [
+      { json: 'appMetadata', js: 'appMetadata', typ: u(undefined, r('AppMetadata')) },
+      { json: 'error', js: 'error', typ: u(undefined, r('FindInstancesErrorMessages')) },
+    ],
+    false
+  ),
   GetAppMetadataBridgeRequest: o(
     [
       { json: 'meta', js: 'meta', typ: r('GetAppMetadataBridgeRequestMeta') },
@@ -4174,7 +4345,7 @@ const typeMap: any = {
   ),
   GetAppMetadataBridgeResponseMeta: o(
     [
-      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
+      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a(r('ResponseErrorDetail'))) },
       { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('DesktopAgentIdentifier'))) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'responseUuid', js: 'responseUuid', typ: '' },
@@ -4225,7 +4396,13 @@ const typeMap: any = {
     ],
     false
   ),
-  OpenAgentResponsePayload: o([{ json: 'appIdentifier', js: 'appIdentifier', typ: r('AppIdentifier') }], false),
+  OpenAgentResponsePayload: o(
+    [
+      { json: 'appIdentifier', js: 'appIdentifier', typ: u(undefined, r('AppIdentifier')) },
+      { json: 'error', js: 'error', typ: u(undefined, r('OpenErrorMessage')) },
+    ],
+    false
+  ),
   OpenBridgeRequest: o(
     [
       { json: 'meta', js: 'meta', typ: r('OpenBridgeRequestMeta') },
@@ -4260,7 +4437,7 @@ const typeMap: any = {
   ),
   OpenBridgeResponseMeta: o(
     [
-      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
+      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a(r('ResponseErrorDetail'))) },
       { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('DesktopAgentIdentifier'))) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'responseUuid', js: 'responseUuid', typ: '' },
@@ -4597,7 +4774,10 @@ const typeMap: any = {
     false
   ),
   RaiseIntentAgentResponsePayload: o(
-    [{ json: 'intentResolution', js: 'intentResolution', typ: r('IntentResolution') }],
+    [
+      { json: 'intentResolution', js: 'intentResolution', typ: u(undefined, r('IntentResolution')) },
+      { json: 'error', js: 'error', typ: u(undefined, r('FindInstancesErrorMessages')) },
+    ],
     false
   ),
   IntentResolution: o(
@@ -4643,7 +4823,7 @@ const typeMap: any = {
   ),
   RaiseIntentBridgeResponseMeta: o(
     [
-      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
+      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a(r('ResponseErrorDetail'))) },
       { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('DesktopAgentIdentifier'))) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'responseUuid', js: 'responseUuid', typ: '' },
@@ -4674,7 +4854,10 @@ const typeMap: any = {
     false
   ),
   RaiseIntentResultAgentResponsePayload: o(
-    [{ json: 'intentResult', js: 'intentResult', typ: r('IntentResult') }],
+    [
+      { json: 'intentResult', js: 'intentResult', typ: u(undefined, r('IntentResult')) },
+      { json: 'error', js: 'error', typ: u(undefined, r('RaiseIntentResultErrorMessage')) },
+    ],
     false
   ),
   IntentResult: o(
@@ -4694,7 +4877,7 @@ const typeMap: any = {
   ),
   RaiseIntentResultBridgeResponseMeta: o(
     [
-      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a('')) },
+      { json: 'errorDetails', js: 'errorDetails', typ: u(undefined, a(r('ResponseErrorDetail'))) },
       { json: 'errorSources', js: 'errorSources', typ: u(undefined, a(r('DesktopAgentIdentifier'))) },
       { json: 'requestUuid', js: 'requestUuid', typ: '' },
       { json: 'responseUuid', js: 'responseUuid', typ: '' },
@@ -4730,6 +4913,28 @@ const typeMap: any = {
     'raiseIntentRequest',
     'raiseIntentResultResponse',
   ],
+  ResponseErrorDetail: [
+    'AccessDenied',
+    'AgentDisconnected',
+    'AppNotFound',
+    'AppTimeout',
+    'CreationFailed',
+    'DesktopAgentNotFound',
+    'ErrorOnLaunch',
+    'IntentDeliveryFailed',
+    'IntentHandlerRejected',
+    'MalformedContext',
+    'NoAppsFound',
+    'NoChannelFound',
+    'NoResultReturned',
+    'NotConnectedToBridge',
+    'ResolverTimeout',
+    'ResolverUnavailable',
+    'ResponseToBridgeTimedOut',
+    'TargetAppUnavailable',
+    'TargetInstanceUnavailable',
+    'UserCancelledResolution',
+  ],
   ResponseMessageType: [
     'findInstancesResponse',
     'findIntentResponse',
@@ -4741,4 +4946,36 @@ const typeMap: any = {
   ],
   Type: ['app', 'private', 'user'],
   ConnectionStepMessageType: ['authenticationFailed', 'connectedAgentsUpdate', 'handshake', 'hello'],
+  FindInstancesErrorMessages: [
+    'AgentDisconnected',
+    'DesktopAgentNotFound',
+    'IntentDeliveryFailed',
+    'MalformedContext',
+    'NoAppsFound',
+    'NotConnectedToBridge',
+    'ResolverTimeout',
+    'ResolverUnavailable',
+    'ResponseToBridgeTimedOut',
+    'TargetAppUnavailable',
+    'TargetInstanceUnavailable',
+    'UserCancelledResolution',
+  ],
+  OpenErrorMessage: [
+    'AgentDisconnected',
+    'AppNotFound',
+    'AppTimeout',
+    'DesktopAgentNotFound',
+    'ErrorOnLaunch',
+    'MalformedContext',
+    'NotConnectedToBridge',
+    'ResolverUnavailable',
+    'ResponseToBridgeTimedOut',
+  ],
+  RaiseIntentResultErrorMessage: [
+    'AgentDisconnected',
+    'IntentHandlerRejected',
+    'NoResultReturned',
+    'NotConnectedToBridge',
+    'ResponseToBridgeTimedOut',
+  ],
 };
