@@ -1,5 +1,5 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://fdc3.finos.org/schemas/next/api/appIdentifier.schema.json",
     "title": "AppIdentifier",
     "description": "Identifies an application, or instance of an application, and is used to target FDC3 API calls at specific applications.",

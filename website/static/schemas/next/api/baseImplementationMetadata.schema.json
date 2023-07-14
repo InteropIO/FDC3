@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://fdc3.finos.org/schemas/next/api/baseImplementationMetadata.schema.json",
   "title": "BaseImplementationMetadata",
   "description": "Base of Implementation Metadata used by Bridging that leaves out the metadata of the calling application (appMetadata)",

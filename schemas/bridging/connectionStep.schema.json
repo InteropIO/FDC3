@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://fdc3.finos.org/schemas/next/bridging/connectionStep.schema.json",
   "title": "Connection Step Message",
   "type": "object",
@@ -34,11 +34,11 @@
       "description": "Metadata for this connection step message.",
       "type": "object",
       "properties": {
-        "requestUuid": {
-          "$ref": "common.schema.json#/$defs/RequestUuid"
-        },
         "timestamp": {
           "$ref": "common.schema.json#/$defs/Timestamp"
+        },
+        "requestUuid": {
+          "$ref": "common.schema.json#/$defs/RequestUuid"
         },
         "responseUuid": {
           "$ref": "common.schema.json#/$defs/ResponseUuid"
