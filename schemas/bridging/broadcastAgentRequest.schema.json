@@ -45,8 +45,11 @@
           "properties": {
             "requestUuid": true,
             "timestamp": true,
-            "source": true
+            "source": {
+              "$ref": "../api/api.schema.json#/definitions/AppIdentifier"
+            }
           },
+          "required": ["source"],
           "additionalProperties": false
         }
       },
