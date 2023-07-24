@@ -24,8 +24,8 @@ When the `disconnect` function is is called on a `PrivateChannel` any applicatio
 sequenceDiagram
     box Desktop Agent A
     participant AA as App A
-    end
     participant DA as Desktop Agent A
+    end
     participant DAB as Desktop Agent Bridge
     participant DB as Desktop Agent B
     participant DC as Desktop Agent C
