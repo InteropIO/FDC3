@@ -47,12 +47,12 @@ sequenceDiagram
     participant DAB as Desktop Agent Bridge
     participant DB as Desktop Agent B
     participant DC as Desktop Agent C
-    AA -->> DA: fdc3.open()
+    AA --) DA: fdc3.open()
     DA ->> DAB: openRequest
     DAB ->> DB: openRequest
     DB ->> DAB: openResponse
     DAB ->> DA: openResponse
-    DA -->> AA: resolve
+    DA --) AA: resolve (AppIdentifier)
 ```
 
 ## Request format

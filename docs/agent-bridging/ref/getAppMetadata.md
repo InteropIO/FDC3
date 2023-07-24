@@ -32,12 +32,12 @@ sequenceDiagram
     participant DAB as Desktop Agent Bridge
     participant DB as Desktop Agent B
     participant DC as Desktop Agent C
-    AA -->> DA: fdc3.getAppMetadata()
+    AA --) DA: fdc3.getAppMetadata()
     DA ->> DAB: getAppMetadataRequest
     DAB ->> DB: getAppMetadataRequest
     DB ->> DAB: getAppMetadataResponse (B)
     DAB ->> DA: getAppMetadataResponse (B)
-    DA -->> AA: resolve
+    DA --) AA: resolve (AppMetadata)
 ```
 
 ## Request format

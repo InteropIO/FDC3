@@ -40,7 +40,7 @@ sequenceDiagram
     participant DAB as Desktop Agent Bridge
     participant DB as Desktop Agent B
     participant DC as Desktop Agent C
-    AA -->> DA: fdc3.broadcast() / channel.broadcast()
+    AA --) DA: fdc3.broadcast() / channel.broadcast()
     DA ->> DAB: broadcastRequest
     DAB ->> DB: broadcastRequest
     DAB ->> DC: broadcastRequest

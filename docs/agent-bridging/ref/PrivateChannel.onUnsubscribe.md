@@ -32,7 +32,7 @@ sequenceDiagram
     participant DAB as Desktop Agent Bridge
     participant DB as Desktop Agent B
     participant DC as Desktop Agent C
-    AA -->> DA: listener.unsubscribe()
+    AA --) DA: listener.unsubscribe()
     DA ->>+ DAB: PrivateChannel.onUnsubscribe
     DAB ->>+ DB: PrivateChannel.onUnsubscribe
 ```

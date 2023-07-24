@@ -29,7 +29,7 @@ sequenceDiagram
     participant DAB as Desktop Agent Bridge
     participant DB as Desktop Agent B
     participant DC as Desktop Agent C
-    AA -->> DA: privateChannel.disconnect()
+    AA --) DA: privateChannel.disconnect()
     DA ->> DAB: PrivateChannel.onDisconnect
     DAB ->> DB: PrivateChannel.onDisconnect
 ```

@@ -34,9 +34,9 @@ sequenceDiagram
     participant DAB as Desktop Agent Bridge
     participant DB as Desktop Agent B
     participant DC as Desktop Agent C
-    AA -->> DA: removes an event listener
-    DA ->>+ DAB: PrivateChannel.eventListenerRemoved
-    DAB ->>+ DB: PrivateChannel.eventListenerRemoved
+    AA --) DA: removes an event listener
+    DA ->> DAB: PrivateChannel.eventListenerRemoved
+    DAB ->> DB: PrivateChannel.eventListenerRemoved
 ```
 
 ## Request format

@@ -31,14 +31,14 @@ sequenceDiagram
     participant DAB as Desktop Agent Bridge
     participant DB as Desktop Agent B
     participant DC as Desktop Agent C
-    AA -->> DA: fdc3.findInstances()
+    AA --) DA: fdc3.findInstances()
     DA ->> DAB: findInstancesRequest
     DAB ->> DB: findInstancesRequest
     DAB ->> DC: findInstancesRequest
     DB ->> DAB: findInstancesResponse (B)
     DC ->> DAB: findInstancesResponse (C)
     DAB ->> DA: findInstancesResponse (B + C)
-    DA -->> AA: resolve
+    DA --) AA: resolve (AppIdentifier[])
 ```
 
 ## Request format

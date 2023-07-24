@@ -58,16 +58,16 @@ sequenceDiagram
     participant DAB as Desktop Agent Bridge
     participant DB as Desktop Agent B
     participant DC as Desktop Agent C
-    AA -->> DA: fdc3.raiseIntent 
+    AA --) DA: fdc3.raiseIntent 
     DA ->> DAB: raiseIntentRequest
     DAB ->> DB: raiseIntentRequest
     DB ->> DAB: raiseIntentResponse
     DAB ->> DA: raiseIntentResponse
     DA -->> AA: resolve (IntentResolution)
-    AA -->> DA: resolution.getResult()
+    AA --) DA: resolution.getResult()
     DB ->> DAB: raiseIntentResultResponse
     DAB ->> DA: raiseIntentResultResponse
-    DA -->> AA: resolve (IntentResult)
+    DA --) AA: resolve (IntentResult)
 ```
 
 ## Request format

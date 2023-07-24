@@ -31,7 +31,7 @@ sequenceDiagram
     participant DAB as Desktop Agent Bridge
     participant DB as Desktop Agent B
     participant DC as Desktop Agent C
-    AA -->> DA: adds an event listener
+    AA --) DA: adds an event listener
     DA ->> DAB: PrivateChannel.eventListenerAdded
     DAB ->> DB: PrivateChannel.eventListenerAdded
 ```

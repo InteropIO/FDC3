@@ -29,7 +29,7 @@ sequenceDiagram
     participant DAB as Desktop Agent Bridge
     participant DB as Desktop Agent B
     participant DC as Desktop Agent C
-    AA -->> DA: privateChannel.addContextListener()
+    AA --) DA: privateChannel.addContextListener()
     DA ->> DAB: PrivateChannel.onAddContextListener
     DAB ->> DB: PrivateChannel.onAddContextListener
 ```

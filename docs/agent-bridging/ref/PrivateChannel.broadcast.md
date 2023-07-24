@@ -27,7 +27,7 @@ sequenceDiagram
     participant DAB as Desktop Agent Bridge
     participant DB as Desktop Agent B
     participant DC as Desktop Agent C
-    AA -->> DA: privateChannel.broadcast()
+    AA --) DA: privateChannel.broadcast()
     DA ->> DAB: PrivateChannel.broadcast
     DAB ->> DB: PrivateChannel.broadcast
 ```
