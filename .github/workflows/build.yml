@@ -10,7 +10,7 @@ on:
       environment:
         description: "Environment"
         required: true
-        default: "prod"
+        default: "stg"
         type: choice
         options:
         - prod
