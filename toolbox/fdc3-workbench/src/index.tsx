@@ -6,6 +6,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
+import IOConnectBrowser from "@interopio/browser"
+import { IOConnectProvider } from "@interopio/react-hooks"
 
 //make sure URL ends with trailing / for resolution of image paths
 if (!window.location.href.endsWith("/")){
@@ -14,7 +16,18 @@ if (!window.location.href.endsWith("/")){
 
 ReactDOM.render(
 	<React.StrictMode>
+      <IOConnectProvider
+        settings={{
+          browser: {
+            factory: IOConnectBrowser,
+            config: {
+            },
+          },
+        }}
+      >
 		<App />
+      </IOConnectProvider>
 	</React.StrictMode>,
 	document.getElementById("root")
 );
+
