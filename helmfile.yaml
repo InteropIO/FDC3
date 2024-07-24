@@ -5,7 +5,7 @@ environments:
 ---
 releases:
   - name: fdc3-demo #{{ requiredEnv "PROJECT_NAME" }}
-    namespace: enterprise-demos #{{ requiredEnv "NAMESPACE" }}
+    namespace: enterprise-demos 
     chart: helm/
     installed: {{ requiredEnv "INSTALLED" }}
     historyMax: 3
