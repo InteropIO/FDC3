@@ -14,7 +14,7 @@ on:
       environment:
         description: "Environment"
         required: true
-        default: "prod"
+        default: "stg"
         type: choice
         options:
         - prod
@@ -32,7 +32,7 @@ jobs:
       - uses: benjlevesque/short-sha@v2.2
         id: short-sha
         with:
-          length: 6
+          length: 7
       - uses: actions/checkout@v4
         with:
           ref: master
@@ -41,40 +41,6 @@ jobs:
           sparse-checkout: '*'
           sparse-checkout-cone-mode: false
       - name: Deploy 
-        if: inputs.component != 'all'
-        run: |
-          helmfile -e ${{ github.event.inputs.environment }} -f ${{ github.event.inputs.component }}.yaml apply
-        env:
-          PROJECT_NAME: ${{ github.event.repository.name }}
-          NAMESPACE: ${{ github.event.inputs.namespace }}
-          ALB_INSTANCES: ${{ vars.ALB_INSTANCES }}
-          CI_REGISTRY: ${{ vars.CI_REGISTRY }}
-          CERT_ARN: ${{ vars.CERT_ARN }}
-          IMAGE_TAG: ${{ github.event.inputs.image_tag }}
-          CLOUDSERVER_USER: ${{ secrets.CLOUDSERVER_USER }}
-          CLOUDSERVER_PASS: ${{ secrets.CLOUDSERVER_PASS }}
-          CLOUDSERVER_DB: ${{ vars.SHARED_MONGO_URL }}
-          CLOUDSERVER_DB_HOST: ${{ vars.CLOUDSERVER_DB_HOST }}
-          MASTER_ADMIN_EMAIL: ${{ secrets.MASTER_ADMIN_EMAIL }}
-          MASTER_ADMIN_PASSWORD: ${{ secrets.MASTER_ADMIN_PASSWORD }}
-          AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
-          AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
-          CLIENT_ID_IDENTITY: ${{ secrets.CLIENT_ID_IDENTITY }}
-          CLIENT_ID_INFRASTRUCTURE: ${{ secrets.CLIENT_ID_INFRASTRUCTURE }}
-          CLIENT_ID_SERVER: ${{ secrets.CLIENT_ID_SERVER }}
-          CLIENT_ID_INTEROPIO: ${{ secrets.CLIENT_ID_INTEROPIO }}
-          AUTH0_ORGS_DEFAULT_CONNECTION_ID: ${{ secrets.AUTH0_ORGS_DEFAULT_CONNECTION_ID }}
-          AWS_CI_ACCESS_KEY_ID: ${{ secrets.AWS_CI_ACCESS_KEY_ID }}
-          AWS_CI_SECRET_ACCESS_KEY: ${{ secrets.AWS_CI_SECRET_ACCESS_KEY }}
-          AWS_CLOUD_ACCESS_KEY_ID: ${{ secrets.AWS_CLOUD_ACCESS_KEY_ID }}
-          AWS_CLOUD_SECRET_ACCESS_KEY: ${{ secrets.AWS_CLOUD_SECRET_ACCESS_KEY }}
-          JFROG_AUTH_TOKEN: ${{ secrets.JFROG_AUTH_TOKEN }}
-          INFRASTRUCTURE_GITHUB_TOKEN: ${{ secrets.INFRASTRUCTURE_GITHUB_TOKEN }}
-          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          LICENSE_TOKEN_SECRET_KEY: ${{ secrets.LICENSE_TOKEN_SECRET_KEY }}
-          INSTALLED: ${{ github.event.inputs.deploy }}
-      - name: Deploy All
-        if: inputs.component == 'all'
         run: |
           helmfile -e ${{ github.event.inputs.environment }} -f helmfile.yaml apply
         env:
@@ -84,25 +50,4 @@ jobs:
           CI_REGISTRY: ${{ vars.CI_REGISTRY }}
           CERT_ARN: ${{ vars.CERT_ARN }}
           IMAGE_TAG: ${{ github.event.inputs.image_tag }}
-          CLOUDSERVER_USER: ${{ secrets.CLOUDSERVER_USER }}
-          CLOUDSERVER_PASS: ${{ secrets.CLOUDSERVER_PASS }}
-          CLOUDSERVER_DB: ${{ vars.CLOUDSERVER_DB }}
-          CLOUDSERVER_DB_HOST: ${{ vars.CLOUDSERVER_DB_HOST }}
-          MASTER_ADMIN_EMAIL: ${{ secrets.MASTER_ADMIN_EMAIL }}
-          MASTER_ADMIN_PASSWORD: ${{ secrets.MASTER_ADMIN_PASSWORD }}
-          AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
-          AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
-          CLIENT_ID_IDENTITY: ${{ secrets.CLIENT_ID_IDENTITY }}
-          CLIENT_ID_INFRASTRUCTURE: ${{ secrets.CLIENT_ID_INFRASTRUCTURE }}
-          CLIENT_ID_SERVER: ${{ secrets.CLIENT_ID_SERVER }}
-          CLIENT_ID_INTEROPIO: ${{ secrets.CLIENT_ID_INTEROPIO }}
-          AUTH0_ORGS_DEFAULT_CONNECTION_ID: ${{ secrets.AUTH0_ORGS_DEFAULT_CONNECTION_ID }}
-          AWS_CI_ACCESS_KEY_ID: ${{ secrets.AWS_CI_ACCESS_KEY_ID }}
-          AWS_CI_SECRET_ACCESS_KEY: ${{ secrets.AWS_CI_SECRET_ACCESS_KEY }}
-          AWS_CLOUD_ACCESS_KEY_ID: ${{ secrets.AWS_CLOUD_ACCESS_KEY_ID }}
-          AWS_CLOUD_SECRET_ACCESS_KEY: ${{ secrets.AWS_CLOUD_SECRET_ACCESS_KEY }}
-          JFROG_AUTH_TOKEN: ${{ secrets.JFROG_AUTH_TOKEN }}
-          INFRASTRUCTURE_GITHUB_TOKEN: ${{ secrets.INFRASTRUCTURE_GITHUB_TOKEN }}
-          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          LICENSE_TOKEN_SECRET_KEY: ${{ secrets.LICENSE_TOKEN_SECRET_KEY }}
           INSTALLED: ${{ github.event.inputs.deploy }}
