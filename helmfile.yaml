@@ -82,7 +82,7 @@ releases:
           hosts:
             - host: fdc3-demos.interop.io
               paths:
-                - path: /toolbox/fdc3-workbench/
+                - path: /*
                   pathType: ImplementationSpecific
                   backend: 
                     service:
@@ -92,6 +92,8 @@ releases:
       - nodeSelector:
           kubernetes.io/arch: "amd64"
           kubernetes.io/os: "linux"
+          builds: 'false'
+          github_worker: 'true'
       - configmaps:
           - name: fdc3-demo
             annotations:
@@ -101,7 +103,6 @@ releases:
                 user  nginx;
                 worker_processes  auto;
 
-                error_log  /var/log/nginx/error.log notice;
                 pid        /var/run/nginx.pid;
 
                 events {
@@ -116,23 +117,23 @@ releases:
                                       '$status $body_bytes_sent "$http_referer" '
                                       '"$http_user_agent" "$http_x_forwarded_for"';
 
-                    # access_log  /var/log/nginx/access.log  main;
-                    access_log off;
-                    sendfile        on;
-                    #tcp_nopush     on;
-                    keepalive_timeout  65;
-                    gzip  on;
+                    # access_log          /var/log/nginx/access.log  main;
+                    error_log           /var/log/nginx/error.log notice;
+                    access_log          off;
+                    sendfile            on;
+                    #tcp_nopush         on;
+                    keepalive_timeout   65;
+                    gzip                on;
                     include /etc/nginx/conf.d/*.conf;
                 }
               default.conf: |
                 server {
                   listen 80;
                   server_name fdc3-demos.interop.io;
-                  set         $root_path '/usr/share/nginx/html';
-                  root        $root_path;
-                  index  index.html index.htm;
 
-                location / {
+                  location /toolbox/fdc3-workbench/ {
                     root   /usr/share/nginx/html;
                     index  index.html index.htm;
+                    try_files $uri $uri/ /index.html index.htm;
+                  }
                 }
