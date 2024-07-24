@@ -24,6 +24,7 @@ import { AppChannels } from "./components/AppChannels";
 import snackbarStore from "./store/SnackbarStore";
 import fdc3 from "./utility/Fdc3Api";
 import "./App.css";
+import "@interopio/fdc3";
 import IOConnectBrowser from "@interopio/browser"
 
 const mainTheme = createTheme({

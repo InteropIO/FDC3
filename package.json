@@ -70,5 +70,8 @@
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "4.14.1"
+  },
+  "dependencies": {
+    "@interopio/fdc3": "^2.3.3"
   }
 }
