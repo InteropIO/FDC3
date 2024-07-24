@@ -4,14 +4,14 @@ environments:
   prod:
 ---
 releases:
-  - name: {{ requiredEnv "PROJECT_NAME" }}
-    namespace: {{ requiredEnv "NAMESPACE" }}
+  - name: fdc3-demo #{{ requiredEnv "PROJECT_NAME" }}
+    namespace: enterprise-demos #{{ requiredEnv "NAMESPACE" }}
     chart: helm/
     installed: {{ requiredEnv "INSTALLED" }}
     historyMax: 3
     values:
       - kind: Deployment
-      - fullnameOverride: {{ requiredEnv "PROJECT_NAME" }}
+      - fullnameOverride: fdc3-demo #{{ requiredEnv "PROJECT_NAME" }}
       - serviceAccount:
           create: false
       - replicaCount: 1
@@ -63,7 +63,7 @@ releases:
                   pathType: ImplementationSpecific
                   backend: 
                     service:
-                      name: {{ requiredEnv "PROJECT_NAME" }}
+                      name: fdc3-demo #{{ requiredEnv "PROJECT_NAME" }}
                       port:
                         number: 80
       - nodeSelector:
