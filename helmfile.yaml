@@ -15,6 +15,9 @@ releases:
       - serviceAccount:
           create: false
       - replicaCount: 1
+      - deploymentAnnotations:
+          configmap.reloader.stakater.com/reload: "fdc3-demo"
+          # secret.reloader.stakater.com/reload: ""
       - image:
           repository: {{ requiredEnv "CI_REGISTRY" }}/{{ requiredEnv "PROJECT_NAME" }}
           pullPolicy: IfNotPresent
@@ -29,6 +32,26 @@ releases:
             - name: http
               containerPort: 80
               protocol: TCP
+          volumeMounts:
+            - name: default-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+          volumes:
+          - name: default-config
+            configMap:
+              name: fdc3-demo
+              items:
+              - key: "default.conf"
+                path: "default.conf"
+          - name: nginx-config
+            configMap:
+              name: fdc3-demo
+              items:
+              - key: "nginx.conf"
+                path: "nginx.conf"
           env:
           securityContext:
             allowPrivilegeEscalation: false
@@ -57,7 +80,7 @@ releases:
             alb.ingress.kubernetes.io/load-balancer-attributes: routing.http.drop_invalid_header_fields.enabled=true
             alb.ingress.kubernetes.io/target-group-attributes: stickiness.enabled=false,stickiness.lb_cookie.duration_seconds=3600,slow_start.duration_seconds=30,deregistration_delay.timeout_seconds=60
           hosts:
-            - host: gfdc3-demos.interop.io
+            - host: fdc3-demos.interop.io
               paths:
                 - path: /toolbox/fdc3-workbench/
                   pathType: ImplementationSpecific
@@ -69,3 +92,47 @@ releases:
       - nodeSelector:
           kubernetes.io/arch: "amd64"
           kubernetes.io/os: "linux"
+      - configmaps:
+          - name: fdc3-demo
+            annotations:
+              reloader.stakater.com/match: "true" 
+            data:
+              nginx.conf: |
+                user  nginx;
+                worker_processes  auto;
+
+                error_log  /var/log/nginx/error.log notice;
+                pid        /var/run/nginx.pid;
+
+                events {
+                    worker_connections  512;
+                }
+
+                http {
+                    include       /etc/nginx/mime.types;
+                    default_type  application/octet-stream;
+
+                    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                                      '$status $body_bytes_sent "$http_referer" '
+                                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+                    # access_log  /var/log/nginx/access.log  main;
+                    access_log off;
+                    sendfile        on;
+                    #tcp_nopush     on;
+                    keepalive_timeout  65;
+                    gzip  on;
+                    include /etc/nginx/conf.d/*.conf;
+                }
+              default.conf: |
+                server {
+                  listen 80;
+                  server_name fdc3-demos.interop.io;
+                  set         $root_path '/usr/share/nginx/html';
+                  root        $root_path;
+                  index  index.html index.htm;
+
+                location / {
+                    root   /usr/share/nginx/html;
+                    index  index.html index.htm;
+                }
