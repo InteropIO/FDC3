@@ -1,0 +1,53 @@
+name: Deploy to EKS
+on: 
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Image tag to be deployed"
+        required: true
+        default: "latest"
+      deploy:
+        description: "Deploy"
+        required: true
+        default: false
+        type: boolean
+      environment:
+        description: "Environment"
+        required: true
+        default: "stg"
+        type: choice
+        options:
+        - prod
+        - stg
+        - dev
+
+jobs:
+  deploy:
+    runs-on: 
+      - deploy
+    environment: ${{ github.event.inputs.environment }}
+    name: Deploy 
+    steps:
+      - uses: actions/checkout@v4
+      - uses: benjlevesque/short-sha@v2.2
+        id: short-sha
+        with:
+          length: 7
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          repository: InteropIO/basehelmchart
+          path: 'helm'
+          sparse-checkout: '*'
+          sparse-checkout-cone-mode: false
+      - name: Deploy 
+        run: |
+          helmfile -e ${{ github.event.inputs.environment }} -f helmfile.yaml apply
+        env:
+          PROJECT_NAME: ${{ github.event.repository.name }}
+          NAMESPACE: ${{ github.event.inputs.namespace }}
+          ALB_INSTANCES: ${{ vars.ALB_INSTANCES }}
+          CI_REGISTRY: ${{ vars.CI_REGISTRY }}
+          CERT_ARN: ${{ vars.CERT_ARN }}
+          IMAGE_TAG: ${{ github.event.inputs.image_tag }}
+          INSTALLED: ${{ github.event.inputs.deploy }}
