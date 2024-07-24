@@ -1,0 +1,71 @@
+environments:
+  dev:
+  stg:
+  prod:
+---
+releases:
+  - name: {{ requiredEnv "PROJECT_NAME" }}
+    namespace: {{ requiredEnv "NAMESPACE" }}
+    chart: helm/
+    installed: {{ requiredEnv "INSTALLED" }}
+    historyMax: 3
+    values:
+      - kind: Deployment
+      - fullnameOverride: {{ requiredEnv "PROJECT_NAME" }}
+      - serviceAccount:
+          create: false
+      - replicaCount: 1
+      - image:
+          repository: {{ requiredEnv "CI_REGISTRY" }}/{{ requiredEnv "PROJECT_NAME" }}
+          pullPolicy: IfNotPresent
+          tag: {{ requiredEnv "IMAGE_TAG" }}
+          resources:
+            limits:
+              memory: "32Mi"
+            requests:
+              cpu: "200m"
+              memory: "8Mi"
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          env:
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 0
+      - service:
+          enabled: true
+          type: NodePort
+          ports:
+            - name: http
+              targetPort: 80
+              protocol: TCP
+              port: 80
+      - ingress:
+          enabled: true
+          annotations:
+            kubernetes.io/ingress.class: alb
+            alb.ingress.kubernetes.io/scheme: internet-facing
+            alb.ingress.kubernetes.io/certificate-arn: {{ requiredEnv "CERT_ARN" }}
+            alb.ingress.kubernetes.io/group.name: ext-{{ mod (randNumeric 1) ( requiredEnv "ALB_INSTANCES" ) }}
+            alb.ingress.kubernetes.io/target-node-labels: kubernetes.io/os=linux
+            alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}, {"HTTP":80}]'
+            alb.ingress.kubernetes.io/ssl-redirect: "443"
+            alb.ingress.kubernetes.io/healthcheck-path: /
+            alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+            alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS-1-1-2017-01
+            alb.ingress.kubernetes.io/load-balancer-attributes: routing.http.drop_invalid_header_fields.enabled=true
+            alb.ingress.kubernetes.io/target-group-attributes: stickiness.enabled=false,stickiness.lb_cookie.duration_seconds=3600,slow_start.duration_seconds=30,deregistration_delay.timeout_seconds=60
+          hosts:
+            - host: gfdc3-demos.interop.io
+              paths:
+                - path: /toolbox/fdc3-workbench/
+                  pathType: ImplementationSpecific
+                  backend: 
+                    service:
+                      name: {{ requiredEnv "PROJECT_NAME" }}
+                      port:
+                        number: 80
+      - nodeSelector:
+          kubernetes.io/arch: "amd64"
+          kubernetes.io/os: "linux"

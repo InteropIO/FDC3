@@ -1,0 +1,76 @@
+name: Build images
+on: 
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: "Deploy after build"
+        required: true
+        default: false
+        type: boolean
+      environment:
+        description: "Environment"
+        required: true
+        default: "stg"
+        type: choice
+        options:
+        - prod
+        - stg
+        - dev
+
+jobs:
+  build:
+    runs-on: 
+      - lnx-build
+    name: Build images
+    steps:
+      - uses: actions/checkout@v4
+      - uses: benjlevesque/short-sha@v2.2
+        id: short-sha
+        with:
+          length: 7
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to ECR
+        run: |
+          aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin ${{vars.CI_REGISTRY}}
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{vars.CI_REGISTRY}}/${{ github.event.repository.name }}:latest
+            ${{vars.CI_REGISTRY}}/${{ github.event.repository.name }}:${{ steps.short-sha.outputs.sha }}
+          provenance: false
+
+  deploy:
+    runs-on: 
+      - deploy
+    environment: ${{ github.event.inputs.environment }}
+    name: Deploy 
+    needs: [ "build",]
+    if: inputs.deploy == true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: benjlevesque/short-sha@v2.2
+        id: short-sha
+        with:
+          length: 7
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          repository: InteropIO/basehelmchart
+          path: 'helm'
+          sparse-checkout: '*'
+          sparse-checkout-cone-mode: false
+      - name: Deploy 
+        run: |
+          helmfile -e ${{ github.event.inputs.environment }} -f helmfile.yaml apply
+        env:
+          PROJECT_NAME: ${{ github.event.repository.name }}
+          ALB_INSTANCES: ${{ vars.ALB_INSTANCES }}
+          CI_REGISTRY: ${{ vars.CI_REGISTRY }}
+          CERT_ARN: ${{ vars.CERT_ARN }}
+          IMAGE_TAG: ${{ steps.short-sha.outputs.sha }}
+          INSTALLED: ${{ github.event.inputs.deploy }}
