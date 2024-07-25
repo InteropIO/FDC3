@@ -7,6 +7,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import "@interopio/fdc3";
+import IOConnectDesktop from "@interopio/desktop"
 import IOConnectBrowser from "@interopio/browser"
 import { IOConnectProvider } from "@interopio/react-hooks"
 
@@ -21,6 +22,11 @@ ReactDOM.render(
         settings={{
           browser: {
             factory: IOConnectBrowser,
+            config: {
+            },
+          },
+          desktop: {
+            factory: IOConnectDesktop,
             config: {
             },
           },

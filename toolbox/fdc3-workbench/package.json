@@ -5,6 +5,7 @@
   "homepage": ".",
   "dependencies": {
     "@interopio/browser": "^3.3.3",
+    "@interopio/desktop": "^6.5.1",
     "@interopio/fdc3": "^2.3.3",
     "@interopio/react-hooks": "^3.3.3"
   },
