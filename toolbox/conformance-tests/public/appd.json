@@ -1,0 +1,68 @@
+{
+  "applications": [
+    {
+      "appId": "Tester",
+      "name": "Tester",
+      "title": "Conformance Test Runner",
+      "description": "Mocha runner for FDC3 conformance tests.",
+      "type": "web",
+      "details": {
+        "url": "http://localhost:5173/index.html"
+      },
+      "version": "0.0.1",
+      "publisher": "FDC3",
+      "icons": [],
+      "interop": {
+        "intents": {
+          "raises": {
+            "custom.instruction": {
+              "context": ["start-test"]
+            }
+          },
+          "listensFor": {
+            "custom.health": {
+              "context": ["custom.opened"]
+            }
+          }
+        },
+        "appChannels": [
+          {
+            "id": "test-channel",
+            "description": "Channel for testing FDC3 functionality.",
+            "listensFor": ["custom.test-response"]
+          }
+        ]
+      }
+    },
+    {
+      "appId": "app-b",
+      "name": "AppB",
+      "title": "Test App B",
+      "description": "Helper app used by conformance tests.",
+      "type": "web",
+      "details": {
+        "url": "http://localhost:5173/app-b.html"
+      },
+      "version": "0.0.1",
+      "publisher": "FDC3",
+      "interop": {
+        "intents": {
+          "raises": ["custom.health"],
+          "listensFor": {"custom.instruction": {
+            "context": ["start-test"]
+          }}
+        },
+        "appChannels": [
+          {
+            "id": "test-channel",
+            "description": "Channel for testing FDC3 functionality.",
+            "broadcasts": ["custom.test-response"]
+          }
+        ]
+      }
+    }
+  ],
+  "message": "OK"
+}
+
+

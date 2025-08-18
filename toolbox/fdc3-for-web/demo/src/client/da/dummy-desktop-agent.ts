@@ -56,7 +56,6 @@ window.addEventListener('load', () => {
 
     const directory = new FDC3_2_1_JSONDirectory();
     await directory.load('/static/da/appd.json');
-    await directory.load('/static/da/local-conformance.v2.json');
     const sc = new DemoServerContext(socket, directory);
 
     const channelDetails: ChannelState[] = [

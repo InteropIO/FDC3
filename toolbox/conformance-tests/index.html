@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FDC3 Conformance Tests</title>
+  <link rel="stylesheet" href="https://unpkg.com/mocha@10.2.0/mocha.css">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; }
+    header { padding: 12px 16px; border-bottom: 1px solid #eee; }
+    header h1 { margin: 0; font-size: 18px; font-weight: 600; }
+    #mocha { padding: 16px; }
+  </style>
+  
+</head>
+<body>
+  <header>
+    <h1>FDC3 Conformance Tests</h1>
+  </header>
+
+  <div id="mocha"></div>
+
+  <script src="https://unpkg.com/mocha@10.2.0/mocha.js"></script>
+  <script src="https://unpkg.com/chai@4.3.10/chai.js"></script>
+  <script>
+    // Configure Mocha for browser usage
+    mocha.setup('bdd');
+    // Expose chai expect globally for tests
+    window.expect = chai.expect;
+  </script>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
+
+
